@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorBackground">#FFFFFFFF</color>
+    <color name="colorOnPrimary">#FFFFFFFF</color>
+    <color name="colorOnSecondary">#FF000000</color>
+    <color name="colorPrimary">#FF6200EE</color>
+    <color name="colorPrimaryVariant">#FF3700B3</color>
+    <color name="colorSecondary">#FF03DAC5</color>
+    <color name="colorSurface">#FFFFFFFF</color>
+    <color name="green">#FF43A047</color>
+    <color name="red">#FFE53935</color>
+    <string name="app_name">FitnessUltra</string>
+    <string name="nav_charts">Charts</string>
+    <string name="nav_history">History</string>
+    <string name="nav_run">Run</string>
+    <string name="nav_weight">Weight</string>
+    <style name="Theme.FitnessUltra" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorOnSecondary">@color/colorOnSecondary</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+    </style>
+    <style name="Theme.FitnessUltra.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+</resources>
