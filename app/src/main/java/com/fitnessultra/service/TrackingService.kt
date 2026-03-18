@@ -20,6 +20,7 @@ import com.google.android.gms.location.*
 import org.osmdroid.util.GeoPoint
 import com.fitnessultra.MainActivity
 import com.fitnessultra.R
+import com.fitnessultra.util.SettingsManager
 import com.fitnessultra.util.TrackingUtils
 import kotlinx.coroutines.*
 
@@ -105,7 +106,7 @@ class TrackingService : LifecycleService() {
                     isTracking.postValue(false)
                     timerJob?.cancel()
                     timeRun += System.currentTimeMillis() - timeStarted
-                    updateNotification(TrackingUtils.formatTime(timeRun))
+                    updateNotification(timeRun, totalDistanceMeters.value ?: 0f, tracking = false)
                     stopStepCounter()
                 }
                 ACTION_STOP -> {
@@ -130,42 +131,53 @@ class TrackingService : LifecycleService() {
             )
             notificationManager.createNotificationChannel(channel)
         }
-
-        val pendingIntent = PendingIntent.getActivity(
-            this, 0,
-            Intent(this, MainActivity::class.java),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setAutoCancel(false)
-            .setOngoing(true)
-            .setSmallIcon(R.drawable.ic_run)
-            .setContentTitle("FitnessUltra")
-            .setContentText("00:00:00")
-            .setContentIntent(pendingIntent)
-            .build()
-
-        startForeground(NOTIFICATION_ID, notification)
+        startForeground(NOTIFICATION_ID, buildNotification(0L, 0f, tracking = true))
     }
 
-    private fun updateNotification(time: String) {
-        val pendingIntent = PendingIntent.getActivity(
-            this, 0,
-            Intent(this, MainActivity::class.java),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setAutoCancel(false)
-            .setOngoing(true)
-            .setSmallIcon(R.drawable.ic_run)
-            .setContentTitle("FitnessUltra")
-            .setContentText(time)
-            .setContentIntent(pendingIntent)
-            .build()
-
-        notificationManager.notify(NOTIFICATION_ID, notification)
+    private fun updateNotification(elapsedMs: Long, distanceMeters: Float, tracking: Boolean) {
+        notificationManager.notify(NOTIFICATION_ID, buildNotification(elapsedMs, distanceMeters, tracking))
     }
+
+    private fun buildNotification(elapsedMs: Long, distanceMeters: Float, tracking: Boolean) =
+        NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).apply {
+            setAutoCancel(false)
+            setOngoing(true)
+            setSmallIcon(R.drawable.ic_run)
+            setContentTitle(TrackingUtils.formatTime(elapsedMs))
+
+            val useMiles = SettingsManager.useMiles(this@TrackingService)
+            val distStr  = TrackingUtils.formatDistance(distanceMeters, useMiles)
+            val paceStr  = TrackingUtils.calculatePace(distanceMeters, elapsedMs, useMiles)
+            setContentText("$distStr  ·  $paceStr")
+
+            // Tap notification → open app
+            val openIntent = PendingIntent.getActivity(
+                this@TrackingService, 0,
+                Intent(this@TrackingService, MainActivity::class.java),
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            setContentIntent(openIntent)
+
+            // Action button: Pause or Resume
+            val actionLabel: String
+            val actionIcon: Int
+            val serviceAction: String
+            if (tracking) {
+                actionLabel = getString(R.string.replay_pause)
+                actionIcon  = R.drawable.ic_pause_notification
+                serviceAction = ACTION_PAUSE
+            } else {
+                actionLabel = getString(R.string.replay_play)
+                actionIcon  = R.drawable.ic_run
+                serviceAction = ACTION_START_OR_RESUME
+            }
+            val actionIntent = PendingIntent.getService(
+                this@TrackingService, 1,
+                Intent(this@TrackingService, TrackingService::class.java).apply { action = serviceAction },
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            addAction(actionIcon, actionLabel, actionIntent)
+        }.build()
 
     @SuppressLint("MissingPermission")
     private fun updateLocationTracking(isTracking: Boolean) {
@@ -209,7 +221,7 @@ class TrackingService : LifecycleService() {
             while (isActive) {
                 val elapsed = timeRun + (System.currentTimeMillis() - timeStarted)
                 timeRunInMillis.postValue(elapsed)
-                updateNotification(TrackingUtils.formatTime(elapsed))
+                updateNotification(elapsed, totalDistanceMeters.value ?: 0f, tracking = true)
                 delay(1000L)
             }
         }
