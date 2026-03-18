@@ -111,8 +111,8 @@ class GoalsFragment : Fragment() {
         val unit = TrackingUtils.distanceUnitLabel(useMiles)
         val pct = ((actualDisplay / goalDisplay) * 100).toInt().coerceAtMost(100)
         binding.progressDistance.progress = pct
-        binding.tvDistanceValue.text = "%.1f / %.1f %s".format(actualDisplay, goalDisplay, unit)
-        binding.tvDistancePct.text = "$pct%"
+        binding.tvDistanceValue.text = getString(R.string.goal_progress_distance, actualDisplay, goalDisplay, unit)
+        binding.tvDistancePct.text = getString(R.string.percent_format, pct)
         setProgressColor(binding.progressDistance, pct)
     }
 
@@ -122,7 +122,7 @@ class GoalsFragment : Fragment() {
         val pct = ((actualMin.toFloat() / goalMin) * 100).toInt().coerceAtMost(100)
         binding.progressTime.progress = pct
         binding.tvTimeValue.text = getString(R.string.goal_progress_min, actualMin, goalMin)
-        binding.tvTimePct.text = "$pct%"
+        binding.tvTimePct.text = getString(R.string.percent_format, pct)
         setProgressColor(binding.progressTime, pct)
     }
 
@@ -132,7 +132,7 @@ class GoalsFragment : Fragment() {
         val pct = ((actual.toFloat() / goal) * 100).toInt().coerceAtMost(100)
         binding.progressSteps.progress = pct
         binding.tvStepsValue.text = getString(R.string.goal_progress_steps, "%,d".format(actual), "%,d".format(goal))
-        binding.tvStepsPct.text = "$pct%"
+        binding.tvStepsPct.text = getString(R.string.percent_format, pct)
         setProgressColor(binding.progressSteps, pct)
     }
 
@@ -154,7 +154,7 @@ class GoalsFragment : Fragment() {
         val (title, hint, current) = when (type) {
             GoalType.DISTANCE -> Triple(
                 getString(R.string.goal_edit_distance_title),
-                TrackingUtils.distanceUnitLabel(useMiles) + " per week",
+                getString(R.string.goal_edit_distance_hint, TrackingUtils.distanceUnitLabel(useMiles)),
                 TrackingUtils.fromKm(viewModel.goalDistanceKm, useMiles).toInt().toString()
             )
             GoalType.TIME -> Triple(

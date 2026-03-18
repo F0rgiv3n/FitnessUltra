@@ -174,7 +174,7 @@ class TrackingService : LifecycleService() {
             val useMiles = SettingsManager.useMiles(this@TrackingService)
             val distStr  = TrackingUtils.formatDistance(distanceMeters, useMiles)
             val paceStr  = TrackingUtils.calculatePace(distanceMeters, elapsedMs, useMiles)
-            setContentText("$distStr  ·  $paceStr")
+            setContentText(getString(R.string.notification_content, distStr, paceStr))
 
             // Tap notification → open app
             val openIntent = PendingIntent.getActivity(

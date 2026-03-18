@@ -43,8 +43,8 @@ class ChartsFragment : Fragment() {
         }
 
         val useMiles = SettingsManager.useMiles(requireContext())
-        val speedLabel = "Speed (${TrackingUtils.speedUnitLabel(useMiles)})"
-        val paceLabel  = "Pace (min/${TrackingUtils.distanceUnitLabel(useMiles)})"
+        val speedLabel = getString(R.string.chart_label_speed, TrackingUtils.speedUnitLabel(useMiles))
+        val paceLabel  = getString(R.string.chart_label_pace, TrackingUtils.distanceUnitLabel(useMiles))
 
         lifecycleScope.launch {
             val run = viewModel.getRunById(runId)
@@ -54,7 +54,9 @@ class ChartsFragment : Fragment() {
                 binding.tvRunDistance.text = TrackingUtils.formatDistance(run.distanceMeters, useMiles)
                 binding.tvRunDuration.text = TrackingUtils.formatTime(run.durationMillis)
                 binding.tvRunCalories.text = getString(R.string.calories_format, run.caloriesBurned)
-                binding.tvRunSteps.text = if (run.stepCount > 0) "${run.stepCount} steps" else "-"
+                binding.tvRunSteps.text = if (run.stepCount > 0)
+                    getString(R.string.steps_format, run.stepCount)
+                else getString(R.string.label_not_available)
             }
 
             val points = viewModel.getLocationPoints(runId)
@@ -80,7 +82,7 @@ class ChartsFragment : Fragment() {
             val elevEntries = points.map { p ->
                 Entry((p.timestamp - startTime) / 1000f, p.altitude.toFloat())
             }
-            val elevDataSet = LineDataSet(elevEntries, "Altitude (m)").apply {
+            val elevDataSet = LineDataSet(elevEntries, getString(R.string.chart_label_altitude)).apply {
                 color = Color.GREEN
                 setCircleColor(Color.GREEN)
                 circleRadius = 2f

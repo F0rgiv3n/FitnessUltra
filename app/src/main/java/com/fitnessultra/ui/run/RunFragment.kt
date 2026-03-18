@@ -260,7 +260,7 @@ class RunFragment : Fragment() {
             val kmAnnounced = milestonePassed * freqKm
             val durationMs = viewModel.timeRunInMillis.value ?: 0L
             val paceStr = TrackingUtils.calculatePace(kmAnnounced * 1000f, durationMs)
-            speakTts("$kmAnnounced kilometer completed – pace $paceStr")
+            speakTts(getString(R.string.tts_voice_milestone, kmAnnounced, paceStr))
         }
     }
 

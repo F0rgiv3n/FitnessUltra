@@ -51,7 +51,7 @@ class WeightFragment : Fragment() {
         setupChart(binding.chartBmi)
 
         // Update weight input hint to reflect current unit
-        binding.tilWeight.hint = "Weight (${weightUnit()})"
+        binding.tilWeight.hint = getString(R.string.hint_weight_format, weightUnit())
 
         // Tap on weight chart point → Edit/Delete dialog
         binding.chartWeight.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
@@ -151,8 +151,10 @@ class WeightFragment : Fragment() {
     private fun showInfoSummary(heightCm: Float, age: Int) {
         binding.layoutInfoForm.visibility = View.GONE
         binding.layoutInfoSummary.visibility = View.VISIBLE
-        val agePart = if (age > 0) getString(R.string.info_summary_age_part, age) else ""
-        binding.tvInfoSummary.text = getString(R.string.info_summary_height, heightCm.toInt()) + agePart
+        binding.tvInfoSummary.text = if (age > 0)
+            getString(R.string.info_summary_with_age, heightCm.toInt(), age)
+        else
+            getString(R.string.info_summary_height, heightCm.toInt())
     }
 
     private fun showInfoForm() {

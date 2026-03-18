@@ -27,7 +27,9 @@ class RunAdapter(
             binding.tvDuration.text = TrackingUtils.formatTime(run.durationMillis)
             binding.tvAvgSpeed.text = TrackingUtils.formatSpeedKmh(run.avgSpeedKmh, useMiles)
             binding.tvCalories.text = itemView.context.getString(com.fitnessultra.R.string.calories_format, run.caloriesBurned)
-            binding.tvSteps.text = if (run.stepCount > 0) "${run.stepCount} steps" else ""
+            binding.tvSteps.text = if (run.stepCount > 0)
+                itemView.context.getString(com.fitnessultra.R.string.steps_format, run.stepCount)
+            else ""
             binding.root.setOnClickListener { onItemClick(run) }
         }
     }

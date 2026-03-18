@@ -74,6 +74,17 @@
     <string name="tts_pace_too_slow">Πολύ αργά, επίταξε</string>
     <string name="tts_pace_too_fast">Πολύ γρήγορα, επιβράδυνε</string>
     <string name="elevation_gain_format">+%.0f m</string>
+    <string name="steps_format">%1$d βήματα</string>
+    <string name="label_not_available">-</string>
+    <string name="goal_progress_distance">%1$.1f / %2$.1f %3$s</string>
+    <string name="percent_format">%1$d%%</string>
+    <string name="tts_voice_milestone">%1$.0f χιλιόμετρα ολοκληρώθηκαν – ρυθμός %2$s</string>
+    <string name="notification_content">%1$s  ·  %2$s</string>
+    <string name="chart_label_speed">Ταχύτητα (%1$s)</string>
+    <string name="chart_label_pace">Ρυθμός (λεπτ/%1$s)</string>
+    <string name="chart_label_altitude">Υψόμετρο (m)</string>
+    <string name="hint_weight_format">Βάρος (%1$s)</string>
+    <string name="info_summary_with_age">Ύψος: %1$d cm · Ηλικία: %2$d</string>
 
     <!-- Weight dialogs & validation -->
     <string name="btn_delete">Διαγραφή</string>
@@ -121,7 +132,7 @@
     <string name="goal_progress_min">%1$d / %2$d λεπτά</string>
     <string name="goal_progress_steps">%1$s / %2$s βήματα</string>
     <string name="goal_edit_distance_title">Ορισμός στόχου απόστασης</string>
-    <string name="goal_edit_distance_hint">km ανά εβδομάδα</string>
+    <string name="goal_edit_distance_hint">%1$s ανά εβδομάδα</string>
     <string name="goal_edit_time_title">Ορισμός στόχου χρόνου</string>
     <string name="goal_edit_time_hint">λεπτά ανά εβδομάδα</string>
     <string name="goal_edit_steps_title">Ορισμός στόχου βημάτων</string>

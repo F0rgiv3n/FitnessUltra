@@ -74,6 +74,17 @@
     <string name="tts_pace_too_slow">Zu langsam, schneller</string>
     <string name="tts_pace_too_fast">Zu schnell, langsamer</string>
     <string name="elevation_gain_format">+%.0f m</string>
+    <string name="steps_format">%1$d Schritte</string>
+    <string name="label_not_available">-</string>
+    <string name="goal_progress_distance">%1$.1f / %2$.1f %3$s</string>
+    <string name="percent_format">%1$d%%</string>
+    <string name="tts_voice_milestone">%1$.0f Kilometer absolviert – Tempo %2$s</string>
+    <string name="notification_content">%1$s  ·  %2$s</string>
+    <string name="chart_label_speed">Geschwindigkeit (%1$s)</string>
+    <string name="chart_label_pace">Tempo (Min/%1$s)</string>
+    <string name="chart_label_altitude">Höhe (m)</string>
+    <string name="hint_weight_format">Gewicht (%1$s)</string>
+    <string name="info_summary_with_age">Größe: %1$d cm · Alter: %2$d</string>
 
     <!-- Weight dialogs & validation -->
     <string name="btn_delete">Löschen</string>
@@ -121,7 +132,7 @@
     <string name="goal_progress_min">%1$d / %2$d Min.</string>
     <string name="goal_progress_steps">%1$s / %2$s Schritte</string>
     <string name="goal_edit_distance_title">Distanzziel festlegen</string>
-    <string name="goal_edit_distance_hint">km pro Woche</string>
+    <string name="goal_edit_distance_hint">%1$s pro Woche</string>
     <string name="goal_edit_time_title">Zeitziel festlegen</string>
     <string name="goal_edit_time_hint">Minuten pro Woche</string>
     <string name="goal_edit_steps_title">Schritteziel festlegen</string>
