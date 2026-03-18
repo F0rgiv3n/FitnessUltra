@@ -14,13 +14,24 @@ A personal Android fitness tracking app built with Kotlin. Track outdoor runs wi
 
 ### Running
 - Real-time GPS tracking with live map (OpenStreetMap, no API key)
-- Distance, speed, pace, elapsed time displayed during run
+- Distance, speed, pace, elapsed time, and live elevation gain displayed during run
 - Step counter via device accelerometer
 - Voice announcements at configurable distance milestones (1 / 2 / 5 km) in your chosen language
 - Calories burned estimation (adjusts for gender)
 - Foreground service with WakeLock — keeps tracking alive with screen off
 - Live notification showing time, distance, pace + Pause/Resume button
 - 3-2-1 countdown overlay before tracking starts
+
+### Workout Modes
+Choose a workout type before each run via a setup sheet:
+
+| Mode | Description |
+|---|---|
+| **Free Run** | Standard run with no additional guidance |
+| **Interval Training** | Alternates run/walk segments with configurable durations and reps; TTS announces each phase |
+| **Target Pace** | Set a target pace (min/km or min/mi); TTS alerts and pace color feedback when too fast or too slow |
+
+Interval timer correctly pauses when the run is paused — only counts active tracking time.
 
 ### History
 - Full run log with swipe-to-delete and undo
