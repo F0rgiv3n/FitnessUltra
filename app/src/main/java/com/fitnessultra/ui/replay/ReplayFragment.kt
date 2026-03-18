@@ -89,7 +89,9 @@ class ReplayFragment : Fragment() {
             run?.let {
                 val useMiles = SettingsManager.useMiles(requireContext())
                 val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-                activity?.title = "${sdf.format(Date(it.dateTimestamp))}  ·  ${TrackingUtils.formatDistance(it.distanceMeters, useMiles)}"
+                activity?.title = getString(R.string.notification_content,
+                    sdf.format(Date(it.dateTimestamp)),
+                    TrackingUtils.formatDistance(it.distanceMeters, useMiles, requireContext()))
             }
 
             setupOverlays()
