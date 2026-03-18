@@ -2,11 +2,11 @@ package com.fitnessultra.ui.weight
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.graphics.toColorInt
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -27,18 +27,18 @@ class BmiGaugeView @JvmOverloads constructor(
     private val BMI_MAX = 40f
 
     private val segments = listOf(
-        Triple(18.5f, Color.parseColor("#1565C0"), "Under"),
-        Triple(25f,   Color.parseColor("#388E3C"), "Normal"),
-        Triple(30f,   Color.parseColor("#F57F17"), "Over"),
-        Triple(40f,   Color.RED,                   "Obese")
+        Triple(18.5f, "#1565C0".toColorInt(), "Under"),
+        Triple(25f,   "#388E3C".toColorInt(), "Normal"),
+        Triple(30f,   "#F57F17".toColorInt(), "Over"),
+        Triple(40f,   "#D32F2F".toColorInt(), "Obese")
     )
 
     private val arcPaint    = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeCap = Paint.Cap.BUTT }
-    private val trackPaint  = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeCap = Paint.Cap.BUTT; color = Color.parseColor("#E0E0E0") }
+    private val trackPaint  = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeCap = Paint.Cap.BUTT; color = "#E0E0E0".toColorInt() }
     private val needlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL_AND_STROKE; strokeCap = Paint.Cap.ROUND }
     private val textPaint   = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL; textAlign = Paint.Align.CENTER }
     private val dotPaint    = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
-    private val tickPaint   = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; color = Color.WHITE; strokeCap = Paint.Cap.ROUND }
+    private val tickPaint   = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; color = "#FFFFFF".toColorInt(); strokeCap = Paint.Cap.ROUND }
 
     private val oval = RectF()
 
@@ -99,7 +99,7 @@ class BmiGaugeView @JvmOverloads constructor(
 
         // Boundary labels outside arc
         textPaint.textSize = radius * 0.16f
-        textPaint.color = Color.DKGRAY
+        textPaint.color = "#444444".toColorInt()
         val labelR = radius + strokeW * 0.9f
         val labelBmis  = listOf(BMI_MIN, 18.5f, 25f, 30f, BMI_MAX)
         val labelTexts = listOf("10", "18.5", "25", "30", "40")
@@ -112,7 +112,7 @@ class BmiGaugeView @JvmOverloads constructor(
 
         // Category labels inside arc
         textPaint.textSize = radius * 0.13f
-        textPaint.color = Color.WHITE
+        textPaint.color = "#FFFFFF".toColorInt()
         val catMids = listOf((BMI_MIN + 18.5f) / 2f, (18.5f + 25f) / 2f, (25f + 30f) / 2f, (30f + BMI_MAX) / 2f)
         val catR = radius - strokeW * 1.15f
         for (i in segments.indices) {
@@ -129,7 +129,7 @@ class BmiGaugeView @JvmOverloads constructor(
             val needleLen = radius * 0.80f
             val tailLen   = radius * 0.18f
 
-            needlePaint.color = Color.parseColor("#212121")
+            needlePaint.color = "#212121".toColorInt()
             needlePaint.strokeWidth = strokeW * 0.18f
             canvas.drawLine(
                 cx - (tailLen * cos(ar)).toFloat(), cy - (tailLen * sin(ar)).toFloat(),
@@ -137,9 +137,9 @@ class BmiGaugeView @JvmOverloads constructor(
                 needlePaint
             )
 
-            dotPaint.color = Color.parseColor("#424242")
+            dotPaint.color = "#424242".toColorInt()
             canvas.drawCircle(cx, cy, radius * 0.09f, dotPaint)
-            dotPaint.color = Color.WHITE
+            dotPaint.color = "#FFFFFF".toColorInt()
             canvas.drawCircle(cx, cy, radius * 0.045f, dotPaint)
         }
     }

@@ -1,6 +1,6 @@
 package com.fitnessultra.ui.replay
 
-import android.graphics.Color
+import androidx.core.graphics.toColorInt
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -110,7 +110,7 @@ class ReplayFragment : Fragment() {
         // Full route — gray background
         routePolyline = Polyline().apply {
             setPoints(geoPoints)
-            outlinePaint.color = Color.parseColor("#BDBDBD")
+            outlinePaint.color = ContextCompat.getColor(requireContext(), R.color.routeGray)
             outlinePaint.strokeWidth = 6f
         }
 
@@ -141,8 +141,8 @@ class ReplayFragment : Fragment() {
             return
         }
         val lats = points.map { it.latitude }
-        val lons = points.map { it.longitude }
-        val box = BoundingBox(lats.max(), lons.max(), lats.min(), lons.min())
+        val lngs = points.map { it.longitude }
+        val box = BoundingBox(lats.max(), lngs.max(), lats.min(), lngs.min())
         binding.replayMapView.post {
             binding.replayMapView.zoomToBoundingBox(box.increaseByScale(1.3f), true)
         }
@@ -155,7 +155,7 @@ class ReplayFragment : Fragment() {
     private fun startReplay() {
         if (currentIndex >= points.size - 1) currentIndex = 0  // restart if finished
         isPlaying = true
-        binding.btnPlayPause.text = "PAUSE"
+        binding.btnPlayPause.setText(R.string.replay_pause)
 
         replayJob = lifecycleScope.launch {
             while (currentIndex < points.size - 1 && isActive) {
@@ -168,14 +168,14 @@ class ReplayFragment : Fragment() {
             updatePositionAt(points.size - 1)
             isPlaying = false
             currentIndex = 0
-            binding.btnPlayPause.text = "REPLAY"
+            binding.btnPlayPause.setText(R.string.replay_replay)
         }
     }
 
     private fun pauseReplay() {
         replayJob?.cancel()
         isPlaying = false
-        binding.btnPlayPause.text = "PLAY"
+        binding.btnPlayPause.setText(R.string.replay_play)
     }
 
     private fun updatePositionAt(index: Int) {
@@ -199,17 +199,16 @@ class ReplayFragment : Fragment() {
     private fun setSpeed(multiplier: Float) {
         speedMultiplier = multiplier
         val selectedColor = ContextCompat.getColor(requireContext(), R.color.colorPrimary)
-        val defaultColor = Color.TRANSPARENT
         listOf(
             binding.btn1x  to 1f,
             binding.btn2x  to 2f,
             binding.btn5x  to 5f,
             binding.btn10x to 10f
         ).forEach { (btn, value) ->
-            btn.setBackgroundColor(if (value == multiplier) selectedColor else defaultColor)
+            btn.setBackgroundColor(if (value == multiplier) selectedColor else "#00000000".toColorInt())
             btn.setTextColor(
-                if (value == multiplier) Color.WHITE
-                else ContextCompat.getColor(requireContext(), R.color.colorPrimary)
+                if (value == multiplier) "#FFFFFFFF".toColorInt()
+                else selectedColor
             )
         }
     }

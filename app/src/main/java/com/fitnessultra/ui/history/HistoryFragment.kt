@@ -88,9 +88,9 @@ class HistoryFragment : Fragment() {
 
     private fun setupStepsChart() {
         binding.tabsSteps.apply {
-            addTab(newTab().setText("Last 7 Days"))
-            addTab(newTab().setText("Last 4 Weeks"))
-            addTab(newTab().setText("Last 6 Months"))
+            addTab(newTab().setText(R.string.steps_tab_daily))
+            addTab(newTab().setText(R.string.steps_tab_weekly))
+            addTab(newTab().setText(R.string.steps_tab_monthly))
         }
 
         binding.chartSteps.apply {
@@ -130,8 +130,8 @@ class HistoryFragment : Fragment() {
         }
 
         val total = values.sum()
-        val periodLabel = when (selectedTab) { 0 -> "7 days"; 1 -> "4 weeks"; else -> "6 months" }
-        binding.tvStepsTotalLabel.text = "Total: ${"%,d".format(total)} steps in $periodLabel"
+        val periodRes = when (selectedTab) { 0 -> R.string.steps_period_days; 1 -> R.string.steps_period_weeks; else -> R.string.steps_period_months }
+        binding.tvStepsTotalLabel.text = getString(R.string.steps_total_label, "%,d".format(total), getString(periodRes))
     }
 
     private fun buildStepData(runs: List<RunEntity>, period: Int): Pair<List<String>, List<Int>> {

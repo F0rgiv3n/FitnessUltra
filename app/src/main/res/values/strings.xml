@@ -6,6 +6,26 @@
     <string name="nav_charts">Charts</string>
     <string name="nav_weight">User Info</string>
 
+    <!-- Replay screen -->
+    <string name="replay_play">PLAY</string>
+    <string name="replay_pause">PAUSE</string>
+    <string name="replay_replay">REPLAY</string>
+
+    <!-- History steps chart tabs -->
+    <string name="steps_tab_daily">Last 7 Days</string>
+    <string name="steps_tab_weekly">Last 4 Weeks</string>
+    <string name="steps_tab_monthly">Last 6 Months</string>
+    <string name="steps_total_label">Total: %1$s steps in %2$s</string>
+    <string name="steps_period_days">7 days</string>
+    <string name="steps_period_weeks">4 weeks</string>
+    <string name="steps_period_months">6 months</string>
+
+    <!-- Charts screen -->
+    <string name="calories_format">%1$d kcal</string>
+
+    <!-- Route gray color -->
+    <color name="routeGray">#BDBDBD</color>
+
     <!-- Settings arrays -->
     <string-array name="pref_distance_entries">
         <item>Kilometers (km)</item>

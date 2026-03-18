@@ -48,7 +48,7 @@ class ChartsFragment : Fragment() {
                 binding.tvRunDate.text = sdf.format(Date(run.dateTimestamp))
                 binding.tvRunDistance.text = TrackingUtils.formatDistance(run.distanceMeters)
                 binding.tvRunDuration.text = TrackingUtils.formatTime(run.durationMillis)
-                binding.tvRunCalories.text = "${run.caloriesBurned} kcal"
+                binding.tvRunCalories.text = getString(R.string.calories_format, run.caloriesBurned)
                 binding.tvRunSteps.text = if (run.stepCount > 0) "${run.stepCount} steps" else "-"
             }
 

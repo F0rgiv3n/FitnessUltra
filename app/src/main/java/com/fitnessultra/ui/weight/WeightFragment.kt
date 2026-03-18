@@ -1,6 +1,6 @@
 package com.fitnessultra.ui.weight
 
-import android.graphics.Color
+import androidx.core.graphics.toColorInt
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -160,7 +160,7 @@ class WeightFragment : Fragment() {
         if (entries.size > 1) {
             val diff = weights.last() - weights[weights.size - 2]
             val sign = if (diff >= 0) "+" else ""
-            val color = if (diff <= 0) Color.parseColor("#388E3C") else Color.RED
+            val color = if (diff <= 0) "#388E3C".toColorInt() else "#D32F2F".toColorInt()
             binding.tvWeightDiff.text = "Change from last entry: ${sign}%.1f kg".format(diff)
             binding.tvWeightDiff.setTextColor(color)
             binding.tvWeightDiff.visibility = View.VISIBLE
@@ -200,7 +200,7 @@ class WeightFragment : Fragment() {
 
         val dataSets = mutableListOf<ILineDataSet>()
         for (i in 0 until values.size - 1) {
-            val color = if (values[i + 1] <= values[i]) Color.parseColor("#388E3C") else Color.RED
+            val color = if (values[i + 1] <= values[i]) "#388E3C".toColorInt() else "#D32F2F".toColorInt()
             val ds = LineDataSet(
                 listOf(Entry(i.toFloat(), values[i]), Entry((i + 1).toFloat(), values[i + 1])), ""
             ).apply {
@@ -234,10 +234,10 @@ class WeightFragment : Fragment() {
     }
 
     private fun bmiColor(bmi: Float): Int = when {
-        bmi < 18.5f -> Color.parseColor("#1565C0")
-        bmi < 25f   -> Color.parseColor("#388E3C")
-        bmi < 30f   -> Color.parseColor("#F57F17")
-        else        -> Color.RED
+        bmi < 18.5f -> "#1565C0".toColorInt()
+        bmi < 25f   -> "#388E3C".toColorInt()
+        bmi < 30f   -> "#F57F17".toColorInt()
+        else        -> "#D32F2F".toColorInt()
     }
 
     override fun onDestroyView() {
