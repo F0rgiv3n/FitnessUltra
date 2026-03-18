@@ -15,6 +15,7 @@ import androidx.fragment.app.viewModels
 import com.fitnessultra.R
 import com.fitnessultra.databinding.FragmentRunBinding
 import com.fitnessultra.service.TrackingService
+import com.fitnessultra.util.SettingsManager
 import com.fitnessultra.util.TrackingUtils
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -129,14 +130,17 @@ class RunFragment : Fragment() {
     }
 
     private fun checkVoiceMilestone() {
+        if (!SettingsManager.isVoiceEnabled(requireContext())) return
+        val freqKm = SettingsManager.voiceFrequencyKm(requireContext())
         val distanceKm = (viewModel.totalDistanceMeters.value ?: 0f) / 1000f
-        val kmCompleted = distanceKm.toInt()
-        if (kmCompleted > lastVoiceKm) {
-            lastVoiceKm = kmCompleted
+        val milestonePassed = (distanceKm / freqKm).toInt()
+        if (milestonePassed > lastVoiceKm) {
+            lastVoiceKm = milestonePassed
+            val kmAnnounced = milestonePassed * freqKm
             val durationMs = viewModel.timeRunInMillis.value ?: 0L
-            val paceStr = TrackingUtils.calculatePace(kmCompleted * 1000f, durationMs)
+            val paceStr = TrackingUtils.calculatePace(kmAnnounced * 1000f, durationMs)
             tts.speak(
-                "$kmCompleted kilometer completed – pace $paceStr",
+                "$kmAnnounced kilometer completed – pace $paceStr",
                 TextToSpeech.QUEUE_ADD,
                 null,
                 null

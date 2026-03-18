@@ -5,4 +5,45 @@
     <string name="nav_history">History</string>
     <string name="nav_charts">Charts</string>
     <string name="nav_weight">User Info</string>
+
+    <!-- Settings arrays -->
+    <string-array name="pref_distance_entries">
+        <item>Kilometers (km)</item>
+        <item>Miles (mi)</item>
+    </string-array>
+    <string-array name="pref_distance_values">
+        <item>km</item>
+        <item>mi</item>
+    </string-array>
+
+    <string-array name="pref_weight_entries">
+        <item>Kilograms (kg)</item>
+        <item>Pounds (lbs)</item>
+    </string-array>
+    <string-array name="pref_weight_values">
+        <item>kg</item>
+        <item>lbs</item>
+    </string-array>
+
+    <string-array name="pref_voice_freq_entries">
+        <item>Every 1 km</item>
+        <item>Every 2 km</item>
+        <item>Every 5 km</item>
+    </string-array>
+    <string-array name="pref_voice_freq_values">
+        <item>1</item>
+        <item>2</item>
+        <item>5</item>
+    </string-array>
+
+    <string-array name="pref_theme_entries">
+        <item>System default</item>
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+    <string-array name="pref_theme_values">
+        <item>system</item>
+        <item>light</item>
+        <item>dark</item>
+    </string-array>
 </resources>
