@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.fitnessultra.R
 import com.fitnessultra.data.db.AppDatabase
 import com.fitnessultra.data.db.entity.WeightEntry
 import com.fitnessultra.data.repository.WeightRepository
@@ -47,11 +48,11 @@ class WeightViewModel(application: Application) : AndroidViewModel(application) 
         return weightKg / (heightM * heightM)
     }
 
-    fun bmiCategory(bmi: Float): String = when {
-        bmi < 18.5f -> "Underweight"
-        bmi < 25f   -> "Normal weight"
-        bmi < 30f   -> "Overweight"
-        else        -> "Obese"
+    fun bmiCategoryRes(bmi: Float): Int = when {
+        bmi < 18.5f -> R.string.bmi_underweight
+        bmi < 25f   -> R.string.bmi_normal
+        bmi < 30f   -> R.string.bmi_overweight
+        else        -> R.string.bmi_obese
     }
 
     fun deleteEntry(entry: WeightEntry) {

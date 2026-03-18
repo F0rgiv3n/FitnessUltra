@@ -72,7 +72,7 @@ class WeightFragment : Fragment() {
             val height = binding.etHeight.text.toString().toFloatOrNull()
             val age = binding.etAge.text.toString().toIntOrNull()
             if (height == null || height <= 0f) {
-                Toast.makeText(requireContext(), "Enter a valid height", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.msg_invalid_height, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             viewModel.saveUserInfo(height, age ?: 0)
@@ -85,7 +85,7 @@ class WeightFragment : Fragment() {
         binding.btnSaveWeight.setOnClickListener {
             val inputValue = binding.etWeight.text.toString().toFloatOrNull()
             if (inputValue == null || inputValue <= 0f) {
-                Toast.makeText(requireContext(), "Enter a valid weight", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.msg_invalid_weight_input, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             viewModel.saveWeight(toKg(inputValue))
@@ -104,11 +104,11 @@ class WeightFragment : Fragment() {
         val unit = weightUnit()
 
         AlertDialog.Builder(requireContext())
-            .setTitle("Entry – $dateStr")
-            .setMessage("Weight: %.1f %s".format(displayWeight(entry.weightKg), unit))
-            .setPositiveButton("Edit") { _, _ -> showEditDialog(entry) }
-            .setNegativeButton("Delete") { _, _ -> showDeleteConfirm(entry) }
-            .setNeutralButton("Cancel", null)
+            .setTitle(getString(R.string.dialog_entry_title, dateStr))
+            .setMessage(getString(R.string.dialog_entry_message, displayWeight(entry.weightKg), unit))
+            .setPositiveButton(R.string.btn_edit) { _, _ -> showEditDialog(entry) }
+            .setNegativeButton(R.string.btn_delete) { _, _ -> showDeleteConfirm(entry) }
+            .setNeutralButton(android.R.string.cancel, null)
             .show()
     }
 
@@ -121,36 +121,37 @@ class WeightFragment : Fragment() {
             setPadding(48, 24, 48, 24)
         }
         AlertDialog.Builder(requireContext())
-            .setTitle("Edit weight ($unit)")
+            .setTitle(getString(R.string.dialog_edit_weight_title, unit))
             .setView(input)
-            .setPositiveButton("Save") { _, _ ->
+            .setPositiveButton(R.string.btn_save) { _, _ ->
                 val inputVal = input.text.toString().toFloatOrNull()
                 if (inputVal != null && inputVal > 0f) {
                     viewModel.updateEntry(entry, toKg(inputVal))
                 } else {
-                    Toast.makeText(requireContext(), "Invalid value", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), R.string.msg_invalid_value, Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(android.R.string.cancel, null)
             .show()
     }
 
     private fun showDeleteConfirm(entry: WeightEntry) {
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val unit = weightUnit()
+        val dateStr = sdf.format(Date(entry.dateTimestamp))
         AlertDialog.Builder(requireContext())
-            .setTitle("Delete entry")
-            .setMessage("Delete ${sdf.format(Date(entry.dateTimestamp))} – %.1f %s?".format(displayWeight(entry.weightKg), unit))
-            .setPositiveButton("Delete") { _, _ -> viewModel.deleteEntry(entry) }
-            .setNegativeButton("Cancel", null)
+            .setTitle(R.string.dialog_delete_entry_title)
+            .setMessage(getString(R.string.dialog_delete_entry_message, dateStr, displayWeight(entry.weightKg), unit))
+            .setPositiveButton(R.string.btn_delete) { _, _ -> viewModel.deleteEntry(entry) }
+            .setNegativeButton(android.R.string.cancel, null)
             .show()
     }
 
     private fun showInfoSummary(heightCm: Float, age: Int) {
         binding.layoutInfoForm.visibility = View.GONE
         binding.layoutInfoSummary.visibility = View.VISIBLE
-        val agePart = if (age > 0) " · Age: $age" else ""
-        binding.tvInfoSummary.text = "Height: ${heightCm.toInt()} cm$agePart"
+        val agePart = if (age > 0) getString(R.string.info_summary_age_part, age) else ""
+        binding.tvInfoSummary.text = getString(R.string.info_summary_height, heightCm.toInt()) + agePart
     }
 
     private fun showInfoForm() {
@@ -175,16 +176,16 @@ class WeightFragment : Fragment() {
             val diff = weightsDisplay.last() - weightsDisplay[weightsDisplay.size - 2]
             val sign = if (diff >= 0) "+" else ""
             val color = if (diff <= 0) "#388E3C".toColorInt() else "#D32F2F".toColorInt()
-            binding.tvWeightDiff.text = "Change from last entry: ${sign}%.1f %s".format(diff, unit)
+            binding.tvWeightDiff.text = getString(R.string.weight_diff_label, sign, diff, unit)
             binding.tvWeightDiff.setTextColor(color)
             binding.tvWeightDiff.visibility = View.VISIBLE
         }
 
         val bmi = viewModel.calculateBmi(weightsKg.last())
         if (bmi != null) {
-            binding.tvCurrentBmi.text = "BMI: %.1f".format(bmi)
+            binding.tvCurrentBmi.text = getString(R.string.bmi_value_label, bmi)
             binding.tvCurrentBmi.setTextColor(bmiColor(bmi))
-            binding.tvBmiCategory.text = viewModel.bmiCategory(bmi)
+            binding.tvBmiCategory.text = getString(viewModel.bmiCategoryRes(bmi))
             binding.layoutBmiCurrent.visibility = View.VISIBLE
             binding.bmiGauge.bmi = bmi
             binding.cardBmiGauge.visibility = View.VISIBLE
@@ -199,7 +200,7 @@ class WeightFragment : Fragment() {
         } else {
             binding.tvBmiChartNote.visibility = View.VISIBLE
             binding.chartBmi.clear()
-            binding.chartBmi.setNoDataText("Enter height to calculate BMI")
+            binding.chartBmi.setNoDataText(getString(R.string.msg_bmi_no_height))
             binding.chartBmi.invalidate()
         }
     }
@@ -207,7 +208,7 @@ class WeightFragment : Fragment() {
     private fun buildColoredChart(chart: LineChart, values: List<Float>, labels: List<String>) {
         if (values.size < 2) {
             chart.clear()
-            chart.setNoDataText("Add more entries to see chart")
+            chart.setNoDataText(getString(R.string.chart_no_data))
             chart.invalidate()
             return
         }
@@ -243,7 +244,7 @@ class WeightFragment : Fragment() {
             setTouchEnabled(true)
             setDragEnabled(true)
             setScaleEnabled(true)
-            setNoDataText("No entries yet")
+            setNoDataText(getString(R.string.chart_no_entries))
         }
     }
 

@@ -56,6 +56,28 @@
     <string name="steps_period_weeks">4 Wochen</string>
     <string name="steps_period_months">6 Monaten</string>
 
+    <!-- Weight dialogs & validation -->
+    <string name="btn_delete">Löschen</string>
+    <string name="btn_save">Speichern</string>
+    <string name="dialog_entry_title">Eintrag – %1$s</string>
+    <string name="dialog_entry_message">Gewicht: %1$.1f %2$s</string>
+    <string name="dialog_edit_weight_title">Gewicht bearbeiten (%1$s)</string>
+    <string name="dialog_delete_entry_title">Eintrag löschen</string>
+    <string name="dialog_delete_entry_message">Eintrag %1$s – %2$.1f %3$s löschen?</string>
+    <string name="msg_invalid_value">Ungültiger Wert</string>
+    <string name="msg_invalid_height">Gültige Körpergröße eingeben</string>
+    <string name="msg_invalid_weight_input">Gültiges Gewicht eingeben</string>
+    <string name="weight_diff_label">Änderung zum letzten Eintrag: %1$s%2$.1f %3$s</string>
+    <string name="bmi_value_label">BMI: %1$.1f</string>
+    <string name="info_summary_height">Größe: %1$d cm</string>
+    <string name="info_summary_age_part"> · Alter: %1$d</string>
+    <string name="chart_no_data">Mehr Einträge für das Diagramm nötig</string>
+    <string name="chart_no_entries">Noch keine Einträge</string>
+    <string name="bmi_underweight">Untergewicht</string>
+    <string name="bmi_normal">Normalgewicht</string>
+    <string name="bmi_overweight">Übergewicht</string>
+    <string name="bmi_obese">Stark übergewichtig</string>
+
     <!-- User Info / Weight screen -->
     <string name="title_personal_info">Persönliche Daten</string>
     <string name="btn_edit">Bearbeiten</string>

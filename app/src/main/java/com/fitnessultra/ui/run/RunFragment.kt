@@ -128,7 +128,7 @@ class RunFragment : Fragment() {
     private fun observeTracking() {
         viewModel.isTracking.observe(viewLifecycleOwner) { tracking ->
             isTracking = tracking
-            binding.btnToggleRun.text = if (tracking) "PAUSE" else "START"
+            binding.btnToggleRun.setText(if (tracking) R.string.replay_pause else R.string.btn_start)
             binding.btnStopRun.visibility =
                 if (!tracking && (viewModel.timeRunInMillis.value ?: 0L) > 0L) View.VISIBLE else View.GONE
         }

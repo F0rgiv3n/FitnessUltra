@@ -56,6 +56,28 @@
     <string name="steps_period_weeks">4 εβδομάδες</string>
     <string name="steps_period_months">6 μήνες</string>
 
+    <!-- Weight dialogs & validation -->
+    <string name="btn_delete">Διαγραφή</string>
+    <string name="btn_save">Αποθήκευση</string>
+    <string name="dialog_entry_title">Εγγραφή – %1$s</string>
+    <string name="dialog_entry_message">Βάρος: %1$.1f %2$s</string>
+    <string name="dialog_edit_weight_title">Επεξεργασία βάρους (%1$s)</string>
+    <string name="dialog_delete_entry_title">Διαγραφή εγγραφής</string>
+    <string name="dialog_delete_entry_message">Διαγραφή %1$s – %2$.1f %3$s;</string>
+    <string name="msg_invalid_value">Μη έγκυρη τιμή</string>
+    <string name="msg_invalid_height">Εισάγετε έγκυρο ύψος</string>
+    <string name="msg_invalid_weight_input">Εισάγετε έγκυρο βάρος</string>
+    <string name="weight_diff_label">Μεταβολή από τελευταία εγγραφή: %1$s%2$.1f %3$s</string>
+    <string name="bmi_value_label">ΔΜΣ: %1$.1f</string>
+    <string name="info_summary_height">Ύψος: %1$d cm</string>
+    <string name="info_summary_age_part"> · Ηλικία: %1$d</string>
+    <string name="chart_no_data">Προσθέστε περισσότερες εγγραφές για το γράφημα</string>
+    <string name="chart_no_entries">Δεν υπάρχουν εγγραφές</string>
+    <string name="bmi_underweight">Ελλιποβαρής</string>
+    <string name="bmi_normal">Κανονικό βάρος</string>
+    <string name="bmi_overweight">Υπέρβαρος</string>
+    <string name="bmi_obese">Παχύσαρκος</string>
+
     <!-- User Info / Weight screen -->
     <string name="title_personal_info">Προσωπικά Στοιχεία</string>
     <string name="btn_edit">Επεξεργασία</string>
