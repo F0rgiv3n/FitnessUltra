@@ -34,15 +34,19 @@ public final class ItemRunBinding implements ViewBinding {
   @NonNull
   public final TextView tvDuration;
 
+  @NonNull
+  public final TextView tvSteps;
+
   private ItemRunBinding(@NonNull MaterialCardView rootView, @NonNull TextView tvAvgSpeed,
       @NonNull TextView tvCalories, @NonNull TextView tvDate, @NonNull TextView tvDistance,
-      @NonNull TextView tvDuration) {
+      @NonNull TextView tvDuration, @NonNull TextView tvSteps) {
     this.rootView = rootView;
     this.tvAvgSpeed = tvAvgSpeed;
     this.tvCalories = tvCalories;
     this.tvDate = tvDate;
     this.tvDistance = tvDistance;
     this.tvDuration = tvDuration;
+    this.tvSteps = tvSteps;
   }
 
   @Override
@@ -102,8 +106,14 @@ public final class ItemRunBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.tvSteps;
+      TextView tvSteps = ViewBindings.findChildViewById(rootView, id);
+      if (tvSteps == null) {
+        break missingId;
+      }
+
       return new ItemRunBinding((MaterialCardView) rootView, tvAvgSpeed, tvCalories, tvDate,
-          tvDistance, tvDuration);
+          tvDistance, tvDuration, tvSteps);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

@@ -68,11 +68,11 @@
         "source": "com.fitnessultra.app-main-58:/layout/fragment_weight.xml"
     },
     {
-        "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-debug-56:/drawable_ic_launcher_background.xml.flat",
-        "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/drawable/ic_launcher_background.xml"
-    },
-    {
         "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-debug-56:/menu_bottom_nav_menu.xml.flat",
         "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/menu/bottom_nav_menu.xml"
+    },
+    {
+        "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-debug-56:/drawable_ic_launcher_background.xml.flat",
+        "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/drawable/ic_launcher_background.xml"
     }
 ]

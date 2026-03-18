@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.fitnessultra.R
 import com.fitnessultra.databinding.FragmentHistoryBinding
 
 class HistoryFragment : Fragment() {
@@ -27,7 +29,10 @@ class HistoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        runAdapter = RunAdapter()
+        runAdapter = RunAdapter { run ->
+            val bundle = Bundle().apply { putLong("runId", run.id) }
+            findNavController().navigate(R.id.action_historyFragment_to_chartsFragment, bundle)
+        }
         binding.rvRuns.apply {
             adapter = runAdapter
             layoutManager = LinearLayoutManager(requireContext())

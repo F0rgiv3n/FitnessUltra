@@ -44,12 +44,15 @@ public final class FragmentRunBinding implements ViewBinding {
   public final TextView tvSpeed;
 
   @NonNull
+  public final TextView tvSteps;
+
+  @NonNull
   public final TextView tvTimer;
 
   private FragmentRunBinding(@NonNull ConstraintLayout rootView, @NonNull MaterialButton btnStopRun,
       @NonNull MaterialButton btnToggleRun, @NonNull MapView mapView,
       @NonNull MaterialCardView statsCard, @NonNull TextView tvDistance, @NonNull TextView tvPace,
-      @NonNull TextView tvSpeed, @NonNull TextView tvTimer) {
+      @NonNull TextView tvSpeed, @NonNull TextView tvSteps, @NonNull TextView tvTimer) {
     this.rootView = rootView;
     this.btnStopRun = btnStopRun;
     this.btnToggleRun = btnToggleRun;
@@ -58,6 +61,7 @@ public final class FragmentRunBinding implements ViewBinding {
     this.tvDistance = tvDistance;
     this.tvPace = tvPace;
     this.tvSpeed = tvSpeed;
+    this.tvSteps = tvSteps;
     this.tvTimer = tvTimer;
   }
 
@@ -130,6 +134,12 @@ public final class FragmentRunBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.tvSteps;
+      TextView tvSteps = ViewBindings.findChildViewById(rootView, id);
+      if (tvSteps == null) {
+        break missingId;
+      }
+
       id = R.id.tvTimer;
       TextView tvTimer = ViewBindings.findChildViewById(rootView, id);
       if (tvTimer == null) {
@@ -137,7 +147,7 @@ public final class FragmentRunBinding implements ViewBinding {
       }
 
       return new FragmentRunBinding((ConstraintLayout) rootView, btnStopRun, btnToggleRun, mapView,
-          statsCard, tvDistance, tvPace, tvSpeed, tvTimer);
+          statsCard, tvDistance, tvPace, tvSpeed, tvSteps, tvTimer);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

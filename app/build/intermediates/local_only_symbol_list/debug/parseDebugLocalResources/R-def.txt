@@ -17,12 +17,15 @@ drawable ic_launcher_foreground
 drawable ic_launcher_round
 drawable ic_run
 drawable ic_weight
+id action_historyFragment_to_chartsFragment
+id bmiGauge
 id bottomNavigationView
 id btnEditInfo
 id btnSaveInfo
 id btnSaveWeight
 id btnStopRun
 id btnToggleRun
+id cardBmiGauge
 id chartBmi
 id chartElevation
 id chartPace
@@ -41,7 +44,6 @@ id navHostFragment
 id nav_graph
 id runFragment
 id rvRuns
-id spinnerRuns
 id statsCard
 id tvAvgSpeed
 id tvBmiCategory
@@ -54,7 +56,13 @@ id tvDuration
 id tvEmpty
 id tvInfoSummary
 id tvPace
+id tvRunCalories
+id tvRunDate
+id tvRunDistance
+id tvRunDuration
+id tvRunSteps
 id tvSpeed
+id tvSteps
 id tvTimer
 id tvWeightDiff
 id weightFragment

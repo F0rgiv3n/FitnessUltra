@@ -12,12 +12,20 @@
     <fragment
         android:id="@+id/historyFragment"
         android:name="com.fitnessultra.ui.history.HistoryFragment"
-        android:label="History" />
+        android:label="History">
+        <action
+            android:id="@+id/action_historyFragment_to_chartsFragment"
+            app:destination="@id/chartsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/chartsFragment"
         android:name="com.fitnessultra.ui.charts.ChartsFragment"
-        android:label="Charts" />
+        android:label="Charts">
+        <argument
+            android:name="runId"
+            app:argType="long" />
+    </fragment>
 
     <fragment
         android:id="@+id/weightFragment"

@@ -11,5 +11,6 @@ data class RunEntity(
     val distanceMeters: Float,
     val durationMillis: Long,
     val caloriesBurned: Int,
-    val elevationGainMeters: Float = 0f
+    val elevationGainMeters: Float = 0f,
+    val stepCount: Int = 0
 )

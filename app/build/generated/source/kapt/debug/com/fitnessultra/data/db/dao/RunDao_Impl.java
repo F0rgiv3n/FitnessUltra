@@ -45,7 +45,7 @@ public final class RunDao_Impl implements RunDao {
       @Override
       @NonNull
       protected String createQuery() {
-        return "INSERT OR REPLACE INTO `runs` (`id`,`dateTimestamp`,`avgSpeedKmh`,`distanceMeters`,`durationMillis`,`caloriesBurned`,`elevationGainMeters`) VALUES (nullif(?, 0),?,?,?,?,?,?)";
+        return "INSERT OR REPLACE INTO `runs` (`id`,`dateTimestamp`,`avgSpeedKmh`,`distanceMeters`,`durationMillis`,`caloriesBurned`,`elevationGainMeters`,`stepCount`) VALUES (nullif(?, 0),?,?,?,?,?,?,?)";
       }
 
       @Override
@@ -58,6 +58,7 @@ public final class RunDao_Impl implements RunDao {
         statement.bindLong(5, entity.getDurationMillis());
         statement.bindLong(6, entity.getCaloriesBurned());
         statement.bindDouble(7, entity.getElevationGainMeters());
+        statement.bindLong(8, entity.getStepCount());
       }
     };
     this.__insertionAdapterOfLocationPoint = new EntityInsertionAdapter<LocationPoint>(__db) {
@@ -166,6 +167,7 @@ public final class RunDao_Impl implements RunDao {
           final int _cursorIndexOfDurationMillis = CursorUtil.getColumnIndexOrThrow(_cursor, "durationMillis");
           final int _cursorIndexOfCaloriesBurned = CursorUtil.getColumnIndexOrThrow(_cursor, "caloriesBurned");
           final int _cursorIndexOfElevationGainMeters = CursorUtil.getColumnIndexOrThrow(_cursor, "elevationGainMeters");
+          final int _cursorIndexOfStepCount = CursorUtil.getColumnIndexOrThrow(_cursor, "stepCount");
           final List<RunEntity> _result = new ArrayList<RunEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
             final RunEntity _item;
@@ -183,7 +185,9 @@ public final class RunDao_Impl implements RunDao {
             _tmpCaloriesBurned = _cursor.getInt(_cursorIndexOfCaloriesBurned);
             final float _tmpElevationGainMeters;
             _tmpElevationGainMeters = _cursor.getFloat(_cursorIndexOfElevationGainMeters);
-            _item = new RunEntity(_tmpId,_tmpDateTimestamp,_tmpAvgSpeedKmh,_tmpDistanceMeters,_tmpDurationMillis,_tmpCaloriesBurned,_tmpElevationGainMeters);
+            final int _tmpStepCount;
+            _tmpStepCount = _cursor.getInt(_cursorIndexOfStepCount);
+            _item = new RunEntity(_tmpId,_tmpDateTimestamp,_tmpAvgSpeedKmh,_tmpDistanceMeters,_tmpDurationMillis,_tmpCaloriesBurned,_tmpElevationGainMeters,_tmpStepCount);
             _result.add(_item);
           }
           return _result;
@@ -219,6 +223,7 @@ public final class RunDao_Impl implements RunDao {
           final int _cursorIndexOfDurationMillis = CursorUtil.getColumnIndexOrThrow(_cursor, "durationMillis");
           final int _cursorIndexOfCaloriesBurned = CursorUtil.getColumnIndexOrThrow(_cursor, "caloriesBurned");
           final int _cursorIndexOfElevationGainMeters = CursorUtil.getColumnIndexOrThrow(_cursor, "elevationGainMeters");
+          final int _cursorIndexOfStepCount = CursorUtil.getColumnIndexOrThrow(_cursor, "stepCount");
           final RunEntity _result;
           if (_cursor.moveToFirst()) {
             final long _tmpId;
@@ -235,7 +240,9 @@ public final class RunDao_Impl implements RunDao {
             _tmpCaloriesBurned = _cursor.getInt(_cursorIndexOfCaloriesBurned);
             final float _tmpElevationGainMeters;
             _tmpElevationGainMeters = _cursor.getFloat(_cursorIndexOfElevationGainMeters);
-            _result = new RunEntity(_tmpId,_tmpDateTimestamp,_tmpAvgSpeedKmh,_tmpDistanceMeters,_tmpDurationMillis,_tmpCaloriesBurned,_tmpElevationGainMeters);
+            final int _tmpStepCount;
+            _tmpStepCount = _cursor.getInt(_cursorIndexOfStepCount);
+            _result = new RunEntity(_tmpId,_tmpDateTimestamp,_tmpAvgSpeedKmh,_tmpDistanceMeters,_tmpDurationMillis,_tmpCaloriesBurned,_tmpElevationGainMeters,_tmpStepCount);
           } else {
             _result = null;
           }

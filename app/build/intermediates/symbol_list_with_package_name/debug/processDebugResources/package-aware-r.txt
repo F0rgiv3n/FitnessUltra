@@ -3261,6 +3261,7 @@ id action_bar_title
 id action_container
 id action_context_bar
 id action_divider
+id action_historyFragment_to_chartsFragment
 id action_image
 id action_menu_divider
 id action_menu_presenter
@@ -3296,6 +3297,7 @@ id beginOnFirstDraw
 id beginning
 id bestChoice
 id blocking
+id bmiGauge
 id bottom
 id bottomNavigationView
 id bounce
@@ -3316,6 +3318,7 @@ id buttonPanel
 id cache_measures
 id callMeasure
 id cancel_button
+id cardBmiGauge
 id carryVelocity
 id center
 id centerCrop
@@ -3648,7 +3651,6 @@ id snapMargins
 id south
 id spacer
 id special_effects_controller_view_tag
-id spinnerRuns
 id spline
 id split_action_bar
 id spread
@@ -3728,7 +3730,13 @@ id tvDuration
 id tvEmpty
 id tvInfoSummary
 id tvPace
+id tvRunCalories
+id tvRunDate
+id tvRunDistance
+id tvRunDuration
+id tvRunSteps
 id tvSpeed
+id tvSteps
 id tvTimer
 id tvWeightDiff
 id unchecked

@@ -6,6 +6,10 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.location.Location
 import android.os.Build
 import android.os.Looper
@@ -36,11 +40,14 @@ class TrackingService : LifecycleService() {
         val currentSpeedKmh = MutableLiveData<Float>()
         val totalDistanceMeters = MutableLiveData<Float>()
         val elevationGainMeters = MutableLiveData<Float>()
+        val stepCount = MutableLiveData<Int>()
     }
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var notificationManager: NotificationManager
+    private lateinit var sensorManager: SensorManager
+    private var stepSensorListener: SensorEventListener? = null
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
@@ -54,6 +61,7 @@ class TrackingService : LifecycleService() {
         super.onCreate()
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
@@ -79,6 +87,7 @@ class TrackingService : LifecycleService() {
         currentSpeedKmh.postValue(0f)
         totalDistanceMeters.postValue(0f)
         elevationGainMeters.postValue(0f)
+        stepCount.postValue(0)
         timeRun = 0L
         lastAltitude = Double.MIN_VALUE
     }
@@ -90,16 +99,19 @@ class TrackingService : LifecycleService() {
                     startForegroundService()
                     isTracking.postValue(true)
                     startTimer()
+                    startStepCounter()
                 }
                 ACTION_PAUSE -> {
                     isTracking.postValue(false)
                     timerJob?.cancel()
                     timeRun += System.currentTimeMillis() - timeStarted
                     updateNotification(TrackingUtils.formatTime(timeRun))
+                    stopStepCounter()
                 }
                 ACTION_STOP -> {
                     isTracking.postValue(false)
                     timerJob?.cancel()
+                    stopStepCounter()
                     stopForeground(STOP_FOREGROUND_REMOVE)
                     stopSelf()
                     initValues()
@@ -203,8 +215,27 @@ class TrackingService : LifecycleService() {
         }
     }
 
+    private fun startStepCounter() {
+        val stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR) ?: return
+        stepSensorListener = object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent) {
+                if (isTracking.value == true) {
+                    stepCount.postValue((stepCount.value ?: 0) + 1)
+                }
+            }
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+        }
+        sensorManager.registerListener(stepSensorListener, stepSensor, SensorManager.SENSOR_DELAY_FASTEST)
+    }
+
+    private fun stopStepCounter() {
+        stepSensorListener?.let { sensorManager.unregisterListener(it) }
+        stepSensorListener = null
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         serviceJob.cancel()
+        stopStepCounter()
     }
 }

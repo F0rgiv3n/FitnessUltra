@@ -20,6 +20,7 @@ class RunViewModel(application: Application) : AndroidViewModel(application) {
     val currentSpeedKmh = TrackingService.currentSpeedKmh
     val totalDistanceMeters = TrackingService.totalDistanceMeters
     val elevationGainMeters = TrackingService.elevationGainMeters
+    val stepCount = TrackingService.stepCount
 
     private val repository = RunRepository(
         AppDatabase.getInstance(application).runDao()
@@ -37,6 +38,7 @@ class RunViewModel(application: Application) : AndroidViewModel(application) {
         val distanceMeters = totalDistanceMeters.value ?: return
         val durationMillis = timeRunInMillis.value ?: return
         val elevationGain = elevationGainMeters.value ?: 0f
+        val steps = stepCount.value ?: 0
         val avgSpeedKmh = if (durationMillis > 0)
             (distanceMeters / 1000f) / (durationMillis / 1000f / 3600f)
         else 0f
@@ -48,7 +50,8 @@ class RunViewModel(application: Application) : AndroidViewModel(application) {
             distanceMeters = distanceMeters,
             durationMillis = durationMillis,
             caloriesBurned = calories,
-            elevationGainMeters = elevationGain
+            elevationGainMeters = elevationGain,
+            stepCount = steps
         )
 
         val points = pathPoints.value?.mapIndexed { index, geoPoint ->

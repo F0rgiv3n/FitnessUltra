@@ -2,11 +2,10 @@ package com.fitnessultra.ui.charts
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.asLiveData
 import com.fitnessultra.data.db.AppDatabase
 import com.fitnessultra.data.db.entity.LocationPoint
+import com.fitnessultra.data.db.entity.RunEntity
 import com.fitnessultra.data.repository.RunRepository
-import kotlinx.coroutines.flow.Flow
 
 class ChartsViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -14,7 +13,7 @@ class ChartsViewModel(application: Application) : AndroidViewModel(application) 
         AppDatabase.getInstance(application).runDao()
     )
 
-    val runs = repository.allRuns.asLiveData()
+    suspend fun getRunById(runId: Long): RunEntity? = repository.getRunById(runId)
 
     suspend fun getLocationPoints(runId: Long): List<LocationPoint> =
         repository.getLocationPointsForRun(runId)

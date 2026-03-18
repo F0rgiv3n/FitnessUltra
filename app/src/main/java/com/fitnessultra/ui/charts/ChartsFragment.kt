@@ -5,14 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
-import com.fitnessultra.data.db.entity.RunEntity
 import com.fitnessultra.databinding.FragmentChartsBinding
 import com.fitnessultra.util.TrackingUtils
 import kotlinx.coroutines.launch
@@ -25,7 +22,6 @@ class ChartsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: ChartsViewModel by viewModels()
-    private var runList: List<RunEntity> = emptyList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentChartsBinding.inflate(inflater, container, false)
@@ -36,45 +32,26 @@ class ChartsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupCharts()
 
-        viewModel.runs.observe(viewLifecycleOwner) { runs ->
-            runList = runs
-            val sdf = SimpleDateFormat("dd/MM HH:mm", Locale.getDefault())
-            val items = runs.map { sdf.format(Date(it.dateTimestamp)) }
-            binding.spinnerRuns.adapter = ArrayAdapter(
-                requireContext(),
-                android.R.layout.simple_spinner_item,
-                items
-            ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
-        }
+        val runId = arguments?.getLong("runId") ?: return
 
-        binding.spinnerRuns.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (runList.isNotEmpty()) loadCharts(runList[position])
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-    }
-
-    private fun setupCharts() {
-        listOf(binding.chartSpeed, binding.chartElevation, binding.chartPace).forEach { chart ->
-            chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-            chart.description.isEnabled = false
-            chart.legend.isEnabled = true
-            chart.setTouchEnabled(true)
-            chart.setDragEnabled(true)
-            chart.setScaleEnabled(true)
-        }
-    }
-
-    private fun loadCharts(run: RunEntity) {
         lifecycleScope.launch {
-            val points = viewModel.getLocationPoints(run.id)
+            val run = viewModel.getRunById(runId)
+            if (run != null) {
+                val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+                binding.tvRunDate.text = sdf.format(Date(run.dateTimestamp))
+                binding.tvRunDistance.text = TrackingUtils.formatDistance(run.distanceMeters)
+                binding.tvRunDuration.text = TrackingUtils.formatTime(run.durationMillis)
+                binding.tvRunCalories.text = "${run.caloriesBurned} kcal"
+                binding.tvRunSteps.text = if (run.stepCount > 0) "${run.stepCount} steps" else "-"
+            }
+
+            val points = viewModel.getLocationPoints(runId)
             if (points.isEmpty()) return@launch
 
             val startTime = points.first().timestamp.toFloat()
 
             // Speed chart
-            val speedEntries = points.mapIndexed { i, p ->
+            val speedEntries = points.map { p ->
                 Entry((p.timestamp - startTime) / 1000f, p.speedMs * 3.6f)
             }
             val speedDataSet = LineDataSet(speedEntries, "Speed (km/h)").apply {
@@ -87,7 +64,7 @@ class ChartsFragment : Fragment() {
             binding.chartSpeed.invalidate()
 
             // Elevation chart
-            val elevEntries = points.mapIndexed { i, p ->
+            val elevEntries = points.map { p ->
                 Entry((p.timestamp - startTime) / 1000f, p.altitude.toFloat())
             }
             val elevDataSet = LineDataSet(elevEntries, "Altitude (m)").apply {
@@ -119,6 +96,17 @@ class ChartsFragment : Fragment() {
             }
             binding.chartPace.data = LineData(paceDataSet)
             binding.chartPace.invalidate()
+        }
+    }
+
+    private fun setupCharts() {
+        listOf(binding.chartSpeed, binding.chartElevation, binding.chartPace).forEach { chart ->
+            chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+            chart.description.isEnabled = false
+            chart.legend.isEnabled = true
+            chart.setTouchEnabled(true)
+            chart.setDragEnabled(true)
+            chart.setScaleEnabled(true)
         }
     }
 

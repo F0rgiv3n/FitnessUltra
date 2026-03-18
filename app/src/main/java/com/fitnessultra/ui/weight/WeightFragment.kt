@@ -172,6 +172,8 @@ class WeightFragment : Fragment() {
             binding.tvCurrentBmi.setTextColor(bmiColor(bmi))
             binding.tvBmiCategory.text = viewModel.bmiCategory(bmi)
             binding.layoutBmiCurrent.visibility = View.VISIBLE
+            binding.bmiGauge.bmi = bmi
+            binding.cardBmiGauge.visibility = View.VISIBLE
         }
 
         buildColoredChart(binding.chartWeight, weights, labels)

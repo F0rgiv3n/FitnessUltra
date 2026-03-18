@@ -84,8 +84,7 @@ public final class WeightDao_Impl implements WeightDao {
   }
 
   @Override
-  public Object insertWeightEntry(final WeightEntry entry,
-      final Continuation<? super Unit> $completion) {
+  public Object insertWeightEntry(final WeightEntry entry, final Continuation<? super Unit> arg1) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -99,12 +98,11 @@ public final class WeightDao_Impl implements WeightDao {
           __db.endTransaction();
         }
       }
-    }, $completion);
+    }, arg1);
   }
 
   @Override
-  public Object deleteWeightEntry(final WeightEntry entry,
-      final Continuation<? super Unit> $completion) {
+  public Object deleteWeightEntry(final WeightEntry entry, final Continuation<? super Unit> arg1) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -118,12 +116,11 @@ public final class WeightDao_Impl implements WeightDao {
           __db.endTransaction();
         }
       }
-    }, $completion);
+    }, arg1);
   }
 
   @Override
-  public Object updateWeightEntry(final WeightEntry entry,
-      final Continuation<? super Unit> $completion) {
+  public Object updateWeightEntry(final WeightEntry entry, final Continuation<? super Unit> arg1) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -137,7 +134,7 @@ public final class WeightDao_Impl implements WeightDao {
           __db.endTransaction();
         }
       }
-    }, $completion);
+    }, arg1);
   }
 
   @Override

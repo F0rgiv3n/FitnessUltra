@@ -3260,6 +3260,7 @@ int id action_bar_title 0x7f080039
 int id action_container 0x7f08003a
 int id action_context_bar 0x7f08003b
 int id action_divider 0x7f08003c
+int id action_historyFragment_to_chartsFragment 0x7f08022d
 int id action_image 0x7f08003d
 int id action_menu_divider 0x7f08003e
 int id action_menu_presenter 0x7f08003f
@@ -3295,6 +3296,7 @@ int id beginOnFirstDraw 0x7f08005c
 int id beginning 0x7f08005d
 int id bestChoice 0x7f08005e
 int id blocking 0x7f08005f
+int id bmiGauge 0x7f080234
 int id bottom 0x7f080060
 int id bottomNavigationView 0x7f080061
 int id bounce 0x7f080062
@@ -3315,6 +3317,7 @@ int id buttonPanel 0x7f08006e
 int id cache_measures 0x7f08006f
 int id callMeasure 0x7f080070
 int id cancel_button 0x7f080071
+int id cardBmiGauge 0x7f080235
 int id carryVelocity 0x7f080072
 int id center 0x7f080073
 int id centerCrop 0x7f080074
@@ -3647,7 +3650,6 @@ int id snapMargins 0x7f0801b4
 int id south 0x7f0801b5
 int id spacer 0x7f0801b6
 int id special_effects_controller_view_tag 0x7f0801b7
-int id spinnerRuns 0x7f0801b8
 int id spline 0x7f0801b9
 int id split_action_bar 0x7f0801ba
 int id spread 0x7f0801bb
@@ -3727,7 +3729,13 @@ int id tvDuration 0x7f080202
 int id tvEmpty 0x7f080203
 int id tvInfoSummary 0x7f08022c
 int id tvPace 0x7f080204
+int id tvRunCalories 0x7f08022e
+int id tvRunDate 0x7f08022f
+int id tvRunDistance 0x7f080230
+int id tvRunDuration 0x7f080231
+int id tvRunSteps 0x7f080232
 int id tvSpeed 0x7f080205
+int id tvSteps 0x7f080233
 int id tvTimer 0x7f080206
 int id tvWeightDiff 0x7f080207
 int id unchecked 0x7f080208

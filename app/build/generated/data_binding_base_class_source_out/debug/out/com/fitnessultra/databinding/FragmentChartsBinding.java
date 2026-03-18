@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
-import android.widget.Spinner;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
@@ -30,15 +30,33 @@ public final class FragmentChartsBinding implements ViewBinding {
   public final LineChart chartSpeed;
 
   @NonNull
-  public final Spinner spinnerRuns;
+  public final TextView tvRunCalories;
+
+  @NonNull
+  public final TextView tvRunDate;
+
+  @NonNull
+  public final TextView tvRunDistance;
+
+  @NonNull
+  public final TextView tvRunDuration;
+
+  @NonNull
+  public final TextView tvRunSteps;
 
   private FragmentChartsBinding(@NonNull ScrollView rootView, @NonNull LineChart chartElevation,
-      @NonNull LineChart chartPace, @NonNull LineChart chartSpeed, @NonNull Spinner spinnerRuns) {
+      @NonNull LineChart chartPace, @NonNull LineChart chartSpeed, @NonNull TextView tvRunCalories,
+      @NonNull TextView tvRunDate, @NonNull TextView tvRunDistance, @NonNull TextView tvRunDuration,
+      @NonNull TextView tvRunSteps) {
     this.rootView = rootView;
     this.chartElevation = chartElevation;
     this.chartPace = chartPace;
     this.chartSpeed = chartSpeed;
-    this.spinnerRuns = spinnerRuns;
+    this.tvRunCalories = tvRunCalories;
+    this.tvRunDate = tvRunDate;
+    this.tvRunDistance = tvRunDistance;
+    this.tvRunDuration = tvRunDuration;
+    this.tvRunSteps = tvRunSteps;
   }
 
   @Override
@@ -86,14 +104,38 @@ public final class FragmentChartsBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.spinnerRuns;
-      Spinner spinnerRuns = ViewBindings.findChildViewById(rootView, id);
-      if (spinnerRuns == null) {
+      id = R.id.tvRunCalories;
+      TextView tvRunCalories = ViewBindings.findChildViewById(rootView, id);
+      if (tvRunCalories == null) {
+        break missingId;
+      }
+
+      id = R.id.tvRunDate;
+      TextView tvRunDate = ViewBindings.findChildViewById(rootView, id);
+      if (tvRunDate == null) {
+        break missingId;
+      }
+
+      id = R.id.tvRunDistance;
+      TextView tvRunDistance = ViewBindings.findChildViewById(rootView, id);
+      if (tvRunDistance == null) {
+        break missingId;
+      }
+
+      id = R.id.tvRunDuration;
+      TextView tvRunDuration = ViewBindings.findChildViewById(rootView, id);
+      if (tvRunDuration == null) {
+        break missingId;
+      }
+
+      id = R.id.tvRunSteps;
+      TextView tvRunSteps = ViewBindings.findChildViewById(rootView, id);
+      if (tvRunSteps == null) {
         break missingId;
       }
 
       return new FragmentChartsBinding((ScrollView) rootView, chartElevation, chartPace, chartSpeed,
-          spinnerRuns);
+          tvRunCalories, tvRunDate, tvRunDistance, tvRunDuration, tvRunSteps);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

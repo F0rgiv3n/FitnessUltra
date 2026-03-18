@@ -12,8 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import com.fitnessultra.R;
+import com.fitnessultra.ui.weight.BmiGaugeView;
 import com.github.mikephil.charting.charts.LineChart;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textfield.TextInputEditText;
 import java.lang.NullPointerException;
 import java.lang.Override;
@@ -24,6 +26,9 @@ public final class FragmentWeightBinding implements ViewBinding {
   private final ScrollView rootView;
 
   @NonNull
+  public final BmiGaugeView bmiGauge;
+
+  @NonNull
   public final MaterialButton btnEditInfo;
 
   @NonNull
@@ -31,6 +36,9 @@ public final class FragmentWeightBinding implements ViewBinding {
 
   @NonNull
   public final MaterialButton btnSaveWeight;
+
+  @NonNull
+  public final MaterialCardView cardBmiGauge;
 
   @NonNull
   public final LineChart chartBmi;
@@ -71,8 +79,9 @@ public final class FragmentWeightBinding implements ViewBinding {
   @NonNull
   public final TextView tvWeightDiff;
 
-  private FragmentWeightBinding(@NonNull ScrollView rootView, @NonNull MaterialButton btnEditInfo,
-      @NonNull MaterialButton btnSaveInfo, @NonNull MaterialButton btnSaveWeight,
+  private FragmentWeightBinding(@NonNull ScrollView rootView, @NonNull BmiGaugeView bmiGauge,
+      @NonNull MaterialButton btnEditInfo, @NonNull MaterialButton btnSaveInfo,
+      @NonNull MaterialButton btnSaveWeight, @NonNull MaterialCardView cardBmiGauge,
       @NonNull LineChart chartBmi, @NonNull LineChart chartWeight, @NonNull TextInputEditText etAge,
       @NonNull TextInputEditText etHeight, @NonNull TextInputEditText etWeight,
       @NonNull LinearLayout layoutBmiCurrent, @NonNull LinearLayout layoutInfoForm,
@@ -80,9 +89,11 @@ public final class FragmentWeightBinding implements ViewBinding {
       @NonNull TextView tvBmiChartNote, @NonNull TextView tvCurrentBmi,
       @NonNull TextView tvInfoSummary, @NonNull TextView tvWeightDiff) {
     this.rootView = rootView;
+    this.bmiGauge = bmiGauge;
     this.btnEditInfo = btnEditInfo;
     this.btnSaveInfo = btnSaveInfo;
     this.btnSaveWeight = btnSaveWeight;
+    this.cardBmiGauge = cardBmiGauge;
     this.chartBmi = chartBmi;
     this.chartWeight = chartWeight;
     this.etAge = etAge;
@@ -125,6 +136,12 @@ public final class FragmentWeightBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.bmiGauge;
+      BmiGaugeView bmiGauge = ViewBindings.findChildViewById(rootView, id);
+      if (bmiGauge == null) {
+        break missingId;
+      }
+
       id = R.id.btnEditInfo;
       MaterialButton btnEditInfo = ViewBindings.findChildViewById(rootView, id);
       if (btnEditInfo == null) {
@@ -140,6 +157,12 @@ public final class FragmentWeightBinding implements ViewBinding {
       id = R.id.btnSaveWeight;
       MaterialButton btnSaveWeight = ViewBindings.findChildViewById(rootView, id);
       if (btnSaveWeight == null) {
+        break missingId;
+      }
+
+      id = R.id.cardBmiGauge;
+      MaterialCardView cardBmiGauge = ViewBindings.findChildViewById(rootView, id);
+      if (cardBmiGauge == null) {
         break missingId;
       }
 
@@ -221,10 +244,10 @@ public final class FragmentWeightBinding implements ViewBinding {
         break missingId;
       }
 
-      return new FragmentWeightBinding((ScrollView) rootView, btnEditInfo, btnSaveInfo,
-          btnSaveWeight, chartBmi, chartWeight, etAge, etHeight, etWeight, layoutBmiCurrent,
-          layoutInfoForm, layoutInfoSummary, tvBmiCategory, tvBmiChartNote, tvCurrentBmi,
-          tvInfoSummary, tvWeightDiff);
+      return new FragmentWeightBinding((ScrollView) rootView, bmiGauge, btnEditInfo, btnSaveInfo,
+          btnSaveWeight, cardBmiGauge, chartBmi, chartWeight, etAge, etHeight, etWeight,
+          layoutBmiCurrent, layoutInfoForm, layoutInfoSummary, tvBmiCategory, tvBmiChartNote,
+          tvCurrentBmi, tvInfoSummary, tvWeightDiff);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

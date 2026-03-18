@@ -117,6 +117,10 @@ class RunFragment : Fragment() {
         viewModel.currentSpeedKmh.observe(viewLifecycleOwner) { kmh ->
             binding.tvSpeed.text = TrackingUtils.formatSpeedKmh(kmh)
         }
+
+        viewModel.stepCount.observe(viewLifecycleOwner) { steps ->
+            binding.tvSteps.text = (steps ?: 0).toString()
+        }
     }
 
     private fun updatePolyline(points: MutableList<GeoPoint>) {
@@ -147,6 +151,9 @@ class RunFragment : Fragment() {
         )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissions.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            permissions.add(Manifest.permission.ACTIVITY_RECOGNITION)
         }
 
         val allGranted = permissions.all {
