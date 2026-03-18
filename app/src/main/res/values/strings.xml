@@ -85,6 +85,17 @@
     <string name="chart_label_altitude">Altitude (m)</string>
     <string name="hint_weight_format">Weight (%1$s)</string>
     <string name="info_summary_with_age">Height: %1$d cm · Age: %2$d</string>
+    <string name="format_distance_km" translatable="false">%.2f km</string>
+    <string name="format_distance_mi" translatable="false">%.2f mi</string>
+    <string name="format_speed_kmh" translatable="false">%.1f km/h</string>
+    <string name="format_speed_mph" translatable="false">%.1f mph</string>
+    <string name="format_pace_with_unit" translatable="false">%1$d:%2$02d / %3$s</string>
+    <string name="unit_km" translatable="false">km</string>
+    <string name="unit_mi" translatable="false">mi</string>
+    <string name="unit_kmh" translatable="false">km/h</string>
+    <string name="unit_mph" translatable="false">mph</string>
+    <string name="format_weight_input" translatable="false">%.1f</string>
+    <string name="pace_no_data">--:--</string>
 
     <!-- Weight dialogs & validation -->
     <string name="btn_delete">Delete</string>

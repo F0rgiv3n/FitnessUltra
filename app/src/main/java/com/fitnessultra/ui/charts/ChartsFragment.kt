@@ -43,15 +43,15 @@ class ChartsFragment : Fragment() {
         }
 
         val useMiles = SettingsManager.useMiles(requireContext())
-        val speedLabel = getString(R.string.chart_label_speed, TrackingUtils.speedUnitLabel(useMiles))
-        val paceLabel  = getString(R.string.chart_label_pace, TrackingUtils.distanceUnitLabel(useMiles))
+        val speedLabel = getString(R.string.chart_label_speed, TrackingUtils.speedUnitLabel(useMiles, requireContext()))
+        val paceLabel  = getString(R.string.chart_label_pace, TrackingUtils.distanceUnitLabel(useMiles, requireContext()))
 
         lifecycleScope.launch {
             val run = viewModel.getRunById(runId)
             if (run != null) {
                 val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
                 binding.tvRunDate.text = sdf.format(Date(run.dateTimestamp))
-                binding.tvRunDistance.text = TrackingUtils.formatDistance(run.distanceMeters, useMiles)
+                binding.tvRunDistance.text = TrackingUtils.formatDistance(run.distanceMeters, useMiles, requireContext())
                 binding.tvRunDuration.text = TrackingUtils.formatTime(run.durationMillis)
                 binding.tvRunCalories.text = getString(R.string.calories_format, run.caloriesBurned)
                 binding.tvRunSteps.text = if (run.stepCount > 0)

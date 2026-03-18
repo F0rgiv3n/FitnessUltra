@@ -221,8 +221,8 @@ class ReplayFragment : Fragment() {
         val elapsedMs = points[index].timestamp - points.first().timestamp
         binding.tvElapsed.text = TrackingUtils.formatTime(elapsedMs)
         val useMiles = context?.let { SettingsManager.useMiles(it) } ?: false
-        binding.tvDistanceCovered.text = TrackingUtils.formatDistance(cumulativeDistances[index], useMiles)
-        binding.tvCurrentSpeed.text = TrackingUtils.formatSpeedKmh(points[index].speedMs * 3.6f, useMiles)
+        binding.tvDistanceCovered.text = TrackingUtils.formatDistance(cumulativeDistances[index], useMiles, requireContext())
+        binding.tvCurrentSpeed.text = TrackingUtils.formatSpeedKmh(points[index].speedMs * 3.6f, useMiles, requireContext())
     }
 
     private fun setSpeed(multiplier: Float) {

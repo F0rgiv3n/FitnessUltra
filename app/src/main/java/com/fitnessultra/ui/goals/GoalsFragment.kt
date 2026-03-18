@@ -108,7 +108,7 @@ class GoalsFragment : Fragment() {
         val actualMeters = runs.sumOf { it.distanceMeters.toDouble() }.toFloat()
         val actualDisplay = TrackingUtils.fromKm(actualMeters / 1000f, useMiles)
         val goalDisplay   = TrackingUtils.fromKm(viewModel.goalDistanceKm, useMiles)
-        val unit = TrackingUtils.distanceUnitLabel(useMiles)
+        val unit = TrackingUtils.distanceUnitLabel(useMiles, requireContext())
         val pct = ((actualDisplay / goalDisplay) * 100).toInt().coerceAtMost(100)
         binding.progressDistance.progress = pct
         binding.tvDistanceValue.text = getString(R.string.goal_progress_distance, actualDisplay, goalDisplay, unit)
@@ -154,7 +154,7 @@ class GoalsFragment : Fragment() {
         val (title, hint, current) = when (type) {
             GoalType.DISTANCE -> Triple(
                 getString(R.string.goal_edit_distance_title),
-                getString(R.string.goal_edit_distance_hint, TrackingUtils.distanceUnitLabel(useMiles)),
+                getString(R.string.goal_edit_distance_hint, TrackingUtils.distanceUnitLabel(useMiles, requireContext())),
                 TrackingUtils.fromKm(viewModel.goalDistanceKm, useMiles).toInt().toString()
             )
             GoalType.TIME -> Triple(

@@ -200,15 +200,15 @@ class RunFragment : Fragment() {
 
         viewModel.totalDistanceMeters.observe(viewLifecycleOwner) { meters ->
             val useMiles = SettingsManager.useMiles(requireContext())
-            binding.tvDistance.text = TrackingUtils.formatDistance(meters, useMiles)
+            binding.tvDistance.text = TrackingUtils.formatDistance(meters, useMiles, requireContext())
             val durationMs = viewModel.timeRunInMillis.value ?: 0L
-            val paceStr = TrackingUtils.calculatePace(meters, durationMs, useMiles)
+            val paceStr = TrackingUtils.calculatePace(meters, durationMs, useMiles, requireContext())
             binding.tvPace.text = paceStr
             checkTargetPace(meters, durationMs, useMiles)
         }
 
         viewModel.currentSpeedKmh.observe(viewLifecycleOwner) { kmh ->
-            binding.tvSpeed.text = TrackingUtils.formatSpeedKmh(kmh, SettingsManager.useMiles(requireContext()))
+            binding.tvSpeed.text = TrackingUtils.formatSpeedKmh(kmh, SettingsManager.useMiles(requireContext()), requireContext())
         }
 
         viewModel.stepCount.observe(viewLifecycleOwner) { steps ->
@@ -259,7 +259,7 @@ class RunFragment : Fragment() {
             lastVoiceKm = milestonePassed
             val kmAnnounced = milestonePassed * freqKm
             val durationMs = viewModel.timeRunInMillis.value ?: 0L
-            val paceStr = TrackingUtils.calculatePace(kmAnnounced * 1000f, durationMs)
+            val paceStr = TrackingUtils.calculatePace(kmAnnounced * 1000f, durationMs, context = requireContext())
             speakTts(getString(R.string.tts_voice_milestone, kmAnnounced, paceStr))
         }
     }

@@ -115,7 +115,7 @@ class HistoryFragment : Fragment() {
         val entries = values.mapIndexed { i, v -> BarEntry(i.toFloat(), v.toFloat()) }
         val primaryColor = ContextCompat.getColor(requireContext(), R.color.colorPrimary)
 
-        val dataSet = BarDataSet(entries, "Steps").apply {
+        val dataSet = BarDataSet(entries, getString(R.string.label_steps)).apply {
             color = primaryColor
             valueTextColor = Color.DKGRAY
             valueTextSize = 9f

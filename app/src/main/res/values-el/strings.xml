@@ -85,6 +85,7 @@
     <string name="chart_label_altitude">Υψόμετρο (m)</string>
     <string name="hint_weight_format">Βάρος (%1$s)</string>
     <string name="info_summary_with_age">Ύψος: %1$d cm · Ηλικία: %2$d</string>
+    <string name="pace_no_data">--:--</string>
 
     <!-- Weight dialogs & validation -->
     <string name="btn_delete">Διαγραφή</string>

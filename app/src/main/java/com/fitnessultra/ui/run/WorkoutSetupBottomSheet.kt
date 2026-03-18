@@ -8,6 +8,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.fitnessultra.R
 import com.fitnessultra.databinding.FragmentWorkoutSetupBinding
 import com.fitnessultra.util.SettingsManager
+import com.fitnessultra.util.TrackingUtils
 
 class WorkoutSetupBottomSheet : BottomSheetDialogFragment() {
 
@@ -24,7 +25,7 @@ class WorkoutSetupBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val unitLabel = if (SettingsManager.useMiles(requireContext())) "mi" else "km"
+        val unitLabel = TrackingUtils.distanceUnitLabel(SettingsManager.useMiles(requireContext()), requireContext())
         binding.tvPaceLabel.text = getString(R.string.target_pace_label, unitLabel)
 
         binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->

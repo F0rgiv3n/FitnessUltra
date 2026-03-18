@@ -85,6 +85,7 @@
     <string name="chart_label_altitude">Altitud (m)</string>
     <string name="hint_weight_format">Peso (%1$s)</string>
     <string name="info_summary_with_age">Altura: %1$d cm · Edad: %2$d</string>
+    <string name="pace_no_data">--:--</string>
 
     <!-- Weight dialogs & validation -->
     <string name="btn_delete">Eliminar</string>

@@ -1,5 +1,7 @@
 package com.fitnessultra.util
 
+import android.content.Context
+import com.fitnessultra.R
 import java.util.concurrent.TimeUnit
 
 object TrackingUtils {
@@ -24,33 +26,24 @@ object TrackingUtils {
         }
     }
 
-    fun formatDistance(meters: Float, useMiles: Boolean = false): String {
-        return if (useMiles) {
-            "%.2f mi".format(meters / METERS_PER_MILE)
-        } else {
-            "%.2f km".format(meters / 1000f)
-        }
-    }
+    fun formatDistance(meters: Float, useMiles: Boolean, context: Context): String =
+        if (useMiles) context.getString(R.string.format_distance_mi, meters / METERS_PER_MILE)
+        else          context.getString(R.string.format_distance_km, meters / 1000f)
 
-    fun formatSpeedKmh(kmh: Float, useMiles: Boolean = false): String {
-        return if (useMiles) {
-            "%.1f mph".format(kmh * KM_TO_MI)
-        } else {
-            "%.1f km/h".format(kmh)
-        }
-    }
+    fun formatSpeedKmh(kmh: Float, useMiles: Boolean, context: Context): String =
+        if (useMiles) context.getString(R.string.format_speed_mph, kmh * KM_TO_MI)
+        else          context.getString(R.string.format_speed_kmh, kmh)
 
     /** Returns pace as "MM:SS / km" or "MM:SS / mi", or "--:--" if no movement. */
-    fun calculatePace(distanceMeters: Float, durationMillis: Long, useMiles: Boolean = false): String {
-        if (distanceMeters <= 0f || durationMillis <= 0L) return "--:--"
+    fun calculatePace(distanceMeters: Float, durationMillis: Long, useMiles: Boolean = false, context: Context): String {
+        if (distanceMeters <= 0f || durationMillis <= 0L) return context.getString(R.string.pace_no_data)
         val unitMeters = if (useMiles) METERS_PER_MILE else 1000f
         val distanceUnits = distanceMeters / unitMeters
         val durationMinutes = durationMillis / 1000f / 60f
         val paceMinPerUnit = durationMinutes / distanceUnits
         val paceMin = paceMinPerUnit.toInt()
         val paceSec = ((paceMinPerUnit - paceMin) * 60).toInt()
-        val label = if (useMiles) "mi" else "km"
-        return "%d:%02d / $label".format(paceMin, paceSec)
+        return context.getString(R.string.format_pace_with_unit, paceMin, paceSec, distanceUnitLabel(useMiles, context))
     }
 
     /** Returns current pace in seconds per unit (km or mi), or Int.MAX_VALUE if no movement. */
@@ -74,6 +67,9 @@ object TrackingUtils {
     /** Convert a stored-km value to the display unit. */
     fun fromKm(km: Float, useMiles: Boolean) = if (useMiles) km * KM_TO_MI else km
 
-    fun distanceUnitLabel(useMiles: Boolean) = if (useMiles) "mi" else "km"
-    fun speedUnitLabel(useMiles: Boolean)    = if (useMiles) "mph" else "km/h"
+    fun distanceUnitLabel(useMiles: Boolean, context: Context): String =
+        if (useMiles) context.getString(R.string.unit_mi) else context.getString(R.string.unit_km)
+
+    fun speedUnitLabel(useMiles: Boolean, context: Context): String =
+        if (useMiles) context.getString(R.string.unit_mph) else context.getString(R.string.unit_kmh)
 }

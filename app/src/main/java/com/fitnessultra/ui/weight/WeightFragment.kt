@@ -117,7 +117,7 @@ class WeightFragment : Fragment() {
         val unit = weightUnit()
         val input = EditText(requireContext()).apply {
             inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
-            setText("%.1f".format(displayWeight(entry.weightKg)))
+            setText(getString(R.string.format_weight_input, displayWeight(entry.weightKg)))
             selectAll()
             setPadding(48, 24, 48, 24)
         }
