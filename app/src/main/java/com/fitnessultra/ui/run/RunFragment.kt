@@ -13,18 +13,21 @@ import android.speech.tts.TextToSpeech
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.fitnessultra.R
 import com.fitnessultra.databinding.FragmentRunBinding
 import com.fitnessultra.service.TrackingService
 import com.fitnessultra.util.SettingsManager
 import com.fitnessultra.util.TrackingUtils
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Polyline
 import java.util.Locale
@@ -45,7 +48,7 @@ class RunFragment : Fragment() {
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         if (permissions.values.all { it }) {
-            viewModel.sendCommand(TrackingService.ACTION_START_OR_RESUME)
+            startCountdownAndRun()
         }
     }
 
@@ -60,7 +63,7 @@ class RunFragment : Fragment() {
         Configuration.getInstance().userAgentValue = requireContext().packageName
 
         binding.mapView.apply {
-            setTileSource(TileSourceFactory.MAPNIK)
+            applyMapStyle()
             setMultiTouchControls(true)
             controller.setZoom(17.0)
         }
@@ -72,7 +75,11 @@ class RunFragment : Fragment() {
         binding.mapView.overlays.add(routePolyline)
 
         tts = TextToSpeech(requireContext()) { status ->
-            if (status == TextToSpeech.SUCCESS) tts.language = Locale.US
+            if (status == TextToSpeech.SUCCESS) {
+                val langCode = SettingsManager.voiceLanguage(requireContext())
+                val locale = if (langCode == "default") Locale.getDefault() else Locale(langCode)
+                tts.language = locale
+            }
         }
 
         promptBatteryOptimizationIfNeeded()
@@ -87,7 +94,8 @@ class RunFragment : Fragment() {
 
         binding.btnStopRun.setOnClickListener {
             val weightKg = getUserWeight()
-            viewModel.saveRun(weightKg)
+            val gender = SettingsManager.gender(requireContext())
+            viewModel.saveRun(weightKg, gender)
             viewModel.sendCommand(TrackingService.ACTION_STOP)
             routePolyline?.setPoints(emptyList())
             binding.mapView.invalidate()
@@ -95,6 +103,26 @@ class RunFragment : Fragment() {
         }
 
         observeTracking()
+    }
+
+    private fun applyMapStyle() {
+        binding.mapView.setTileSource(SettingsManager.tileSource(requireContext()))
+    }
+
+    private fun startCountdownAndRun() {
+        if (!SettingsManager.isCountdownEnabled(requireContext())) {
+            viewModel.sendCommand(TrackingService.ACTION_START_OR_RESUME)
+            return
+        }
+        binding.tvCountdown.visibility = View.VISIBLE
+        viewLifecycleOwner.lifecycleScope.launch {
+            for (i in 3 downTo 1) {
+                binding.tvCountdown.text = i.toString()
+                delay(1000L)
+            }
+            binding.tvCountdown.visibility = View.GONE
+            viewModel.sendCommand(TrackingService.ACTION_START_OR_RESUME)
+        }
     }
 
     private fun observeTracking() {
@@ -107,7 +135,7 @@ class RunFragment : Fragment() {
 
         viewModel.pathPoints.observe(viewLifecycleOwner) { points ->
             updatePolyline(points)
-            if (points.isNotEmpty()) {
+            if (points.isNotEmpty() && SettingsManager.isMapFollow(requireContext())) {
                 binding.mapView.controller.animateTo(points.last())
             }
             checkVoiceMilestone()
@@ -174,7 +202,7 @@ class RunFragment : Fragment() {
         }
 
         if (allGranted) {
-            viewModel.sendCommand(TrackingService.ACTION_START_OR_RESUME)
+            startCountdownAndRun()
         } else {
             locationPermissionLauncher.launch(permissions.toTypedArray())
         }
@@ -211,11 +239,16 @@ class RunFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         binding.mapView.onResume()
+        applyMapStyle()
+        if (SettingsManager.isKeepScreenOn(requireContext())) {
+            requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
     }
 
     override fun onPause() {
         super.onPause()
         binding.mapView.onPause()
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     override fun onDestroyView() {

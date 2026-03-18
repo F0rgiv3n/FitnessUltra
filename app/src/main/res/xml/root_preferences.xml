@@ -23,6 +23,67 @@
             android:defaultValue="kg"
             app:useSimpleSummaryProvider="false" />
 
+        <ListPreference
+            android:key="pref_gender"
+            android:title="@string/pref_gender_title"
+            android:summary="%s"
+            android:entries="@array/pref_gender_entries"
+            android:entryValues="@array/pref_gender_values"
+            android:defaultValue="none"
+            app:useSimpleSummaryProvider="false" />
+
+    </PreferenceCategory>
+
+    <!-- Run Settings -->
+    <PreferenceCategory android:title="@string/pref_category_run">
+
+        <ListPreference
+            android:key="pref_gps_accuracy"
+            android:title="@string/pref_gps_accuracy_title"
+            android:summary="%s"
+            android:entries="@array/pref_gps_accuracy_entries"
+            android:entryValues="@array/pref_gps_accuracy_values"
+            android:defaultValue="high"
+            app:useSimpleSummaryProvider="false" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_auto_pause"
+            android:title="@string/pref_auto_pause_title"
+            android:summary="@string/pref_auto_pause_summary"
+            android:defaultValue="false" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_screen_on"
+            android:title="@string/pref_screen_on_title"
+            android:summary="@string/pref_screen_on_summary"
+            android:defaultValue="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_countdown"
+            android:title="@string/pref_countdown_title"
+            android:summary="@string/pref_countdown_summary"
+            android:defaultValue="true" />
+
+    </PreferenceCategory>
+
+    <!-- Map -->
+    <PreferenceCategory android:title="@string/pref_category_map">
+
+        <ListPreference
+            android:key="pref_map_style"
+            android:title="@string/pref_map_style_title"
+            android:summary="%s"
+            android:entries="@array/pref_map_style_entries"
+            android:entryValues="@array/pref_map_style_values"
+            android:defaultValue="standard"
+            app:useSimpleSummaryProvider="false" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_map_follow"
+            android:title="@string/pref_map_follow_title"
+            android:summary="@string/pref_map_follow_summary"
+            android:defaultValue="true" />
+
     </PreferenceCategory>
 
     <!-- Voice Feedback -->
@@ -41,6 +102,16 @@
             android:entries="@array/pref_voice_freq_entries"
             android:entryValues="@array/pref_voice_freq_values"
             android:defaultValue="1"
+            android:dependency="pref_voice_enabled"
+            app:useSimpleSummaryProvider="false" />
+
+        <ListPreference
+            android:key="pref_voice_language"
+            android:title="@string/pref_voice_language_title"
+            android:summary="%s"
+            android:entries="@array/pref_voice_language_entries"
+            android:entryValues="@array/pref_voice_language_values"
+            android:defaultValue="default"
             android:dependency="pref_voice_enabled"
             app:useSimpleSummaryProvider="false" />
 

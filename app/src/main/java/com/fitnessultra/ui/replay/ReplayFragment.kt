@@ -20,7 +20,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
@@ -56,7 +55,7 @@ class ReplayFragment : Fragment() {
 
         Configuration.getInstance().userAgentValue = requireContext().packageName
         binding.replayMapView.apply {
-            setTileSource(TileSourceFactory.MAPNIK)
+            setTileSource(SettingsManager.tileSource(requireContext()))
             setMultiTouchControls(true)
         }
 

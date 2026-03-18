@@ -2,6 +2,7 @@ package com.fitnessultra.ui.weight
 
 import androidx.core.graphics.toColorInt
 import android.os.Bundle
+import com.fitnessultra.util.SettingsManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +33,11 @@ class WeightFragment : Fragment() {
     private val viewModel: WeightViewModel by viewModels()
     private var currentEntries: List<WeightEntry> = emptyList()
 
+    private fun useLbs() = SettingsManager.useLbs(requireContext())
+    private fun weightUnit() = if (useLbs()) "lbs" else "kg"
+    private fun displayWeight(kg: Float) = if (useLbs()) kg * 2.20462f else kg
+    private fun toKg(displayValue: Float) = if (useLbs()) displayValue / 2.20462f else displayValue
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentWeightBinding.inflate(inflater, container, false)
         return binding.root
@@ -42,6 +48,9 @@ class WeightFragment : Fragment() {
 
         setupChart(binding.chartWeight)
         setupChart(binding.chartBmi)
+
+        // Update weight input hint to reflect current unit
+        binding.tilWeight.hint = "Weight (${weightUnit()})"
 
         // Tap on weight chart point → Edit/Delete dialog
         binding.chartWeight.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
@@ -74,12 +83,12 @@ class WeightFragment : Fragment() {
         binding.btnEditInfo.setOnClickListener { showInfoForm() }
 
         binding.btnSaveWeight.setOnClickListener {
-            val weight = binding.etWeight.text.toString().toFloatOrNull()
-            if (weight == null || weight <= 0f) {
+            val inputValue = binding.etWeight.text.toString().toFloatOrNull()
+            if (inputValue == null || inputValue <= 0f) {
                 Toast.makeText(requireContext(), "Enter a valid weight", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            viewModel.saveWeight(weight)
+            viewModel.saveWeight(toKg(inputValue))
             binding.etWeight.text?.clear()
         }
 
@@ -92,10 +101,11 @@ class WeightFragment : Fragment() {
     private fun showEntryDialog(entry: WeightEntry) {
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val dateStr = sdf.format(Date(entry.dateTimestamp))
+        val unit = weightUnit()
 
         AlertDialog.Builder(requireContext())
             .setTitle("Entry – $dateStr")
-            .setMessage("Weight: %.1f kg".format(entry.weightKg))
+            .setMessage("Weight: %.1f %s".format(displayWeight(entry.weightKg), unit))
             .setPositiveButton("Edit") { _, _ -> showEditDialog(entry) }
             .setNegativeButton("Delete") { _, _ -> showDeleteConfirm(entry) }
             .setNeutralButton("Cancel", null)
@@ -103,19 +113,20 @@ class WeightFragment : Fragment() {
     }
 
     private fun showEditDialog(entry: WeightEntry) {
+        val unit = weightUnit()
         val input = EditText(requireContext()).apply {
             inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
-            setText("%.1f".format(entry.weightKg))
+            setText("%.1f".format(displayWeight(entry.weightKg)))
             selectAll()
             setPadding(48, 24, 48, 24)
         }
         AlertDialog.Builder(requireContext())
-            .setTitle("Edit weight")
+            .setTitle("Edit weight ($unit)")
             .setView(input)
             .setPositiveButton("Save") { _, _ ->
-                val newWeight = input.text.toString().toFloatOrNull()
-                if (newWeight != null && newWeight > 0f) {
-                    viewModel.updateEntry(entry, newWeight)
+                val inputVal = input.text.toString().toFloatOrNull()
+                if (inputVal != null && inputVal > 0f) {
+                    viewModel.updateEntry(entry, toKg(inputVal))
                 } else {
                     Toast.makeText(requireContext(), "Invalid value", Toast.LENGTH_SHORT).show()
                 }
@@ -126,9 +137,10 @@ class WeightFragment : Fragment() {
 
     private fun showDeleteConfirm(entry: WeightEntry) {
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val unit = weightUnit()
         AlertDialog.Builder(requireContext())
             .setTitle("Delete entry")
-            .setMessage("Delete ${sdf.format(Date(entry.dateTimestamp))} – %.1f kg?".format(entry.weightKg))
+            .setMessage("Delete ${sdf.format(Date(entry.dateTimestamp))} – %.1f %s?".format(displayWeight(entry.weightKg), unit))
             .setPositiveButton("Delete") { _, _ -> viewModel.deleteEntry(entry) }
             .setNegativeButton("Cancel", null)
             .show()
@@ -153,20 +165,22 @@ class WeightFragment : Fragment() {
     private fun updateAll(entries: List<WeightEntry>) {
         if (entries.isEmpty()) return
 
+        val unit = weightUnit()
         val sdf = SimpleDateFormat("dd/MM", Locale.getDefault())
         val labels = entries.map { sdf.format(Date(it.dateTimestamp)) }
-        val weights = entries.map { it.weightKg }
+        val weightsKg = entries.map { it.weightKg }
+        val weightsDisplay = weightsKg.map { displayWeight(it) }
 
         if (entries.size > 1) {
-            val diff = weights.last() - weights[weights.size - 2]
+            val diff = weightsDisplay.last() - weightsDisplay[weightsDisplay.size - 2]
             val sign = if (diff >= 0) "+" else ""
             val color = if (diff <= 0) "#388E3C".toColorInt() else "#D32F2F".toColorInt()
-            binding.tvWeightDiff.text = "Change from last entry: ${sign}%.1f kg".format(diff)
+            binding.tvWeightDiff.text = "Change from last entry: ${sign}%.1f %s".format(diff, unit)
             binding.tvWeightDiff.setTextColor(color)
             binding.tvWeightDiff.visibility = View.VISIBLE
         }
 
-        val bmi = viewModel.calculateBmi(weights.last())
+        val bmi = viewModel.calculateBmi(weightsKg.last())
         if (bmi != null) {
             binding.tvCurrentBmi.text = "BMI: %.1f".format(bmi)
             binding.tvCurrentBmi.setTextColor(bmiColor(bmi))
@@ -176,7 +190,7 @@ class WeightFragment : Fragment() {
             binding.cardBmiGauge.visibility = View.VISIBLE
         }
 
-        buildColoredChart(binding.chartWeight, weights, labels)
+        buildColoredChart(binding.chartWeight, weightsDisplay, labels)
 
         val bmiValues = entries.mapNotNull { viewModel.calculateBmi(it.weightKg) }
         if (bmiValues.size >= 2) {

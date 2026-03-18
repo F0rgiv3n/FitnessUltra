@@ -95,10 +95,24 @@
     <string name="pref_category_units">Μονάδες</string>
     <string name="pref_distance_unit_title">Μονάδα απόστασης</string>
     <string name="pref_weight_unit_title">Μονάδα βάρους</string>
+    <string name="pref_gender_title">Φύλο (για θερμίδες)</string>
+    <string name="pref_category_run">Τρέξιμο</string>
+    <string name="pref_gps_accuracy_title">Ακρίβεια GPS</string>
+    <string name="pref_auto_pause_title">Αυτόματη παύση</string>
+    <string name="pref_auto_pause_summary">Παύση όταν η ταχύτητα πέσει κάτω από 1 km/h</string>
+    <string name="pref_screen_on_title">Οθόνη πάντα ενεργή</string>
+    <string name="pref_screen_on_summary">Αποτροπή απενεργοποίησης οθόνης κατά το τρέξιμο</string>
+    <string name="pref_countdown_title">Αντίστροφη μέτρηση πριν την εκκίνηση</string>
+    <string name="pref_countdown_summary">Αντίστροφη μέτρηση 3-2-1 πριν ξεκινήσει το tracking</string>
+    <string name="pref_category_map">Χάρτης</string>
+    <string name="pref_map_style_title">Στυλ χάρτη</string>
+    <string name="pref_map_follow_title">Αυτόματο κεντράρισμα χάρτη</string>
+    <string name="pref_map_follow_summary">Διατήρηση χάρτη κεντραρισμένο στη θέση σου</string>
     <string name="pref_category_voice">Φωνητική Καθοδήγηση</string>
     <string name="pref_voice_enabled_title">Ενεργοποίηση φωνητικών ανακοινώσεων</string>
     <string name="pref_voice_enabled_summary">Ανακοίνωση χιλιομέτρων κατά τη διάρκεια του τρεξίματος</string>
     <string name="pref_voice_frequency_title">Ανακοίνωση κάθε</string>
+    <string name="pref_voice_language_title">Γλώσσα φωνής</string>
     <string name="pref_category_appearance">Εμφάνιση</string>
     <string name="pref_theme_title">Θέμα</string>
     <string name="pref_language_title">Γλώσσα</string>
@@ -123,5 +137,26 @@
         <item>Σύστημα</item>
         <item>Φωτεινό</item>
         <item>Σκοτεινό</item>
+    </string-array>
+    <string-array name="pref_gender_entries">
+        <item>Δεν καθορίζεται</item>
+        <item>Άνδρας</item>
+        <item>Γυναίκα</item>
+    </string-array>
+    <string-array name="pref_gps_accuracy_entries">
+        <item>Υψηλή ακρίβεια</item>
+        <item>Εξοικονόμηση μπαταρίας</item>
+    </string-array>
+    <string-array name="pref_map_style_entries">
+        <item>Τυπικός</item>
+        <item>Ποδηλασία</item>
+        <item>Μεταφορές</item>
+    </string-array>
+    <string-array name="pref_voice_language_entries">
+        <item>Προεπιλογή συσκευής</item>
+        <item>Αγγλικά</item>
+        <item>Ελληνικά</item>
+        <item>Ισπανικά</item>
+        <item>Γερμανικά</item>
     </string-array>
 </resources>

@@ -53,9 +53,10 @@ object TrackingUtils {
         return "%d:%02d / $label".format(paceMin, paceSec)
     }
 
-    /** Calories = Distance(km) × Weight(kg) × 1.036 */
-    fun calculateCalories(distanceMeters: Float, weightKg: Float): Int {
-        return (distanceMeters / 1000f * weightKg * 1.036f).toInt()
+    /** Calories with gender-specific MET factor. Male≈1.036, Female≈0.945, unknown≈1.036 */
+    fun calculateCalories(distanceMeters: Float, weightKg: Float, gender: String = "none"): Int {
+        val factor = if (gender == "female") 0.945f else 1.036f
+        return (distanceMeters / 1000f * weightKg * factor).toInt()
     }
 
     /** Convert a user-entered distance value to km for internal storage. */

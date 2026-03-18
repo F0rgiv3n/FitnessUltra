@@ -34,7 +34,7 @@ class RunViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /** Call this when user presses Stop to persist the run. */
-    fun saveRun(weightKg: Float) {
+    fun saveRun(weightKg: Float, gender: String = "none") {
         val distanceMeters = totalDistanceMeters.value ?: return
         val durationMillis = timeRunInMillis.value ?: return
         val elevationGain = elevationGainMeters.value ?: 0f
@@ -42,7 +42,7 @@ class RunViewModel(application: Application) : AndroidViewModel(application) {
         val avgSpeedKmh = if (durationMillis > 0)
             (distanceMeters / 1000f) / (durationMillis / 1000f / 3600f)
         else 0f
-        val calories = TrackingUtils.calculateCalories(distanceMeters, weightKg)
+        val calories = TrackingUtils.calculateCalories(distanceMeters, weightKg, gender)
 
         val run = RunEntity(
             dateTimestamp = System.currentTimeMillis(),

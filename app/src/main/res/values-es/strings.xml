@@ -95,10 +95,24 @@
     <string name="pref_category_units">Unidades</string>
     <string name="pref_distance_unit_title">Unidad de distancia</string>
     <string name="pref_weight_unit_title">Unidad de peso</string>
+    <string name="pref_gender_title">Género (para calorías)</string>
+    <string name="pref_category_run">Carrera</string>
+    <string name="pref_gps_accuracy_title">Precisión GPS</string>
+    <string name="pref_auto_pause_title">Pausa automática</string>
+    <string name="pref_auto_pause_summary">Pausar cuando la velocidad baje de 1 km/h</string>
+    <string name="pref_screen_on_title">Mantener pantalla encendida</string>
+    <string name="pref_screen_on_summary">Evitar que la pantalla se apague durante la carrera</string>
+    <string name="pref_countdown_title">Cuenta regresiva antes de iniciar</string>
+    <string name="pref_countdown_summary">Cuenta regresiva 3-2-1 antes de comenzar</string>
+    <string name="pref_category_map">Mapa</string>
+    <string name="pref_map_style_title">Estilo de mapa</string>
+    <string name="pref_map_follow_title">Centrar mapa automáticamente</string>
+    <string name="pref_map_follow_summary">Mantener el mapa centrado en tu posición</string>
     <string name="pref_category_voice">Guía por Voz</string>
     <string name="pref_voice_enabled_title">Activar anuncios de voz</string>
     <string name="pref_voice_enabled_summary">Anunciar kilómetros durante la carrera</string>
     <string name="pref_voice_frequency_title">Anunciar cada</string>
+    <string name="pref_voice_language_title">Idioma de voz</string>
     <string name="pref_category_appearance">Apariencia</string>
     <string name="pref_theme_title">Tema</string>
     <string name="pref_language_title">Idioma</string>
@@ -123,5 +137,26 @@
         <item>Sistema</item>
         <item>Claro</item>
         <item>Oscuro</item>
+    </string-array>
+    <string-array name="pref_gender_entries">
+        <item>No especificado</item>
+        <item>Hombre</item>
+        <item>Mujer</item>
+    </string-array>
+    <string-array name="pref_gps_accuracy_entries">
+        <item>Alta precisión</item>
+        <item>Ahorro de batería</item>
+    </string-array>
+    <string-array name="pref_map_style_entries">
+        <item>Estándar</item>
+        <item>Ciclismo</item>
+        <item>Transporte</item>
+    </string-array>
+    <string-array name="pref_voice_language_entries">
+        <item>Predeterminado</item>
+        <item>Inglés</item>
+        <item>Griego</item>
+        <item>Español</item>
+        <item>Alemán</item>
     </string-array>
 </resources>

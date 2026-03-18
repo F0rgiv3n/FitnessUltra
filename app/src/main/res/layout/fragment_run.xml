@@ -14,6 +14,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <TextView
+        android:id="@+id/tvCountdown"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:gravity="center"
+        android:textSize="80sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:background="#CC000000"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/statsCard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/statsCard"
         android:layout_width="0dp"

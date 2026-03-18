@@ -60,6 +60,7 @@ class TrackingService : LifecycleService() {
     private var timeRun = 0L
     private var lastAltitude = Double.MIN_VALUE
     private var timerJob: Job? = null
+    private var slowUpdateCount = 0
 
     override fun onCreate() {
         super.onCreate()
@@ -71,6 +72,24 @@ class TrackingService : LifecycleService() {
             override fun onLocationResult(result: LocationResult) {
                 if (isTracking.value == true) {
                     result.locations.forEach { location ->
+                        // Auto-pause when speed stays below 1 km/h for 3 consecutive updates
+                        if (SettingsManager.isAutoPauseEnabled(this@TrackingService)) {
+                            if (location.speed * 3.6f < 1.0f) {
+                                slowUpdateCount++
+                                if (slowUpdateCount >= 3) {
+                                    slowUpdateCount = 0
+                                    timeRun += System.currentTimeMillis() - timeStarted
+                                    timerJob?.cancel()
+                                    isTracking.postValue(false)
+                                    updateNotification(timeRun, totalDistanceMeters.value ?: 0f, tracking = false)
+                                    stopStepCounter()
+                                    releaseWakeLock()
+                                    return@forEach
+                                }
+                            } else {
+                                slowUpdateCount = 0
+                            }
+                        }
                         addPathPoint(location)
                         currentSpeedKmh.postValue(location.speed * 3.6f)
                         trackElevation(location)
@@ -94,6 +113,7 @@ class TrackingService : LifecycleService() {
         stepCount.postValue(0)
         timeRun = 0L
         lastAltitude = Double.MIN_VALUE
+        slowUpdateCount = 0
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -188,7 +208,11 @@ class TrackingService : LifecycleService() {
     @SuppressLint("MissingPermission")
     private fun updateLocationTracking(isTracking: Boolean) {
         if (isTracking) {
-            val request = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000L)
+            val priority = if (SettingsManager.gpsAccuracy(this) == "high")
+                Priority.PRIORITY_HIGH_ACCURACY
+            else
+                Priority.PRIORITY_BALANCED_POWER_ACCURACY
+            val request = LocationRequest.Builder(priority, 3000L)
                 .setMinUpdateIntervalMillis(2000L)
                 .build()
             fusedLocationClient.requestLocationUpdates(request, locationCallback, Looper.getMainLooper())
