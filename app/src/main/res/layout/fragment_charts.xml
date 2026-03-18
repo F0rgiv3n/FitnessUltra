@@ -93,7 +93,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -143,6 +144,18 @@
                     </LinearLayout>
 
                 </LinearLayout>
+
+                <!-- Replay Route button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnReplayRoute"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="▶  REPLAY ROUTE"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:icon="@drawable/ic_replay_run"
+                    app:iconGravity="textStart"
+                    app:cornerRadius="10dp" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

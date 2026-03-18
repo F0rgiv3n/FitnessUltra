@@ -28,6 +28,9 @@
         <argument
             android:name="runId"
             app:argType="long" />
+        <action
+            android:id="@+id/action_chartsFragment_to_replayFragment"
+            app:destination="@id/replayFragment" />
     </fragment>
 
     <fragment

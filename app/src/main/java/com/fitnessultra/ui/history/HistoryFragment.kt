@@ -30,16 +30,10 @@ class HistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        runAdapter = RunAdapter(
-            onItemClick = { run ->
-                val bundle = Bundle().apply { putLong("runId", run.id) }
-                findNavController().navigate(R.id.action_historyFragment_to_chartsFragment, bundle)
-            },
-            onReplayClick = { run ->
-                val bundle = Bundle().apply { putLong("runId", run.id) }
-                findNavController().navigate(R.id.action_historyFragment_to_replayFragment, bundle)
-            }
-        )
+        runAdapter = RunAdapter { run ->
+            val bundle = Bundle().apply { putLong("runId", run.id) }
+            findNavController().navigate(R.id.action_historyFragment_to_chartsFragment, bundle)
+        }
 
         binding.rvRuns.apply {
             adapter = runAdapter

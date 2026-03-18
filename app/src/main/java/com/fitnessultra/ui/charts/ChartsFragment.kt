@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
+import com.fitnessultra.R
 import com.fitnessultra.databinding.FragmentChartsBinding
 import com.fitnessultra.util.TrackingUtils
 import kotlinx.coroutines.launch
@@ -33,6 +35,11 @@ class ChartsFragment : Fragment() {
         setupCharts()
 
         val runId = arguments?.getLong("runId") ?: return
+
+        binding.btnReplayRoute.setOnClickListener {
+            val bundle = android.os.Bundle().apply { putLong("runId", runId) }
+            findNavController().navigate(R.id.action_chartsFragment_to_replayFragment, bundle)
+        }
 
         lifecycleScope.launch {
             val run = viewModel.getRunById(runId)
