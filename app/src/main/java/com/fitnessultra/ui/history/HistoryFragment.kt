@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -13,10 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.fitnessultra.R
-import com.fitnessultra.data.db.entity.RunEntity
 import com.fitnessultra.databinding.FragmentHistoryBinding
-import java.text.SimpleDateFormat
-import java.util.*
 
 class HistoryFragment : Fragment() {
 
@@ -33,7 +29,18 @@ class HistoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        runAdapter = RunAdapter { run -> showRunOptions(run) }
+
+        runAdapter = RunAdapter(
+            onItemClick = { run ->
+                val bundle = Bundle().apply { putLong("runId", run.id) }
+                findNavController().navigate(R.id.action_historyFragment_to_chartsFragment, bundle)
+            },
+            onReplayClick = { run ->
+                val bundle = Bundle().apply { putLong("runId", run.id) }
+                findNavController().navigate(R.id.action_historyFragment_to_replayFragment, bundle)
+            }
+        )
+
         binding.rvRuns.apply {
             adapter = runAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -55,20 +62,6 @@ class HistoryFragment : Fragment() {
             runAdapter.submitList(runs)
             binding.tvEmpty.visibility = if (runs.isEmpty()) View.VISIBLE else View.GONE
         }
-    }
-
-    private fun showRunOptions(run: RunEntity) {
-        val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-        AlertDialog.Builder(requireContext())
-            .setTitle(sdf.format(Date(run.dateTimestamp)))
-            .setItems(arrayOf("📊  View Charts", "▶  Replay Route")) { _, which ->
-                val bundle = Bundle().apply { putLong("runId", run.id) }
-                when (which) {
-                    0 -> findNavController().navigate(R.id.action_historyFragment_to_chartsFragment, bundle)
-                    1 -> findNavController().navigate(R.id.action_historyFragment_to_replayFragment, bundle)
-                }
-            }
-            .show()
     }
 
     override fun onDestroyView() {

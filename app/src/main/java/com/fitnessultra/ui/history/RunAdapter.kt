@@ -12,25 +12,23 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class RunAdapter(
-    private val onItemClick: (RunEntity) -> Unit
+    private val onItemClick: (RunEntity) -> Unit,
+    private val onReplayClick: (RunEntity) -> Unit
 ) : ListAdapter<RunEntity, RunAdapter.RunViewHolder>(DiffCallback()) {
 
     class RunViewHolder(private val binding: ItemRunBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(run: RunEntity, onItemClick: (RunEntity) -> Unit) {
+        fun bind(run: RunEntity, onItemClick: (RunEntity) -> Unit, onReplayClick: (RunEntity) -> Unit) {
             val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
             binding.tvDate.text = sdf.format(Date(run.dateTimestamp))
             binding.tvDistance.text = TrackingUtils.formatDistance(run.distanceMeters)
             binding.tvDuration.text = TrackingUtils.formatTime(run.durationMillis)
             binding.tvAvgSpeed.text = TrackingUtils.formatSpeedKmh(run.avgSpeedKmh)
             binding.tvCalories.text = "${run.caloriesBurned} kcal"
-            if (run.stepCount > 0) {
-                binding.tvSteps.text = "${run.stepCount} steps"
-            } else {
-                binding.tvSteps.text = ""
-            }
+            binding.tvSteps.text = if (run.stepCount > 0) "${run.stepCount} steps" else ""
             binding.root.setOnClickListener { onItemClick(run) }
+            binding.btnReplay.setOnClickListener { onReplayClick(run) }
         }
     }
 
@@ -40,7 +38,7 @@ class RunAdapter(
     }
 
     override fun onBindViewHolder(holder: RunViewHolder, position: Int) {
-        holder.bind(getItem(position), onItemClick)
+        holder.bind(getItem(position), onItemClick, onReplayClick)
     }
 
     class DiffCallback : DiffUtil.ItemCallback<RunEntity>() {
