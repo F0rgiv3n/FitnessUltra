@@ -156,11 +156,11 @@ class RunFragment : Fragment() {
         if (config is WorkoutConfig.Intervals) {
             intervalJob?.cancel()
             intervalJob = viewLifecycleOwner.lifecycleScope.launch {
-                repeat(config.reps) { rep ->
-                    if (!isActive) return@launch
+                repeat(config.reps) {
+                    if (!this.isActive) return@launch
                     speakTts(getString(R.string.tts_start_running, config.runSeconds))
                     waitActiveSeconds(config.runSeconds)
-                    if (!isActive) return@launch
+                    if (!this.isActive) return@launch
                     speakTts(getString(R.string.tts_start_walking, config.walkSeconds))
                     waitActiveSeconds(config.walkSeconds)
                 }
