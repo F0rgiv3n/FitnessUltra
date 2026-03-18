@@ -3,6 +3,7 @@ package com.fitnessultra.ui.settings
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -24,6 +25,20 @@ class SettingsFragment : PreferenceFragmentCompat() {
         // Apply theme immediately when changed
         findPreference<ListPreference>("pref_theme")?.setOnPreferenceChangeListener { _, newValue ->
             applyTheme(newValue as String)
+            true
+        }
+
+        // Sync language selector to current app locale
+        val currentLocale = AppCompatDelegate.getApplicationLocales()
+        if (!currentLocale.isEmpty) {
+            findPreference<ListPreference>("pref_language")?.value = currentLocale[0]?.language
+        }
+
+        // Apply language immediately when changed
+        findPreference<ListPreference>("pref_language")?.setOnPreferenceChangeListener { _, newValue ->
+            AppCompatDelegate.setApplicationLocales(
+                LocaleListCompat.forLanguageTags(newValue as String)
+            )
             true
         }
     }

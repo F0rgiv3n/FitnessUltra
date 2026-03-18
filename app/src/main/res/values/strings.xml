@@ -27,6 +27,19 @@
     <color name="routeGray">#BDBDBD</color>
 
     <!-- Settings arrays -->
+    <string-array name="pref_language_entries">
+        <item>English</item>
+        <item>Ελληνικά</item>
+        <item>Español</item>
+        <item>Deutsch</item>
+    </string-array>
+    <string-array name="pref_language_values">
+        <item>en</item>
+        <item>el</item>
+        <item>es</item>
+        <item>de</item>
+    </string-array>
+
     <string-array name="pref_distance_entries">
         <item>Kilometers (km)</item>
         <item>Miles (mi)</item>

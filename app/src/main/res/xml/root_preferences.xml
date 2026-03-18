@@ -58,6 +58,15 @@
             android:defaultValue="system"
             app:useSimpleSummaryProvider="false" />
 
+        <ListPreference
+            android:key="pref_language"
+            android:title="Language"
+            android:summary="%s"
+            android:entries="@array/pref_language_entries"
+            android:entryValues="@array/pref_language_values"
+            android:defaultValue="en"
+            app:useSimpleSummaryProvider="false" />
+
     </PreferenceCategory>
 
     <!-- About -->
