@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -44,6 +45,7 @@ class ReplayFragment : Fragment() {
     private var isPlaying = false
     private var speedMultiplier = 1f
     private var replayJob: Job? = null
+    private var isScrubbing = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentReplayBinding.inflate(inflater, container, false)
@@ -93,10 +95,34 @@ class ReplayFragment : Fragment() {
             setupOverlays()
             fitMapToRoute()
             updateStatsAt(0)
+            binding.seekBar.max = points.size - 1
+            binding.seekBar.progress = 0
             binding.btnPlayPause.isEnabled = true
         }
 
         binding.btnPlayPause.setOnClickListener { togglePlayPause() }
+
+        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            private var wasPlaying = false
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                wasPlaying = isPlaying
+                if (isPlaying) pauseReplay()
+                isScrubbing = true
+            }
+
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    currentIndex = progress
+                    updatePositionAt(currentIndex)
+                }
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                isScrubbing = false
+                if (wasPlaying) startReplay()
+            }
+        })
         binding.btn1x.setOnClickListener  { setSpeed(1f) }
         binding.btn2x.setOnClickListener  { setSpeed(2f) }
         binding.btn5x.setOnClickListener  { setSpeed(5f) }
@@ -187,6 +213,7 @@ class ReplayFragment : Fragment() {
         )
         binding.replayMapView.controller.animateTo(geoPoint)
         binding.replayMapView.invalidate()
+        if (!isScrubbing) binding.seekBar.progress = index
         updateStatsAt(index)
     }
 
