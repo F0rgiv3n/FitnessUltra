@@ -56,6 +56,25 @@
     <string name="steps_period_weeks">4 semanas</string>
     <string name="steps_period_months">6 meses</string>
 
+    <!-- Workout setup -->
+    <string name="workout_setup_title">Configurar entrenamiento</string>
+    <string name="workout_type_free">Carrera libre</string>
+    <string name="workout_type_intervals">Entrenamiento por intervalos</string>
+    <string name="workout_type_target_pace">Ritmo objetivo</string>
+    <string name="interval_run_time_hint">Correr (seg)</string>
+    <string name="interval_walk_time_hint">Caminar (seg)</string>
+    <string name="interval_reps_hint">Repeticiones</string>
+    <string name="target_pace_label">Ritmo objetivo (por %1$s)</string>
+    <string name="target_pace_min_hint">Min</string>
+    <string name="target_pace_sec_hint">Seg</string>
+    <string name="btn_start_workout">Iniciar</string>
+    <string name="tts_start_running">Empieza a correr, %1$d segundos</string>
+    <string name="tts_start_walking">Empieza a caminar, %1$d segundos</string>
+    <string name="tts_workout_complete">Entrenamiento completado</string>
+    <string name="tts_pace_too_slow">Muy lento, acelera</string>
+    <string name="tts_pace_too_fast">Muy rápido, reduce el ritmo</string>
+    <string name="elevation_gain_format">+%.0f m</string>
+
     <!-- Weight dialogs & validation -->
     <string name="btn_delete">Eliminar</string>
     <string name="btn_save">Guardar</string>

@@ -55,24 +55,51 @@
                 android:textStyle="bold" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:layout_gravity="center"
+                android:orientation="horizontal"
                 android:layout_marginTop="8dp">
-                <TextView
-                    android:layout_width="wrap_content"
+
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/label_steps"
-                    android:textSize="13sp" />
-                <TextView
-                    android:id="@+id/tvSteps"
-                    android:layout_width="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_steps"
+                        android:textSize="12sp" />
+                    <TextView
+                        android:id="@+id/tvSteps"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textSize="28sp"
-                    android:textStyle="bold" />
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_elevation"
+                        android:textSize="12sp" />
+                    <TextView
+                        android:id="@+id/tvElevation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+0 m"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
             </LinearLayout>
 
             <LinearLayout

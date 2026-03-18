@@ -56,6 +56,25 @@
     <string name="steps_period_weeks">4 εβδομάδες</string>
     <string name="steps_period_months">6 μήνες</string>
 
+    <!-- Workout setup -->
+    <string name="workout_setup_title">Ρύθμιση προπόνησης</string>
+    <string name="workout_type_free">Ελεύθερο τρέξιμο</string>
+    <string name="workout_type_intervals">Διαλειμματική προπόνηση</string>
+    <string name="workout_type_target_pace">Στόχος ρυθμού</string>
+    <string name="interval_run_time_hint">Τρέξιμο (δλ)</string>
+    <string name="interval_walk_time_hint">Βάδισμα (δλ)</string>
+    <string name="interval_reps_hint">Επαναλήψεις</string>
+    <string name="target_pace_label">Στόχος ρυθμού (ανά %1$s)</string>
+    <string name="target_pace_min_hint">Λεπτά</string>
+    <string name="target_pace_sec_hint">Δλ</string>
+    <string name="btn_start_workout">Εκκίνηση</string>
+    <string name="tts_start_running">Ξεκίνα τρέχοντας, %1$d δευτερόλεπτα</string>
+    <string name="tts_start_walking">Ξεκίνα βαδίζοντας, %1$d δευτερόλεπτα</string>
+    <string name="tts_workout_complete">Η προπόνηση ολοκληρώθηκε</string>
+    <string name="tts_pace_too_slow">Πολύ αργά, επίταξε</string>
+    <string name="tts_pace_too_fast">Πολύ γρήγορα, επιβράδυνε</string>
+    <string name="elevation_gain_format">+%.0f m</string>
+
     <!-- Weight dialogs & validation -->
     <string name="btn_delete">Διαγραφή</string>
     <string name="btn_save">Αποθήκευση</string>

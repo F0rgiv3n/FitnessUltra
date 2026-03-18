@@ -17,6 +17,7 @@ import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColorInt
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +26,7 @@ import com.fitnessultra.databinding.FragmentRunBinding
 import com.fitnessultra.service.TrackingService
 import com.fitnessultra.util.SettingsManager
 import com.fitnessultra.util.TrackingUtils
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
@@ -43,6 +45,11 @@ class RunFragment : Fragment() {
 
     private lateinit var tts: TextToSpeech
     private var lastVoiceKm = 0
+
+    private var workoutConfig: WorkoutConfig = WorkoutConfig.FreeRun
+    private var intervalJob: Job? = null
+    private var lastPaceAlertMs = 0L
+    private val PACE_ALERT_COOLDOWN_MS = 30_000L
 
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -87,22 +94,39 @@ class RunFragment : Fragment() {
         binding.btnToggleRun.setOnClickListener {
             if (isTracking) {
                 viewModel.sendCommand(TrackingService.ACTION_PAUSE)
-            } else {
+            } else if ((viewModel.timeRunInMillis.value ?: 0L) > 0L) {
+                // Resuming from pause — no setup dialog
                 requestPermissionsAndStart()
+            } else {
+                // Fresh start — show workout setup
+                showWorkoutSetup()
             }
         }
 
         binding.btnStopRun.setOnClickListener {
+            intervalJob?.cancel()
+            intervalJob = null
+            workoutConfig = WorkoutConfig.FreeRun
+            lastVoiceKm = 0
+            lastPaceAlertMs = 0L
             val weightKg = getUserWeight()
             val gender = SettingsManager.gender(requireContext())
             viewModel.saveRun(weightKg, gender)
             viewModel.sendCommand(TrackingService.ACTION_STOP)
             routePolyline?.setPoints(emptyList())
             binding.mapView.invalidate()
-            lastVoiceKm = 0
         }
 
         observeTracking()
+    }
+
+    private fun showWorkoutSetup() {
+        WorkoutSetupBottomSheet().apply {
+            onStart = { config ->
+                workoutConfig = config
+                requestPermissionsAndStart()
+            }
+        }.show(parentFragmentManager, "workout_setup")
     }
 
     private fun applyMapStyle() {
@@ -112,6 +136,7 @@ class RunFragment : Fragment() {
     private fun startCountdownAndRun() {
         if (!SettingsManager.isCountdownEnabled(requireContext())) {
             viewModel.sendCommand(TrackingService.ACTION_START_OR_RESUME)
+            startWorkoutLogic()
             return
         }
         binding.tvCountdown.visibility = View.VISIBLE
@@ -122,6 +147,34 @@ class RunFragment : Fragment() {
             }
             binding.tvCountdown.visibility = View.GONE
             viewModel.sendCommand(TrackingService.ACTION_START_OR_RESUME)
+            startWorkoutLogic()
+        }
+    }
+
+    private fun startWorkoutLogic() {
+        val config = workoutConfig
+        if (config is WorkoutConfig.Intervals) {
+            intervalJob?.cancel()
+            intervalJob = viewLifecycleOwner.lifecycleScope.launch {
+                repeat(config.reps) { rep ->
+                    if (!isActive) return@launch
+                    speakTts(getString(R.string.tts_start_running, config.runSeconds))
+                    waitActiveSeconds(config.runSeconds)
+                    if (!isActive) return@launch
+                    speakTts(getString(R.string.tts_start_walking, config.walkSeconds))
+                    waitActiveSeconds(config.walkSeconds)
+                }
+                speakTts(getString(R.string.tts_workout_complete))
+            }
+        }
+    }
+
+    /** Waits [totalSeconds] of active (non-paused) tracking time. */
+    private suspend fun waitActiveSeconds(totalSeconds: Int) {
+        var elapsed = 0
+        while (elapsed < totalSeconds) {
+            delay(1000L)
+            if (viewModel.isTracking.value == true) elapsed++
         }
     }
 
@@ -149,7 +202,9 @@ class RunFragment : Fragment() {
             val useMiles = SettingsManager.useMiles(requireContext())
             binding.tvDistance.text = TrackingUtils.formatDistance(meters, useMiles)
             val durationMs = viewModel.timeRunInMillis.value ?: 0L
-            binding.tvPace.text = TrackingUtils.calculatePace(meters, durationMs, useMiles)
+            val paceStr = TrackingUtils.calculatePace(meters, durationMs, useMiles)
+            binding.tvPace.text = paceStr
+            checkTargetPace(meters, durationMs, useMiles)
         }
 
         viewModel.currentSpeedKmh.observe(viewLifecycleOwner) { kmh ->
@@ -158,6 +213,35 @@ class RunFragment : Fragment() {
 
         viewModel.stepCount.observe(viewLifecycleOwner) { steps ->
             binding.tvSteps.text = (steps ?: 0).toString()
+        }
+
+        viewModel.elevationGainMeters.observe(viewLifecycleOwner) { gain ->
+            binding.tvElevation.text = getString(R.string.elevation_gain_format, gain ?: 0f)
+        }
+    }
+
+    private fun checkTargetPace(meters: Float, durationMs: Long, useMiles: Boolean) {
+        val config = workoutConfig as? WorkoutConfig.TargetPace ?: return
+        if (meters < 500f) return  // wait for meaningful distance
+        val now = System.currentTimeMillis()
+        if (now - lastPaceAlertMs < PACE_ALERT_COOLDOWN_MS) return
+
+        val currentPaceSec = TrackingUtils.calculatePaceSec(meters, durationMs, useMiles)
+        val diff = currentPaceSec - config.paceSecPerUnit
+        when {
+            diff > config.toleranceSec -> {
+                speakTts(getString(R.string.tts_pace_too_slow))
+                binding.tvPace.setTextColor("#D32F2F".toColorInt())
+                lastPaceAlertMs = now
+            }
+            diff < -config.toleranceSec -> {
+                speakTts(getString(R.string.tts_pace_too_fast))
+                binding.tvPace.setTextColor("#1565C0".toColorInt())
+                lastPaceAlertMs = now
+            }
+            else -> binding.tvPace.setTextColor(
+                requireContext().getColor(android.R.color.tab_indicator_text)
+            )
         }
     }
 
@@ -176,13 +260,12 @@ class RunFragment : Fragment() {
             val kmAnnounced = milestonePassed * freqKm
             val durationMs = viewModel.timeRunInMillis.value ?: 0L
             val paceStr = TrackingUtils.calculatePace(kmAnnounced * 1000f, durationMs)
-            tts.speak(
-                "$kmAnnounced kilometer completed – pace $paceStr",
-                TextToSpeech.QUEUE_ADD,
-                null,
-                null
-            )
+            speakTts("$kmAnnounced kilometer completed – pace $paceStr")
         }
+    }
+
+    private fun speakTts(text: String) {
+        tts.speak(text, TextToSpeech.QUEUE_ADD, null, null)
     }
 
     private fun requestPermissionsAndStart() {
@@ -201,11 +284,8 @@ class RunFragment : Fragment() {
             ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
         }
 
-        if (allGranted) {
-            startCountdownAndRun()
-        } else {
-            locationPermissionLauncher.launch(permissions.toTypedArray())
-        }
+        if (allGranted) startCountdownAndRun()
+        else locationPermissionLauncher.launch(permissions.toTypedArray())
     }
 
     private fun promptBatteryOptimizationIfNeeded() {
@@ -214,7 +294,6 @@ class RunFragment : Fragment() {
         val pkg = requireContext().packageName
         if (pm.isIgnoringBatteryOptimizations(pkg)) return
 
-        // Show only once per install
         val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         if (prefs.getBoolean("battery_opt_asked", false)) return
         prefs.edit().putBoolean("battery_opt_asked", true).apply()
@@ -252,6 +331,7 @@ class RunFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        intervalJob?.cancel()
         tts.shutdown()
         _binding = null
         super.onDestroyView()

@@ -53,6 +53,15 @@ object TrackingUtils {
         return "%d:%02d / $label".format(paceMin, paceSec)
     }
 
+    /** Returns current pace in seconds per unit (km or mi), or Int.MAX_VALUE if no movement. */
+    fun calculatePaceSec(distanceMeters: Float, durationMillis: Long, useMiles: Boolean = false): Int {
+        if (distanceMeters <= 0f || durationMillis <= 0L) return Int.MAX_VALUE
+        val unitMeters = if (useMiles) METERS_PER_MILE else 1000f
+        val distanceUnits = distanceMeters / unitMeters
+        val durationMinutes = durationMillis / 1000f / 60f
+        return ((durationMinutes / distanceUnits) * 60f).toInt()
+    }
+
     /** Calories with gender-specific MET factor. Male≈1.036, Female≈0.945, unknown≈1.036 */
     fun calculateCalories(distanceMeters: Float, weightKg: Float, gender: String = "none"): Int {
         val factor = if (gender == "female") 0.945f else 1.036f
