@@ -30,7 +30,8 @@ A personal Android fitness tracking app built with Kotlin. Track outdoor runs wi
 ### Run Replay
 - Animated playback of your GPS route on a map
 - Adjustable speed: 1× / 2× / 5× / 10×
-- Live stats (time, distance, speed) during playback
+- Scrubber bar — drag to jump to any point in the route
+- Live stats (time, distance, speed) update while scrubbing
 
 ### Goals
 - Weekly targets for distance, time, and steps
@@ -122,5 +123,4 @@ ACTIVITY_RECOGNITION
 
 ## Roadmap
 
-- [ ] Replay scrubber (progress bar to jump to any point)
 - [ ] Supabase integration (optional cloud sync, leaderboards)
