@@ -8,8 +8,16 @@
         "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/layout/fragment_charts.xml"
     },
     {
-        "merged": "com.fitnessultra.app-debug-56:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "com.fitnessultra.app-main-58:/mipmap-anydpi-v26/ic_launcher_round.xml"
+        "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-debug-56:/drawable-v24_ic_launcher_round.xml.flat",
+        "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/drawable-v24/ic_launcher_round.xml"
+    },
+    {
+        "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-debug-56:/drawable-v24_ic_launcher.xml.flat",
+        "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/drawable-v24/ic_launcher.xml"
+    },
+    {
+        "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-debug-56:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/mipmap-anydpi-v26/ic_launcher.xml"
     },
     {
         "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-debug-56:/layout_activity_main.xml.flat",
@@ -28,10 +36,6 @@
         "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/layout/fragment_weight.xml"
     },
     {
-        "merged": "com.fitnessultra.app-debug-56:/drawable-v24_ic_launcher_round.xml.flat",
-        "source": "com.fitnessultra.app-main-58:/drawable-v24/ic_launcher_round.xml"
-    },
-    {
         "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-debug-56:/layout_item_run.xml.flat",
         "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/layout/item_run.xml"
     },
@@ -40,32 +44,32 @@
         "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/drawable/ic_history.xml"
     },
     {
-        "merged": "com.fitnessultra.app-debug-56:/drawable-v24_ic_launcher.xml.flat",
-        "source": "com.fitnessultra.app-main-58:/drawable-v24/ic_launcher.xml"
-    },
-    {
         "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-debug-56:/drawable_ic_run.xml.flat",
         "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/drawable/ic_run.xml"
     },
     {
-        "merged": "com.fitnessultra.app-debug-56:/mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "com.fitnessultra.app-main-58:/mipmap-anydpi-v26/ic_launcher.xml"
-    },
-    {
-        "merged": "com.fitnessultra.app-debug-56:/drawable_ic_launcher_foreground.xml.flat",
-        "source": "com.fitnessultra.app-main-58:/drawable/ic_launcher_foreground.xml"
+        "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-debug-56:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/mipmap-anydpi-v26/ic_launcher_round.xml"
     },
     {
         "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-debug-56:/navigation_nav_graph.xml.flat",
         "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/navigation/nav_graph.xml"
     },
     {
-        "merged": "com.fitnessultra.app-debug-56:/drawable_ic_launcher_background.xml.flat",
-        "source": "com.fitnessultra.app-main-58:/drawable/ic_launcher_background.xml"
+        "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-debug-56:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/drawable/ic_launcher_foreground.xml"
     },
     {
         "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-debug-56:/drawable_ic_weight.xml.flat",
         "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/drawable/ic_weight.xml"
+    },
+    {
+        "merged": "com.fitnessultra.app-debug-56:/layout_fragment_weight.xml.flat",
+        "source": "com.fitnessultra.app-main-58:/layout/fragment_weight.xml"
+    },
+    {
+        "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-debug-56:/drawable_ic_launcher_background.xml.flat",
+        "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/drawable/ic_launcher_background.xml"
     },
     {
         "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-debug-56:/menu_bottom_nav_menu.xml.flat",

@@ -4,6 +4,7 @@ package com.fitnessultra.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -11,7 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import com.fitnessultra.R;
-import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.LineChart;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import java.lang.NullPointerException;
@@ -23,28 +24,60 @@ public final class FragmentWeightBinding implements ViewBinding {
   private final ScrollView rootView;
 
   @NonNull
+  public final MaterialButton btnSaveInfo;
+
+  @NonNull
   public final MaterialButton btnSaveWeight;
 
   @NonNull
-  public final BarChart chartWeight;
+  public final LineChart chartBmi;
+
+  @NonNull
+  public final LineChart chartWeight;
+
+  @NonNull
+  public final TextInputEditText etAge;
+
+  @NonNull
+  public final TextInputEditText etHeight;
 
   @NonNull
   public final TextInputEditText etWeight;
 
   @NonNull
-  public final TextView tvBmi;
+  public final LinearLayout layoutBmiCurrent;
+
+  @NonNull
+  public final TextView tvBmiCategory;
+
+  @NonNull
+  public final TextView tvBmiChartNote;
+
+  @NonNull
+  public final TextView tvCurrentBmi;
 
   @NonNull
   public final TextView tvWeightDiff;
 
-  private FragmentWeightBinding(@NonNull ScrollView rootView, @NonNull MaterialButton btnSaveWeight,
-      @NonNull BarChart chartWeight, @NonNull TextInputEditText etWeight, @NonNull TextView tvBmi,
+  private FragmentWeightBinding(@NonNull ScrollView rootView, @NonNull MaterialButton btnSaveInfo,
+      @NonNull MaterialButton btnSaveWeight, @NonNull LineChart chartBmi,
+      @NonNull LineChart chartWeight, @NonNull TextInputEditText etAge,
+      @NonNull TextInputEditText etHeight, @NonNull TextInputEditText etWeight,
+      @NonNull LinearLayout layoutBmiCurrent, @NonNull TextView tvBmiCategory,
+      @NonNull TextView tvBmiChartNote, @NonNull TextView tvCurrentBmi,
       @NonNull TextView tvWeightDiff) {
     this.rootView = rootView;
+    this.btnSaveInfo = btnSaveInfo;
     this.btnSaveWeight = btnSaveWeight;
+    this.chartBmi = chartBmi;
     this.chartWeight = chartWeight;
+    this.etAge = etAge;
+    this.etHeight = etHeight;
     this.etWeight = etWeight;
-    this.tvBmi = tvBmi;
+    this.layoutBmiCurrent = layoutBmiCurrent;
+    this.tvBmiCategory = tvBmiCategory;
+    this.tvBmiChartNote = tvBmiChartNote;
+    this.tvCurrentBmi = tvCurrentBmi;
     this.tvWeightDiff = tvWeightDiff;
   }
 
@@ -75,15 +108,39 @@ public final class FragmentWeightBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.btnSaveInfo;
+      MaterialButton btnSaveInfo = ViewBindings.findChildViewById(rootView, id);
+      if (btnSaveInfo == null) {
+        break missingId;
+      }
+
       id = R.id.btnSaveWeight;
       MaterialButton btnSaveWeight = ViewBindings.findChildViewById(rootView, id);
       if (btnSaveWeight == null) {
         break missingId;
       }
 
+      id = R.id.chartBmi;
+      LineChart chartBmi = ViewBindings.findChildViewById(rootView, id);
+      if (chartBmi == null) {
+        break missingId;
+      }
+
       id = R.id.chartWeight;
-      BarChart chartWeight = ViewBindings.findChildViewById(rootView, id);
+      LineChart chartWeight = ViewBindings.findChildViewById(rootView, id);
       if (chartWeight == null) {
+        break missingId;
+      }
+
+      id = R.id.etAge;
+      TextInputEditText etAge = ViewBindings.findChildViewById(rootView, id);
+      if (etAge == null) {
+        break missingId;
+      }
+
+      id = R.id.etHeight;
+      TextInputEditText etHeight = ViewBindings.findChildViewById(rootView, id);
+      if (etHeight == null) {
         break missingId;
       }
 
@@ -93,9 +150,27 @@ public final class FragmentWeightBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.tvBmi;
-      TextView tvBmi = ViewBindings.findChildViewById(rootView, id);
-      if (tvBmi == null) {
+      id = R.id.layoutBmiCurrent;
+      LinearLayout layoutBmiCurrent = ViewBindings.findChildViewById(rootView, id);
+      if (layoutBmiCurrent == null) {
+        break missingId;
+      }
+
+      id = R.id.tvBmiCategory;
+      TextView tvBmiCategory = ViewBindings.findChildViewById(rootView, id);
+      if (tvBmiCategory == null) {
+        break missingId;
+      }
+
+      id = R.id.tvBmiChartNote;
+      TextView tvBmiChartNote = ViewBindings.findChildViewById(rootView, id);
+      if (tvBmiChartNote == null) {
+        break missingId;
+      }
+
+      id = R.id.tvCurrentBmi;
+      TextView tvCurrentBmi = ViewBindings.findChildViewById(rootView, id);
+      if (tvCurrentBmi == null) {
         break missingId;
       }
 
@@ -105,8 +180,9 @@ public final class FragmentWeightBinding implements ViewBinding {
         break missingId;
       }
 
-      return new FragmentWeightBinding((ScrollView) rootView, btnSaveWeight, chartWeight, etWeight,
-          tvBmi, tvWeightDiff);
+      return new FragmentWeightBinding((ScrollView) rootView, btnSaveInfo, btnSaveWeight, chartBmi,
+          chartWeight, etAge, etHeight, etWeight, layoutBmiCurrent, tvBmiCategory, tvBmiChartNote,
+          tvCurrentBmi, tvWeightDiff);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

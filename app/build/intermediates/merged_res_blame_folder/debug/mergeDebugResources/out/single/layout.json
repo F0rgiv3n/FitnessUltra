@@ -4,23 +4,27 @@
         "source": "com.fitnessultra.app-main-58:/layout/fragment_weight.xml"
     },
     {
-        "merged": "com.fitnessultra.app-mergeDebugResources-55:/layout/item_run.xml",
-        "source": "com.fitnessultra.app-main-58:/layout/item_run.xml"
+        "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-mergeDebugResources-55:/layout/item_run.xml",
+        "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/layout/item_run.xml"
     },
     {
-        "merged": "com.fitnessultra.app-mergeDebugResources-55:/layout/fragment_history.xml",
-        "source": "com.fitnessultra.app-main-58:/layout/fragment_history.xml"
+        "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-mergeDebugResources-55:/layout/fragment_run.xml",
+        "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/layout/fragment_run.xml"
     },
     {
-        "merged": "com.fitnessultra.app-mergeDebugResources-55:/layout/activity_main.xml",
-        "source": "com.fitnessultra.app-main-58:/layout/activity_main.xml"
+        "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-mergeDebugResources-55:/layout/fragment_history.xml",
+        "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/layout/fragment_history.xml"
     },
     {
-        "merged": "com.fitnessultra.app-mergeDebugResources-55:/layout/fragment_charts.xml",
-        "source": "com.fitnessultra.app-main-58:/layout/fragment_charts.xml"
+        "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-mergeDebugResources-55:/layout/activity_main.xml",
+        "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/layout/activity_main.xml"
     },
     {
-        "merged": "com.fitnessultra.app-mergeDebugResources-55:/layout/fragment_run.xml",
-        "source": "com.fitnessultra.app-main-58:/layout/fragment_run.xml"
+        "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-mergeDebugResources-55:/layout/fragment_weight.xml",
+        "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/layout/fragment_weight.xml"
+    },
+    {
+        "merged": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-mergeDebugResources-55:/layout/fragment_charts.xml",
+        "source": "/home/currahee/.gradle/daemon/8.4/com.fitnessultra.app-main-58:/layout/fragment_charts.xml"
     }
 ]

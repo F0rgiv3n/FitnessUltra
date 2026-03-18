@@ -13,7 +13,7 @@
     <string name="nav_charts">Charts</string>
     <string name="nav_history">History</string>
     <string name="nav_run">Run</string>
-    <string name="nav_weight">Weight</string>
+    <string name="nav_weight">User Info</string>
     <style name="Theme.FitnessUltra" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>

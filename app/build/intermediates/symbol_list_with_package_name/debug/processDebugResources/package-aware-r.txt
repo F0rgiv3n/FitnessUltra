@@ -3302,6 +3302,7 @@ id bounce
 id bounceBoth
 id bounceEnd
 id bounceStart
+id btnSaveInfo
 id btnSaveWeight
 id btnStopRun
 id btnToggleRun
@@ -3323,6 +3324,7 @@ id center_vertical
 id chain
 id chain2
 id chains
+id chartBmi
 id chartElevation
 id chartPace
 id chartSpeed
@@ -3397,6 +3399,8 @@ id end
 id endToStart
 id enterAlways
 id enterAlwaysCollapsed
+id etAge
+id etHeight
 id etWeight
 id exitUntilCollapsed
 id expand_activities_button
@@ -3453,6 +3457,7 @@ id jumpToEnd
 id jumpToStart
 id labeled
 id layout
+id layoutBmiCurrent
 id left
 id leftToRight
 id legacy
@@ -3710,8 +3715,10 @@ id transition_scene_layoutid_cache
 id transition_transform
 id triangle
 id tvAvgSpeed
-id tvBmi
+id tvBmiCategory
+id tvBmiChartNote
 id tvCalories
+id tvCurrentBmi
 id tvDate
 id tvDistance
 id tvDuration
