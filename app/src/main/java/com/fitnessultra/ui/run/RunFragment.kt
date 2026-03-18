@@ -28,6 +28,7 @@ import com.fitnessultra.util.SettingsManager
 import com.fitnessultra.util.TrackingUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
