@@ -13,6 +13,7 @@ import android.hardware.SensorManager
 import android.location.Location
 import android.os.Build
 import android.os.Looper
+import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
@@ -52,6 +53,8 @@ class TrackingService : LifecycleService() {
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
+
+    private var wakeLock: PowerManager.WakeLock? = null
 
     private var timeStarted = 0L
     private var timeRun = 0L
@@ -97,12 +100,14 @@ class TrackingService : LifecycleService() {
         intent?.action?.let { action ->
             when (action) {
                 ACTION_START_OR_RESUME -> {
+                    acquireWakeLock()
                     startForegroundService()
                     isTracking.postValue(true)
                     startTimer()
                     startStepCounter()
                 }
                 ACTION_PAUSE -> {
+                    releaseWakeLock()
                     isTracking.postValue(false)
                     timerJob?.cancel()
                     timeRun += System.currentTimeMillis() - timeStarted
@@ -110,6 +115,7 @@ class TrackingService : LifecycleService() {
                     stopStepCounter()
                 }
                 ACTION_STOP -> {
+                    releaseWakeLock()
                     isTracking.postValue(false)
                     timerJob?.cancel()
                     stopStepCounter()
@@ -245,8 +251,20 @@ class TrackingService : LifecycleService() {
         stepSensorListener = null
     }
 
+    private fun acquireWakeLock() {
+        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "FitnessUltra::TrackingWakeLock")
+        wakeLock?.acquire(6 * 60 * 60 * 1000L) // max 6 hours
+    }
+
+    private fun releaseWakeLock() {
+        if (wakeLock?.isHeld == true) wakeLock?.release()
+        wakeLock = null
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+        releaseWakeLock()
         serviceJob.cancel()
         stopStepCounter()
     }

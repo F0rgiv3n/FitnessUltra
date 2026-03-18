@@ -1,14 +1,20 @@
 package com.fitnessultra.ui.run
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
+import android.provider.Settings
 import android.speech.tts.TextToSpeech
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -68,6 +74,8 @@ class RunFragment : Fragment() {
         tts = TextToSpeech(requireContext()) { status ->
             if (status == TextToSpeech.SUCCESS) tts.language = Locale.US
         }
+
+        promptBatteryOptimizationIfNeeded()
 
         binding.btnToggleRun.setOnClickListener {
             if (isTracking) {
@@ -170,6 +178,29 @@ class RunFragment : Fragment() {
         } else {
             locationPermissionLauncher.launch(permissions.toTypedArray())
         }
+    }
+
+    private fun promptBatteryOptimizationIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
+        val pm = requireContext().getSystemService(Context.POWER_SERVICE) as PowerManager
+        val pkg = requireContext().packageName
+        if (pm.isIgnoringBatteryOptimizations(pkg)) return
+
+        // Show only once per install
+        val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        if (prefs.getBoolean("battery_opt_asked", false)) return
+        prefs.edit().putBoolean("battery_opt_asked", true).apply()
+
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.battery_opt_title))
+            .setMessage(getString(R.string.battery_opt_message))
+            .setPositiveButton(getString(R.string.battery_opt_open)) { _, _ ->
+                startActivity(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                    data = Uri.parse("package:$pkg")
+                })
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     private fun getUserWeight(): Float {

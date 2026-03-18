@@ -21,6 +21,9 @@
     <!-- Run screen -->
     <string name="btn_start">ΕΚΚΙΝΗΣΗ</string>
     <string name="btn_finish">ΤΕΛΟΣ</string>
+    <string name="battery_opt_title">Παρακολούθηση στο background</string>
+    <string name="battery_opt_message">Για να συνεχίσει η παρακολούθηση όταν η οθόνη είναι κλειστή, επίτρεψε στο FitnessUltra να τρέχει χωρίς περιορισμούς μπαταρίας.</string>
+    <string name="battery_opt_open">Άνοιγμα ρυθμίσεων</string>
 
     <!-- History screen -->
     <string name="title_steps_history">Ιστορικό Βημάτων</string>
