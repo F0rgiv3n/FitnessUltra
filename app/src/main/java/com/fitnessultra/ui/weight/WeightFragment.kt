@@ -2,6 +2,7 @@ package com.fitnessultra.ui.weight
 
 import androidx.core.graphics.toColorInt
 import android.os.Bundle
+import com.fitnessultra.R
 import com.fitnessultra.util.SettingsManager
 import android.view.LayoutInflater
 import android.view.View
