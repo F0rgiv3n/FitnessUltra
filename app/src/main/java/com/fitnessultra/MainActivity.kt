@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     // Top-level destinations — no back arrow, settings icon visible
     private val topLevelDestinations = setOf(
-        R.id.runFragment, R.id.historyFragment, R.id.weightFragment
+        R.id.runFragment, R.id.historyFragment, R.id.goalsFragment, R.id.weightFragment
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

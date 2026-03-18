@@ -17,6 +17,9 @@ interface RunDao {
     @Query("SELECT * FROM runs ORDER BY dateTimestamp DESC")
     fun getAllRuns(): Flow<List<RunEntity>>
 
+    @Query("SELECT * FROM runs WHERE dateTimestamp >= :since ORDER BY dateTimestamp DESC")
+    fun getRunsSince(since: Long): Flow<List<RunEntity>>
+
     @Query("SELECT * FROM runs WHERE id = :runId")
     suspend fun getRunById(runId: Long): RunEntity?
 

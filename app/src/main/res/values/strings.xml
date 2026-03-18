@@ -81,6 +81,27 @@
     <string name="pref_category_about">About</string>
     <string name="pref_version_title">Version</string>
 
+    <!-- Goals screen -->
+    <string name="nav_goals">Goals</string>
+    <string name="goal_week_label">%1$s – %2$s</string>
+    <string name="goal_distance_title">Weekly Distance</string>
+    <string name="goal_time_title">Weekly Time</string>
+    <string name="goal_steps_title">Weekly Steps</string>
+    <string name="goal_progress_km">%.1f / %.1f km</string>
+    <string name="goal_progress_min">%1$d / %2$d min</string>
+    <string name="goal_progress_steps">%1$s / %2$s steps</string>
+    <string name="goal_edit_distance_title">Set distance goal</string>
+    <string name="goal_edit_distance_hint">km per week</string>
+    <string name="goal_edit_time_title">Set time goal</string>
+    <string name="goal_edit_time_hint">minutes per week</string>
+    <string name="goal_edit_steps_title">Set steps goal</string>
+    <string name="goal_edit_steps_hint">steps per week</string>
+    <string name="cd_edit_goal">Edit goal</string>
+    <string-array name="week_day_names">
+        <item>Mon</item><item>Tue</item><item>Wed</item>
+        <item>Thu</item><item>Fri</item><item>Sat</item><item>Sun</item>
+    </string-array>
+
     <!-- Route gray color -->
     <color name="routeGray">#BDBDBD</color>
 

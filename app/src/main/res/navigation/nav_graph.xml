@@ -39,6 +39,11 @@
         android:label="Weight" />
 
     <fragment
+        android:id="@+id/goalsFragment"
+        android:name="com.fitnessultra.ui.goals.GoalsFragment"
+        android:label="Goals" />
+
+    <fragment
         android:id="@+id/settingsFragment"
         android:name="com.fitnessultra.ui.settings.SettingsFragment"
         android:label="Settings" />

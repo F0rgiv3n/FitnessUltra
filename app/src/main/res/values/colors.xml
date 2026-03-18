@@ -9,4 +9,6 @@
     <color name="colorBackground">#FFFFFFFF</color>
     <color name="red">#FFE53935</color>
     <color name="green">#FF43A047</color>
+    <color name="goalComplete">#FF388E3C</color>
+    <color name="goalLow">#FFBDBDBD</color>
 </resources>
