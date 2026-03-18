@@ -110,13 +110,14 @@ class RunFragment : Fragment() {
         }
 
         viewModel.totalDistanceMeters.observe(viewLifecycleOwner) { meters ->
-            binding.tvDistance.text = TrackingUtils.formatDistance(meters)
+            val useMiles = SettingsManager.useMiles(requireContext())
+            binding.tvDistance.text = TrackingUtils.formatDistance(meters, useMiles)
             val durationMs = viewModel.timeRunInMillis.value ?: 0L
-            binding.tvPace.text = TrackingUtils.calculatePace(meters, durationMs)
+            binding.tvPace.text = TrackingUtils.calculatePace(meters, durationMs, useMiles)
         }
 
         viewModel.currentSpeedKmh.observe(viewLifecycleOwner) { kmh ->
-            binding.tvSpeed.text = TrackingUtils.formatSpeedKmh(kmh)
+            binding.tvSpeed.text = TrackingUtils.formatSpeedKmh(kmh, SettingsManager.useMiles(requireContext()))
         }
 
         viewModel.stepCount.observe(viewLifecycleOwner) { steps ->

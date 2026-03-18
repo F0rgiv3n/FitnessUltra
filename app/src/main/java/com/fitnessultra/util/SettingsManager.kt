@@ -17,6 +17,8 @@ object SettingsManager {
         PreferenceManager.getDefaultSharedPreferences(context)
             .getString("pref_distance_unit", "km") ?: "km"
 
+    fun useMiles(context: Context): Boolean = distanceUnit(context) == "mi"
+
     fun weightUnit(context: Context): String =
         PreferenceManager.getDefaultSharedPreferences(context)
             .getString("pref_weight_unit", "kg") ?: "kg"

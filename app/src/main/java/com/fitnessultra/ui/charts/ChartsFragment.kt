@@ -13,6 +13,7 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.fitnessultra.R
 import com.fitnessultra.databinding.FragmentChartsBinding
+import com.fitnessultra.util.SettingsManager
 import com.fitnessultra.util.TrackingUtils
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -41,12 +42,16 @@ class ChartsFragment : Fragment() {
             findNavController().navigate(R.id.action_chartsFragment_to_replayFragment, bundle)
         }
 
+        val useMiles = SettingsManager.useMiles(requireContext())
+        val speedLabel = "Speed (${TrackingUtils.speedUnitLabel(useMiles)})"
+        val paceLabel  = "Pace (min/${TrackingUtils.distanceUnitLabel(useMiles)})"
+
         lifecycleScope.launch {
             val run = viewModel.getRunById(runId)
             if (run != null) {
                 val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
                 binding.tvRunDate.text = sdf.format(Date(run.dateTimestamp))
-                binding.tvRunDistance.text = TrackingUtils.formatDistance(run.distanceMeters)
+                binding.tvRunDistance.text = TrackingUtils.formatDistance(run.distanceMeters, useMiles)
                 binding.tvRunDuration.text = TrackingUtils.formatTime(run.durationMillis)
                 binding.tvRunCalories.text = getString(R.string.calories_format, run.caloriesBurned)
                 binding.tvRunSteps.text = if (run.stepCount > 0) "${run.stepCount} steps" else "-"
@@ -57,11 +62,12 @@ class ChartsFragment : Fragment() {
 
             val startTime = points.first().timestamp.toFloat()
 
-            // Speed chart
+            // Speed chart (convert m/s → display unit)
+            val speedMultiplier = if (useMiles) 3.6f * 0.621371f else 3.6f
             val speedEntries = points.map { p ->
-                Entry((p.timestamp - startTime) / 1000f, p.speedMs * 3.6f)
+                Entry((p.timestamp - startTime) / 1000f, p.speedMs * speedMultiplier)
             }
-            val speedDataSet = LineDataSet(speedEntries, "Speed (km/h)").apply {
+            val speedDataSet = LineDataSet(speedEntries, speedLabel).apply {
                 color = Color.BLUE
                 setCircleColor(Color.BLUE)
                 circleRadius = 2f
@@ -70,7 +76,7 @@ class ChartsFragment : Fragment() {
             binding.chartSpeed.data = LineData(speedDataSet)
             binding.chartSpeed.invalidate()
 
-            // Elevation chart
+            // Elevation chart (always in metres)
             val elevEntries = points.map { p ->
                 Entry((p.timestamp - startTime) / 1000f, p.altitude.toFloat())
             }
@@ -83,19 +89,21 @@ class ChartsFragment : Fragment() {
             binding.chartElevation.data = LineData(elevDataSet)
             binding.chartElevation.invalidate()
 
-            // Pace chart (cumulative distance vs pace)
+            // Pace chart — x axis in display distance units
+            val unitMeters = if (useMiles) 1609.344f else 1000f
             val paceEntries = mutableListOf<Entry>()
-            var cumulativeDistance = 0f
+            var cumulativeUnits = 0f
             for (i in 1 until points.size) {
                 val dTime = (points[i].timestamp - points[i - 1].timestamp).toFloat() / 1000f / 60f
-                val dDist = points[i].speedMs * ((points[i].timestamp - points[i - 1].timestamp) / 1000f) / 1000f
-                cumulativeDistance += dDist
-                if (dDist > 0.01f) {
-                    val pace = dTime / dDist
-                    paceEntries.add(Entry(cumulativeDistance, pace.coerceAtMost(20f)))
+                val dMeters = points[i].speedMs * ((points[i].timestamp - points[i - 1].timestamp) / 1000f)
+                cumulativeUnits += dMeters / unitMeters
+                val dUnits = dMeters / unitMeters
+                if (dUnits > 0.001f) {
+                    val pace = dTime / dUnits
+                    paceEntries.add(Entry(cumulativeUnits, pace.coerceAtMost(20f)))
                 }
             }
-            val paceDataSet = LineDataSet(paceEntries, "Pace (min/km)").apply {
+            val paceDataSet = LineDataSet(paceEntries, paceLabel).apply {
                 color = Color.RED
                 setCircleColor(Color.RED)
                 circleRadius = 2f

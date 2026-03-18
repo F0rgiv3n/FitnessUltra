@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fitnessultra.data.db.entity.RunEntity
 import com.fitnessultra.databinding.ItemRunBinding
+import com.fitnessultra.util.SettingsManager
 import com.fitnessultra.util.TrackingUtils
 import java.text.SimpleDateFormat
 import java.util.*
@@ -21,9 +22,10 @@ class RunAdapter(
         fun bind(run: RunEntity, onItemClick: (RunEntity) -> Unit) {
             val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
             binding.tvDate.text = sdf.format(Date(run.dateTimestamp))
-            binding.tvDistance.text = TrackingUtils.formatDistance(run.distanceMeters)
+            val useMiles = SettingsManager.useMiles(itemView.context)
+            binding.tvDistance.text = TrackingUtils.formatDistance(run.distanceMeters, useMiles)
             binding.tvDuration.text = TrackingUtils.formatTime(run.durationMillis)
-            binding.tvAvgSpeed.text = TrackingUtils.formatSpeedKmh(run.avgSpeedKmh)
+            binding.tvAvgSpeed.text = TrackingUtils.formatSpeedKmh(run.avgSpeedKmh, useMiles)
             binding.tvCalories.text = itemView.context.getString(com.fitnessultra.R.string.calories_format, run.caloriesBurned)
             binding.tvSteps.text = if (run.stepCount > 0) "${run.stepCount} steps" else ""
             binding.root.setOnClickListener { onItemClick(run) }

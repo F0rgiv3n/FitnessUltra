@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import com.fitnessultra.R
 import com.fitnessultra.data.db.entity.LocationPoint
 import com.fitnessultra.databinding.FragmentReplayBinding
+import com.fitnessultra.util.SettingsManager
 import com.fitnessultra.util.TrackingUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -85,8 +86,9 @@ class ReplayFragment : Fragment() {
 
             // Update toolbar subtitle with run date + total distance
             run?.let {
+                val useMiles = SettingsManager.useMiles(requireContext())
                 val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-                activity?.title = "${sdf.format(Date(it.dateTimestamp))}  ·  ${TrackingUtils.formatDistance(it.distanceMeters)}"
+                activity?.title = "${sdf.format(Date(it.dateTimestamp))}  ·  ${TrackingUtils.formatDistance(it.distanceMeters, useMiles)}"
             }
 
             setupOverlays()
@@ -192,8 +194,9 @@ class ReplayFragment : Fragment() {
     private fun updateStatsAt(index: Int) {
         val elapsedMs = points[index].timestamp - points.first().timestamp
         binding.tvElapsed.text = TrackingUtils.formatTime(elapsedMs)
-        binding.tvDistanceCovered.text = TrackingUtils.formatDistance(cumulativeDistances[index])
-        binding.tvCurrentSpeed.text = TrackingUtils.formatSpeedKmh(points[index].speedMs * 3.6f)
+        val useMiles = context?.let { SettingsManager.useMiles(it) } ?: false
+        binding.tvDistanceCovered.text = TrackingUtils.formatDistance(cumulativeDistances[index], useMiles)
+        binding.tvCurrentSpeed.text = TrackingUtils.formatSpeedKmh(points[index].speedMs * 3.6f, useMiles)
     }
 
     private fun setSpeed(multiplier: Float) {

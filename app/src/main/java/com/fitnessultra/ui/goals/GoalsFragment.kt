@@ -14,6 +14,8 @@ import androidx.fragment.app.viewModels
 import com.fitnessultra.R
 import com.fitnessultra.data.db.entity.RunEntity
 import com.fitnessultra.databinding.FragmentGoalsBinding
+import com.fitnessultra.util.SettingsManager
+import com.fitnessultra.util.TrackingUtils
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -102,11 +104,14 @@ class GoalsFragment : Fragment() {
     // ── Goal cards ────────────────────────────────────────────────────────────
 
     private fun updateDistanceCard(runs: List<RunEntity>) {
-        val actual = runs.sumOf { it.distanceMeters.toDouble() }.toFloat() / 1000f
-        val goal = viewModel.goalDistanceKm
-        val pct = ((actual / goal) * 100).toInt().coerceAtMost(100)
+        val useMiles = SettingsManager.useMiles(requireContext())
+        val actualMeters = runs.sumOf { it.distanceMeters.toDouble() }.toFloat()
+        val actualDisplay = TrackingUtils.fromKm(actualMeters / 1000f, useMiles)
+        val goalDisplay   = TrackingUtils.fromKm(viewModel.goalDistanceKm, useMiles)
+        val unit = TrackingUtils.distanceUnitLabel(useMiles)
+        val pct = ((actualDisplay / goalDisplay) * 100).toInt().coerceAtMost(100)
         binding.progressDistance.progress = pct
-        binding.tvDistanceValue.text = getString(R.string.goal_progress_km, actual, goal)
+        binding.tvDistanceValue.text = "%.1f / %.1f %s".format(actualDisplay, goalDisplay, unit)
         binding.tvDistancePct.text = "$pct%"
         setProgressColor(binding.progressDistance, pct)
     }
@@ -145,11 +150,12 @@ class GoalsFragment : Fragment() {
     private enum class GoalType { DISTANCE, TIME, STEPS }
 
     private fun showEditDialog(type: GoalType) {
+        val useMiles = SettingsManager.useMiles(requireContext())
         val (title, hint, current) = when (type) {
             GoalType.DISTANCE -> Triple(
                 getString(R.string.goal_edit_distance_title),
-                getString(R.string.goal_edit_distance_hint),
-                viewModel.goalDistanceKm.toInt().toString()
+                TrackingUtils.distanceUnitLabel(useMiles) + " per week",
+                TrackingUtils.fromKm(viewModel.goalDistanceKm, useMiles).toInt().toString()
             )
             GoalType.TIME -> Triple(
                 getString(R.string.goal_edit_time_title),
@@ -177,7 +183,7 @@ class GoalsFragment : Fragment() {
             .setPositiveButton(R.string.btn_save_info) { _, _ ->
                 val value = input.text.toString().toIntOrNull() ?: return@setPositiveButton
                 when (type) {
-                    GoalType.DISTANCE -> viewModel.goalDistanceKm = value.toFloat()
+                    GoalType.DISTANCE -> viewModel.goalDistanceKm = TrackingUtils.toKm(value.toFloat(), useMiles)
                     GoalType.TIME     -> viewModel.goalTimeMinutes = value
                     GoalType.STEPS    -> viewModel.goalSteps = value
                 }
