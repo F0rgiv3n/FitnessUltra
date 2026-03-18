@@ -95,7 +95,7 @@ public final class RunDao_Impl implements RunDao {
   }
 
   @Override
-  public Object insertRun(final RunEntity run, final Continuation<? super Long> $completion) {
+  public Object insertRun(final RunEntity run, final Continuation<? super Long> arg1) {
     return CoroutinesRoom.execute(__db, true, new Callable<Long>() {
       @Override
       @NonNull
@@ -109,12 +109,12 @@ public final class RunDao_Impl implements RunDao {
           __db.endTransaction();
         }
       }
-    }, $completion);
+    }, arg1);
   }
 
   @Override
   public Object insertLocationPoints(final List<LocationPoint> points,
-      final Continuation<? super Unit> $completion) {
+      final Continuation<? super Unit> arg1) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -128,11 +128,11 @@ public final class RunDao_Impl implements RunDao {
           __db.endTransaction();
         }
       }
-    }, $completion);
+    }, arg1);
   }
 
   @Override
-  public Object deleteRun(final RunEntity run, final Continuation<? super Unit> $completion) {
+  public Object deleteRun(final RunEntity run, final Continuation<? super Unit> arg1) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -146,7 +146,7 @@ public final class RunDao_Impl implements RunDao {
           __db.endTransaction();
         }
       }
-    }, $completion);
+    }, arg1);
   }
 
   @Override
@@ -200,7 +200,7 @@ public final class RunDao_Impl implements RunDao {
   }
 
   @Override
-  public Object getRunById(final long runId, final Continuation<? super RunEntity> $completion) {
+  public Object getRunById(final long runId, final Continuation<? super RunEntity> arg1) {
     final String _sql = "SELECT * FROM runs WHERE id = ?";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
     int _argIndex = 1;
@@ -245,12 +245,12 @@ public final class RunDao_Impl implements RunDao {
           _statement.release();
         }
       }
-    }, $completion);
+    }, arg1);
   }
 
   @Override
   public Object getLocationPointsForRun(final long runId,
-      final Continuation<? super List<LocationPoint>> $completion) {
+      final Continuation<? super List<LocationPoint>> arg1) {
     final String _sql = "SELECT * FROM location_points WHERE runId = ? ORDER BY timestamp ASC";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
     int _argIndex = 1;
@@ -295,7 +295,7 @@ public final class RunDao_Impl implements RunDao {
           _statement.release();
         }
       }
-    }, $completion);
+    }, arg1);
   }
 
   @NonNull

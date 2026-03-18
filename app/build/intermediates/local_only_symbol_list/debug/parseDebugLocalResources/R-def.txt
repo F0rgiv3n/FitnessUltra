@@ -18,6 +18,7 @@ drawable ic_launcher_round
 drawable ic_run
 drawable ic_weight
 id bottomNavigationView
+id btnEditInfo
 id btnSaveInfo
 id btnSaveWeight
 id btnStopRun
@@ -33,6 +34,8 @@ id etHeight
 id etWeight
 id historyFragment
 id layoutBmiCurrent
+id layoutInfoForm
+id layoutInfoSummary
 id mapView
 id navHostFragment
 id nav_graph
@@ -49,6 +52,7 @@ id tvDate
 id tvDistance
 id tvDuration
 id tvEmpty
+id tvInfoSummary
 id tvPace
 id tvSpeed
 id tvTimer

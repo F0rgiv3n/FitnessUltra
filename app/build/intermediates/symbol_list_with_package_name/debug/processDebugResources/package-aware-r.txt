@@ -3302,6 +3302,7 @@ id bounce
 id bounceBoth
 id bounceEnd
 id bounceStart
+id btnEditInfo
 id btnSaveInfo
 id btnSaveWeight
 id btnStopRun
@@ -3458,6 +3459,8 @@ id jumpToStart
 id labeled
 id layout
 id layoutBmiCurrent
+id layoutInfoForm
+id layoutInfoSummary
 id left
 id leftToRight
 id legacy
@@ -3723,6 +3726,7 @@ id tvDate
 id tvDistance
 id tvDuration
 id tvEmpty
+id tvInfoSummary
 id tvPace
 id tvSpeed
 id tvTimer

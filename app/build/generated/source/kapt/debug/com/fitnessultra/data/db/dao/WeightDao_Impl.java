@@ -33,6 +33,8 @@ public final class WeightDao_Impl implements WeightDao {
 
   private final EntityDeletionOrUpdateAdapter<WeightEntry> __deletionAdapterOfWeightEntry;
 
+  private final EntityDeletionOrUpdateAdapter<WeightEntry> __updateAdapterOfWeightEntry;
+
   public WeightDao_Impl(@NonNull final RoomDatabase __db) {
     this.__db = __db;
     this.__insertionAdapterOfWeightEntry = new EntityInsertionAdapter<WeightEntry>(__db) {
@@ -61,6 +63,22 @@ public final class WeightDao_Impl implements WeightDao {
       protected void bind(@NonNull final SupportSQLiteStatement statement,
           @NonNull final WeightEntry entity) {
         statement.bindLong(1, entity.getId());
+      }
+    };
+    this.__updateAdapterOfWeightEntry = new EntityDeletionOrUpdateAdapter<WeightEntry>(__db) {
+      @Override
+      @NonNull
+      protected String createQuery() {
+        return "UPDATE OR ABORT `weight_entries` SET `id` = ?,`weightKg` = ?,`dateTimestamp` = ? WHERE `id` = ?";
+      }
+
+      @Override
+      protected void bind(@NonNull final SupportSQLiteStatement statement,
+          @NonNull final WeightEntry entity) {
+        statement.bindLong(1, entity.getId());
+        statement.bindDouble(2, entity.getWeightKg());
+        statement.bindLong(3, entity.getDateTimestamp());
+        statement.bindLong(4, entity.getId());
       }
     };
   }
@@ -94,6 +112,25 @@ public final class WeightDao_Impl implements WeightDao {
         __db.beginTransaction();
         try {
           __deletionAdapterOfWeightEntry.handle(entry);
+          __db.setTransactionSuccessful();
+          return Unit.INSTANCE;
+        } finally {
+          __db.endTransaction();
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
+  public Object updateWeightEntry(final WeightEntry entry,
+      final Continuation<? super Unit> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+      @Override
+      @NonNull
+      public Unit call() throws Exception {
+        __db.beginTransaction();
+        try {
+          __updateAdapterOfWeightEntry.handle(entry);
           __db.setTransactionSuccessful();
           return Unit.INSTANCE;
         } finally {

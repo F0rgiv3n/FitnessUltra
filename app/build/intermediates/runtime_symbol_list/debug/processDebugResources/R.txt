@@ -3301,6 +3301,7 @@ int id bounce 0x7f080062
 int id bounceBoth 0x7f080063
 int id bounceEnd 0x7f080064
 int id bounceStart 0x7f080065
+int id btnEditInfo 0x7f080229
 int id btnSaveInfo 0x7f080221
 int id btnSaveWeight 0x7f080066
 int id btnStopRun 0x7f080067
@@ -3457,6 +3458,8 @@ int id jumpToStart 0x7f0800fa
 int id labeled 0x7f0800fb
 int id layout 0x7f0800fc
 int id layoutBmiCurrent 0x7f080225
+int id layoutInfoForm 0x7f08022a
+int id layoutInfoSummary 0x7f08022b
 int id left 0x7f0800fd
 int id leftToRight 0x7f0800fe
 int id legacy 0x7f0800ff
@@ -3722,6 +3725,7 @@ int id tvDate 0x7f080200
 int id tvDistance 0x7f080201
 int id tvDuration 0x7f080202
 int id tvEmpty 0x7f080203
+int id tvInfoSummary 0x7f08022c
 int id tvPace 0x7f080204
 int id tvSpeed 0x7f080205
 int id tvTimer 0x7f080206

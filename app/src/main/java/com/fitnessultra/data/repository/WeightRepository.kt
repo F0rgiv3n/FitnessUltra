@@ -11,4 +11,6 @@ class WeightRepository(private val weightDao: WeightDao) {
     suspend fun insertWeightEntry(entry: WeightEntry) = weightDao.insertWeightEntry(entry)
 
     suspend fun deleteWeightEntry(entry: WeightEntry) = weightDao.deleteWeightEntry(entry)
+
+    suspend fun updateWeightEntry(entry: WeightEntry) = weightDao.updateWeightEntry(entry)
 }

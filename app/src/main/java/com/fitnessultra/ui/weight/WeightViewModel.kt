@@ -53,4 +53,12 @@ class WeightViewModel(application: Application) : AndroidViewModel(application) 
         bmi < 30f   -> "Overweight"
         else        -> "Obese"
     }
+
+    fun deleteEntry(entry: WeightEntry) {
+        viewModelScope.launch { repository.deleteWeightEntry(entry) }
+    }
+
+    fun updateEntry(entry: WeightEntry, newWeightKg: Float) {
+        viewModelScope.launch { repository.updateWeightEntry(entry.copy(weightKg = newWeightKg)) }
+    }
 }
