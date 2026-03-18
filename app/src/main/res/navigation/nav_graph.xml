@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_historyFragment_to_chartsFragment"
             app:destination="@id/chartsFragment" />
+        <action
+            android:id="@+id/action_historyFragment_to_replayFragment"
+            app:destination="@id/replayFragment" />
     </fragment>
 
     <fragment
@@ -36,5 +39,14 @@
         android:id="@+id/settingsFragment"
         android:name="com.fitnessultra.ui.settings.SettingsFragment"
         android:label="Settings" />
+
+    <fragment
+        android:id="@+id/replayFragment"
+        android:name="com.fitnessultra.ui.replay.ReplayFragment"
+        android:label="Run Replay">
+        <argument
+            android:name="runId"
+            app:argType="long" />
+    </fragment>
 
 </navigation>
