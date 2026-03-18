@@ -6,7 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.fitnessultra.databinding.FragmentHistoryBinding
 
 class HistoryFragment : Fragment() {
@@ -29,6 +32,20 @@ class HistoryFragment : Fragment() {
             adapter = runAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
+
+        val swipeToDelete = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(rv: RecyclerView, vh: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder) = false
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val run = runAdapter.currentList[viewHolder.adapterPosition]
+                viewModel.deleteRun(run)
+                Snackbar.make(requireView(), "Run deleted", Snackbar.LENGTH_LONG)
+                    .setAction("Undo") { viewModel.restoreRun(run) }
+                    .show()
+            }
+        }
+        ItemTouchHelper(swipeToDelete).attachToRecyclerView(binding.rvRuns)
+
         viewModel.runs.observe(viewLifecycleOwner) { runs ->
             runAdapter.submitList(runs)
             binding.tvEmpty.visibility = if (runs.isEmpty()) View.VISIBLE else View.GONE

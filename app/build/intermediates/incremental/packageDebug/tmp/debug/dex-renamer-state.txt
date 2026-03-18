@@ -1,4 +1,4 @@
-#Wed Mar 18 02:04:39 EET 2026
+#Wed Mar 18 02:29:30 EET 2026
 base.0=/home/currahee/Desktop/FitnessUltra/app/build/intermediates/dex/debug/mergeExtDexDebug/classes.dex
 base.1=/home/currahee/Desktop/FitnessUltra/app/build/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
 base.10=/home/currahee/Desktop/FitnessUltra/app/build/intermediates/dex/debug/mergeProjectDexDebug/9/classes.dex

@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:2:1-35:12
-INJECTED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:2:1-35:12
-INJECTED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:2:1-35:12
-INJECTED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:2:1-35:12
+ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:2:1-36:12
+INJECTED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:2:1-36:12
+INJECTED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:2:1-36:12
+INJECTED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:2:1-36:12
 MERGED from [androidx.databinding:viewbinding:8.3.2] /home/currahee/.gradle/caches/transforms-3/fb145178f6c1efefeba52483382feb48/transformed/jetified-viewbinding-8.3.2/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.navigation:navigation-common:2.7.7] /home/currahee/.gradle/caches/transforms-3/fe21b14904a8f7153d54fa5a5c1c25eb/transformed/navigation-common-2.7.7/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.navigation:navigation-common-ktx:2.7.7] /home/currahee/.gradle/caches/transforms-3/0a39ec2b773804e6d43f0e3d818fbc23/transformed/navigation-common-ktx-2.7.7/AndroidManifest.xml:2:1-7:12
@@ -78,26 +78,24 @@ MERGED from [org.osmdroid:osmdroid-android:6.1.18] /home/currahee/.gradle/caches
 		INJECTED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml
 	android:versionName
 		INJECTED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml
+	xmlns:tools
+		ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:3:5-51
 	android:versionCode
 		INJECTED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml
 	xmlns:android
 		ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:2:11-69
 uses-permission#android.permission.ACCESS_FINE_LOCATION
-ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:4:5-79
+ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:5:5-79
 	android:name
-		ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:4:22-76
+		ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:5:22-76
 uses-permission#android.permission.ACCESS_COARSE_LOCATION
-ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:5:5-81
+ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:6:5-81
 	android:name
-		ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:5:22-78
-uses-permission#android.permission.ACCESS_BACKGROUND_LOCATION
-ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:6:5-85
-	android:name
-		ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:6:22-82
+		ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:6:22-78
 uses-permission#android.permission.FOREGROUND_SERVICE
-ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:7:5-77
+ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:7:1-73
 	android:name
-		ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:7:22-74
+		ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:7:18-70
 uses-permission#android.permission.FOREGROUND_SERVICE_LOCATION
 ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:8:5-86
 	android:name
@@ -111,8 +109,8 @@ ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:
 	android:name
 		ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:10:22-64
 application
-ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:12:5-34:19
-INJECTED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:12:5-34:19
+ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:12:5-35:19
+INJECTED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:12:5-35:19
 MERGED from [com.google.android.material:material:1.11.0] /home/currahee/.gradle/caches/transforms-3/4b0c27ce3b34748ecc741beed8ded4a5/transformed/material-1.11.0/AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.11.0] /home/currahee/.gradle/caches/transforms-3/4b0c27ce3b34748ecc741beed8ded4a5/transformed/material-1.11.0/AndroidManifest.xml:22:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] /home/currahee/.gradle/caches/transforms-3/e5554ed11947a061c449c1a7b1074a75/transformed/constraintlayout-2.1.4/AndroidManifest.xml:9:5-20
@@ -174,9 +172,11 @@ ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:
 	android:name
 		ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:25:27-74
 service#com.fitnessultra.service.TrackingService
-ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:29:9-32:40
+ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:29:9-33:58
 	android:exported
 		ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:32:13-37
+	tools:ignore
+		ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:33:13-55
 	android:foregroundServiceType
 		ADDED from /home/currahee/Desktop/FitnessUltra/app/src/main/AndroidManifest.xml:31:13-53
 	android:name
