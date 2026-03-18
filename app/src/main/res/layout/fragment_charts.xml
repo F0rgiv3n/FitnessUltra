@@ -52,7 +52,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Distance"
+                            android:text="@string/label_distance"
                             android:textSize="11sp"
                             android:textColor="#888888" />
                         <TextView
@@ -75,7 +75,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Duration"
+                            android:text="@string/label_duration"
                             android:textSize="11sp"
                             android:textColor="#888888" />
                         <TextView
@@ -108,7 +108,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Calories"
+                            android:text="@string/label_calories"
                             android:textSize="11sp"
                             android:textColor="#888888" />
                         <TextView
@@ -131,7 +131,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Steps"
+                            android:text="@string/label_steps"
                             android:textSize="11sp"
                             android:textColor="#888888" />
                         <TextView
@@ -150,7 +150,7 @@
                     android:id="@+id/btnReplayRoute"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:text="▶  REPLAY ROUTE"
+                    android:text="@string/btn_replay_route"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:icon="@drawable/ic_replay_run"
@@ -164,7 +164,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Speed"
+            android:text="@string/label_speed"
             android:textStyle="bold"
             android:textSize="16sp" />
 
@@ -178,7 +178,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Elevation"
+            android:text="@string/label_elevation"
             android:textStyle="bold"
             android:textSize="16sp" />
 
@@ -192,7 +192,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pace"
+            android:text="@string/label_pace"
             android:textStyle="bold"
             android:textSize="16sp" />
 

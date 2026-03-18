@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- Units -->
-    <PreferenceCategory android:title="Units">
+    <PreferenceCategory android:title="@string/pref_category_units">
 
         <ListPreference
             android:key="pref_distance_unit"
-            android:title="Distance unit"
+            android:title="@string/pref_distance_unit_title"
             android:summary="%s"
             android:entries="@array/pref_distance_entries"
             android:entryValues="@array/pref_distance_values"
@@ -16,7 +16,7 @@
 
         <ListPreference
             android:key="pref_weight_unit"
-            android:title="Weight unit"
+            android:title="@string/pref_weight_unit_title"
             android:summary="%s"
             android:entries="@array/pref_weight_entries"
             android:entryValues="@array/pref_weight_values"
@@ -26,17 +26,17 @@
     </PreferenceCategory>
 
     <!-- Voice Feedback -->
-    <PreferenceCategory android:title="Voice Feedback">
+    <PreferenceCategory android:title="@string/pref_category_voice">
 
         <SwitchPreferenceCompat
             android:key="pref_voice_enabled"
-            android:title="Enable voice announcements"
-            android:summary="Announce distance milestones during a run"
+            android:title="@string/pref_voice_enabled_title"
+            android:summary="@string/pref_voice_enabled_summary"
             android:defaultValue="true" />
 
         <ListPreference
             android:key="pref_voice_frequency"
-            android:title="Announce every"
+            android:title="@string/pref_voice_frequency_title"
             android:summary="%s"
             android:entries="@array/pref_voice_freq_entries"
             android:entryValues="@array/pref_voice_freq_values"
@@ -47,11 +47,11 @@
     </PreferenceCategory>
 
     <!-- Appearance -->
-    <PreferenceCategory android:title="Appearance">
+    <PreferenceCategory android:title="@string/pref_category_appearance">
 
         <ListPreference
             android:key="pref_theme"
-            android:title="Theme"
+            android:title="@string/pref_theme_title"
             android:summary="%s"
             android:entries="@array/pref_theme_entries"
             android:entryValues="@array/pref_theme_values"
@@ -60,7 +60,7 @@
 
         <ListPreference
             android:key="pref_language"
-            android:title="Language"
+            android:title="@string/pref_language_title"
             android:summary="%s"
             android:entries="@array/pref_language_entries"
             android:entryValues="@array/pref_language_values"
@@ -70,11 +70,11 @@
     </PreferenceCategory>
 
     <!-- About -->
-    <PreferenceCategory android:title="About">
+    <PreferenceCategory android:title="@string/pref_category_about">
 
         <Preference
             android:key="pref_version"
-            android:title="Version"
+            android:title="@string/pref_version_title"
             android:selectable="false" />
 
     </PreferenceCategory>

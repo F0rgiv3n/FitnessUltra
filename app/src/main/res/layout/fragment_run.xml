@@ -49,7 +49,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Steps"
+                    android:text="@string/label_steps"
                     android:textSize="13sp" />
                 <TextView
                     android:id="@+id/tvSteps"
@@ -73,7 +73,7 @@
                     android:orientation="vertical"
                     android:gravity="center">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Distance" android:textSize="12sp" />
+                        android:text="@string/label_distance" android:textSize="12sp" />
                     <TextView android:id="@+id/tvDistance" android:layout_width="wrap_content"
                         android:layout_height="wrap_content" android:text="0.00 km" android:textStyle="bold" />
                 </LinearLayout>
@@ -85,7 +85,7 @@
                     android:orientation="vertical"
                     android:gravity="center">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Speed" android:textSize="12sp" />
+                        android:text="@string/label_speed" android:textSize="12sp" />
                     <TextView android:id="@+id/tvSpeed" android:layout_width="wrap_content"
                         android:layout_height="wrap_content" android:text="0.0 km/h" android:textStyle="bold" />
                 </LinearLayout>
@@ -97,7 +97,7 @@
                     android:orientation="vertical"
                     android:gravity="center">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Pace" android:textSize="12sp" />
+                        android:text="@string/label_pace" android:textSize="12sp" />
                     <TextView android:id="@+id/tvPace" android:layout_width="wrap_content"
                         android:layout_height="wrap_content" android:text="--:--" android:textStyle="bold" />
                 </LinearLayout>
@@ -115,7 +115,7 @@
                     android:id="@+id/btnToggleRun"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="START"
+                    android:text="@string/btn_start"
                     android:layout_marginEnd="8dp"
                     app:backgroundTint="@color/colorPrimary" />
 
@@ -123,7 +123,7 @@
                     android:id="@+id/btnStopRun"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="FINISH"
+                    android:text="@string/btn_finish"
                     android:visibility="gone"
                     app:backgroundTint="@color/red" />
 

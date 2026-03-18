@@ -18,7 +18,7 @@
         android:id="@+id/tvNoData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No route data for this run"
+        android:text="@string/msg_no_route_data"
         android:textSize="16sp"
         android:textColor="#888888"
         android:visibility="gone"
@@ -54,7 +54,7 @@
                     android:layout_height="wrap_content" android:orientation="vertical"
                     android:gravity="center">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Time" android:textSize="11sp" android:textColor="#888888" />
+                        android:text="@string/label_time" android:textSize="11sp" android:textColor="#888888" />
                     <TextView android:id="@+id/tvElapsed"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
                         android:text="00:00:00" android:textSize="17sp" android:textStyle="bold" />
@@ -64,7 +64,7 @@
                     android:layout_height="wrap_content" android:orientation="vertical"
                     android:gravity="center">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Distance" android:textSize="11sp" android:textColor="#888888" />
+                        android:text="@string/label_distance" android:textSize="11sp" android:textColor="#888888" />
                     <TextView android:id="@+id/tvDistanceCovered"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
                         android:text="0.00 km" android:textSize="17sp" android:textStyle="bold" />
@@ -74,7 +74,7 @@
                     android:layout_height="wrap_content" android:orientation="vertical"
                     android:gravity="center">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Speed" android:textSize="11sp" android:textColor="#888888" />
+                        android:text="@string/label_speed" android:textSize="11sp" android:textColor="#888888" />
                     <TextView android:id="@+id/tvCurrentSpeed"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
                         android:text="0.0 km/h" android:textSize="17sp" android:textStyle="bold" />
@@ -94,7 +94,7 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1×"
+                    android:text="@string/replay_speed_1x"
                     android:layout_marginEnd="4dp" />
 
                 <com.google.android.material.button.MaterialButton
@@ -102,7 +102,7 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2×"
+                    android:text="@string/replay_speed_2x"
                     android:layout_marginEnd="4dp" />
 
                 <com.google.android.material.button.MaterialButton
@@ -110,7 +110,7 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="5×"
+                    android:text="@string/replay_speed_5x"
                     android:layout_marginEnd="4dp" />
 
                 <com.google.android.material.button.MaterialButton
@@ -118,14 +118,14 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="10×"
+                    android:text="@string/replay_speed_10x"
                     android:layout_marginEnd="16dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnPlayPause"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="PLAY"
+                    android:text="@string/replay_play"
                     android:enabled="false"
                     app:backgroundTint="?attr/colorPrimary" />
 

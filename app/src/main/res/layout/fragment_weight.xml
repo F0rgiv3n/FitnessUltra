@@ -29,7 +29,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Personal Info"
+                    android:text="@string/title_personal_info"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="12dp" />
@@ -55,7 +55,7 @@
                         style="@style/Widget.MaterialComponents.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Edit" />
+                        android:text="@string/btn_edit" />
 
                 </LinearLayout>
 
@@ -76,7 +76,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:hint="Height (cm)"
+                            android:hint="@string/hint_height"
                             android:layout_marginEnd="8dp">
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etHeight"
@@ -90,7 +90,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:hint="Age">
+                            android:hint="@string/hint_age">
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etAge"
                                 android:layout_width="match_parent"
@@ -105,7 +105,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="Save Info"
+                        android:text="@string/btn_save_info"
                         app:backgroundTint="@color/colorPrimary" />
 
                 </LinearLayout>
@@ -160,7 +160,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Add Weight Entry"
+                    android:text="@string/title_add_weight"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="12dp" />
@@ -175,7 +175,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:hint="Weight (kg)"
+                        android:hint="@string/hint_weight"
                         android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etWeight"
@@ -189,7 +189,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:text="Add"
+                        android:text="@string/btn_add"
                         app:backgroundTint="@color/colorPrimary" />
 
                 </LinearLayout>
@@ -222,7 +222,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Weight History"
+                    android:text="@string/title_weight_history"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
@@ -252,7 +252,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="BMI History"
+                    android:text="@string/title_bmi_history"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="4dp" />
@@ -261,7 +261,7 @@
                     android:id="@+id/tvBmiChartNote"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Enter your height in Personal Info to see BMI chart"
+                    android:text="@string/msg_bmi_no_height"
                     android:textSize="12sp"
                     android:textColor="#888888"
                     android:layout_marginBottom="4dp"
@@ -294,7 +294,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="BMI Indicator"
+                    android:text="@string/title_bmi_indicator"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />

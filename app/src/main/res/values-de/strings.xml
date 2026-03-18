@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FitnessUltra</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_run">Laufen</string>
+    <string name="nav_history">Verlauf</string>
+    <string name="nav_charts">Diagramme</string>
+    <string name="nav_weight">Profil</string>
+
+    <!-- Common labels -->
+    <string name="label_distance">Distanz</string>
+    <string name="label_duration">Dauer</string>
+    <string name="label_speed">Geschwindigkeit</string>
+    <string name="label_pace">Tempo</string>
+    <string name="label_calories">Kalorien</string>
+    <string name="label_steps">Schritte</string>
+    <string name="label_elevation">Höhe</string>
+    <string name="label_time">Zeit</string>
+
+    <!-- Run screen -->
+    <string name="btn_start">START</string>
+    <string name="btn_finish">BEENDEN</string>
+
+    <!-- History screen -->
+    <string name="title_steps_history">Schrittverlauf</string>
+    <string name="title_recent_runs">Letzte Aktivitäten</string>
+    <string name="msg_no_runs">Keine Aktivitäten. Starte deinen ersten Lauf!</string>
+    <string name="msg_run_deleted">Aktivität gelöscht</string>
+    <string name="btn_undo">Rückgängig</string>
+
+    <!-- Replay screen -->
+    <string name="msg_no_route_data">Keine Routendaten für diesen Lauf</string>
+    <string name="replay_play">ABSPIELEN</string>
+    <string name="replay_pause">PAUSE</string>
+    <string name="replay_replay">WIEDERHOLEN</string>
+    <string name="replay_speed_1x">1×</string>
+    <string name="replay_speed_2x">2×</string>
+    <string name="replay_speed_5x">5×</string>
+    <string name="replay_speed_10x">10×</string>
+    <string name="cd_replay_route">Route abspielen</string>
+
+    <!-- Charts screen -->
+    <string name="btn_replay_route">▶  ROUTE ABSPIELEN</string>
+    <string name="calories_format">%1$d kcal</string>
+
+    <!-- History steps chart tabs -->
+    <string name="steps_tab_daily">Letzte 7 Tage</string>
+    <string name="steps_tab_weekly">Letzte 4 Wochen</string>
+    <string name="steps_tab_monthly">Letzte 6 Monate</string>
+    <string name="steps_total_label">Gesamt: %1$s Schritte in %2$s</string>
+    <string name="steps_period_days">7 Tagen</string>
+    <string name="steps_period_weeks">4 Wochen</string>
+    <string name="steps_period_months">6 Monaten</string>
+
+    <!-- User Info / Weight screen -->
+    <string name="title_personal_info">Persönliche Daten</string>
+    <string name="btn_edit">Bearbeiten</string>
+    <string name="btn_save_info">Speichern</string>
+    <string name="hint_height">Größe (cm)</string>
+    <string name="hint_age">Alter</string>
+    <string name="title_add_weight">Gewicht hinzufügen</string>
+    <string name="hint_weight">Gewicht (kg)</string>
+    <string name="btn_add">Hinzufügen</string>
+    <string name="title_weight_history">Gewichtsverlauf</string>
+    <string name="title_bmi_history">BMI-Verlauf</string>
+    <string name="msg_bmi_no_height">Gib deine Größe in Persönliche Daten ein, um das BMI-Diagramm zu sehen</string>
+    <string name="title_bmi_indicator">BMI-Anzeige</string>
+
+    <!-- Settings preference titles / categories -->
+    <string name="pref_category_units">Einheiten</string>
+    <string name="pref_distance_unit_title">Distanzeinheit</string>
+    <string name="pref_weight_unit_title">Gewichtseinheit</string>
+    <string name="pref_category_voice">Sprachführung</string>
+    <string name="pref_voice_enabled_title">Sprachansagen aktivieren</string>
+    <string name="pref_voice_enabled_summary">Kilometer während des Laufs ansagen</string>
+    <string name="pref_voice_frequency_title">Ansage alle</string>
+    <string name="pref_category_appearance">Erscheinungsbild</string>
+    <string name="pref_theme_title">Design</string>
+    <string name="pref_language_title">Sprache</string>
+    <string name="pref_category_about">Über die App</string>
+    <string name="pref_version_title">Version</string>
+
+    <!-- Settings arrays -->
+    <string-array name="pref_distance_entries">
+        <item>Kilometer (km)</item>
+        <item>Meilen (mi)</item>
+    </string-array>
+    <string-array name="pref_weight_entries">
+        <item>Kilogramm (kg)</item>
+        <item>Pfund (lbs)</item>
+    </string-array>
+    <string-array name="pref_voice_freq_entries">
+        <item>Alle 1 km</item>
+        <item>Alle 2 km</item>
+        <item>Alle 5 km</item>
+    </string-array>
+    <string-array name="pref_theme_entries">
+        <item>System</item>
+        <item>Hell</item>
+        <item>Dunkel</item>
+    </string-array>
+</resources>

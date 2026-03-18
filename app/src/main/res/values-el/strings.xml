@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FitnessUltra</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_run">Τρέξιμο</string>
+    <string name="nav_history">Ιστορικό</string>
+    <string name="nav_charts">Γραφήματα</string>
+    <string name="nav_weight">Προφίλ</string>
+
+    <!-- Common labels -->
+    <string name="label_distance">Απόσταση</string>
+    <string name="label_duration">Διάρκεια</string>
+    <string name="label_speed">Ταχύτητα</string>
+    <string name="label_pace">Ρυθμός</string>
+    <string name="label_calories">Θερμίδες</string>
+    <string name="label_steps">Βήματα</string>
+    <string name="label_elevation">Υψόμετρο</string>
+    <string name="label_time">Χρόνος</string>
+
+    <!-- Run screen -->
+    <string name="btn_start">ΕΚΚΙΝΗΣΗ</string>
+    <string name="btn_finish">ΤΕΛΟΣ</string>
+
+    <!-- History screen -->
+    <string name="title_steps_history">Ιστορικό Βημάτων</string>
+    <string name="title_recent_runs">Πρόσφατες Δραστηριότητες</string>
+    <string name="msg_no_runs">Δεν υπάρχουν δραστηριότητες. Ξεκίνα την πρώτη σου!</string>
+    <string name="msg_run_deleted">Η δραστηριότητα διαγράφηκε</string>
+    <string name="btn_undo">Αναίρεση</string>
+
+    <!-- Replay screen -->
+    <string name="msg_no_route_data">Δεν υπάρχουν δεδομένα διαδρομής</string>
+    <string name="replay_play">ΑΝΑΠΑΡΑΓΩΓΗ</string>
+    <string name="replay_pause">ΠΑΥΣΗ</string>
+    <string name="replay_replay">ΕΠΑΝΑΛΗΨΗ</string>
+    <string name="replay_speed_1x">1×</string>
+    <string name="replay_speed_2x">2×</string>
+    <string name="replay_speed_5x">5×</string>
+    <string name="replay_speed_10x">10×</string>
+    <string name="cd_replay_route">Αναπαραγωγή διαδρομής</string>
+
+    <!-- Charts screen -->
+    <string name="btn_replay_route">▶  ΑΝΑΠΑΡΑΓΩΓΗ ΔΙΑΔΡΟΜΗΣ</string>
+    <string name="calories_format">%1$d kcal</string>
+
+    <!-- History steps chart tabs -->
+    <string name="steps_tab_daily">Τελευταίες 7 Μέρες</string>
+    <string name="steps_tab_weekly">Τελευταίες 4 Εβδομάδες</string>
+    <string name="steps_tab_monthly">Τελευταίοι 6 Μήνες</string>
+    <string name="steps_total_label">Σύνολο: %1$s βήματα σε %2$s</string>
+    <string name="steps_period_days">7 μέρες</string>
+    <string name="steps_period_weeks">4 εβδομάδες</string>
+    <string name="steps_period_months">6 μήνες</string>
+
+    <!-- User Info / Weight screen -->
+    <string name="title_personal_info">Προσωπικά Στοιχεία</string>
+    <string name="btn_edit">Επεξεργασία</string>
+    <string name="btn_save_info">Αποθήκευση</string>
+    <string name="hint_height">Ύψος (cm)</string>
+    <string name="hint_age">Ηλικία</string>
+    <string name="title_add_weight">Προσθήκη Βάρους</string>
+    <string name="hint_weight">Βάρος (kg)</string>
+    <string name="btn_add">Προσθήκη</string>
+    <string name="title_weight_history">Ιστορικό Βάρους</string>
+    <string name="title_bmi_history">Ιστορικό ΔΜΣ</string>
+    <string name="msg_bmi_no_height">Εισάγετε το ύψος σας στα Προσωπικά Στοιχεία για να δείτε το γράφημα ΔΜΣ</string>
+    <string name="title_bmi_indicator">Δείκτης ΔΜΣ</string>
+
+    <!-- Settings preference titles / categories -->
+    <string name="pref_category_units">Μονάδες</string>
+    <string name="pref_distance_unit_title">Μονάδα απόστασης</string>
+    <string name="pref_weight_unit_title">Μονάδα βάρους</string>
+    <string name="pref_category_voice">Φωνητική Καθοδήγηση</string>
+    <string name="pref_voice_enabled_title">Ενεργοποίηση φωνητικών ανακοινώσεων</string>
+    <string name="pref_voice_enabled_summary">Ανακοίνωση χιλιομέτρων κατά τη διάρκεια του τρεξίματος</string>
+    <string name="pref_voice_frequency_title">Ανακοίνωση κάθε</string>
+    <string name="pref_category_appearance">Εμφάνιση</string>
+    <string name="pref_theme_title">Θέμα</string>
+    <string name="pref_language_title">Γλώσσα</string>
+    <string name="pref_category_about">Σχετικά</string>
+    <string name="pref_version_title">Έκδοση</string>
+
+    <!-- Settings arrays -->
+    <string-array name="pref_distance_entries">
+        <item>Χιλιόμετρα (km)</item>
+        <item>Μίλια (mi)</item>
+    </string-array>
+    <string-array name="pref_weight_entries">
+        <item>Κιλά (kg)</item>
+        <item>Λίβρες (lbs)</item>
+    </string-array>
+    <string-array name="pref_voice_freq_entries">
+        <item>Κάθε 1 km</item>
+        <item>Κάθε 2 km</item>
+        <item>Κάθε 5 km</item>
+    </string-array>
+    <string-array name="pref_theme_entries">
+        <item>Σύστημα</item>
+        <item>Φωτεινό</item>
+        <item>Σκοτεινό</item>
+    </string-array>
+</resources>

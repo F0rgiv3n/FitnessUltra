@@ -61,8 +61,8 @@ class HistoryFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val run = runAdapter.currentList[viewHolder.adapterPosition]
                 viewModel.deleteRun(run)
-                Snackbar.make(requireView(), "Run deleted", Snackbar.LENGTH_LONG)
-                    .setAction("Undo") { viewModel.restoreRun(run) }
+                Snackbar.make(requireView(), R.string.msg_run_deleted, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.btn_undo) { viewModel.restoreRun(run) }
                     .show()
             }
         }

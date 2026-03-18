@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FitnessUltra</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_run">Correr</string>
+    <string name="nav_history">Historial</string>
+    <string name="nav_charts">Gráficos</string>
+    <string name="nav_weight">Perfil</string>
+
+    <!-- Common labels -->
+    <string name="label_distance">Distancia</string>
+    <string name="label_duration">Duración</string>
+    <string name="label_speed">Velocidad</string>
+    <string name="label_pace">Ritmo</string>
+    <string name="label_calories">Calorías</string>
+    <string name="label_steps">Pasos</string>
+    <string name="label_elevation">Elevación</string>
+    <string name="label_time">Tiempo</string>
+
+    <!-- Run screen -->
+    <string name="btn_start">INICIAR</string>
+    <string name="btn_finish">FINALIZAR</string>
+
+    <!-- History screen -->
+    <string name="title_steps_history">Historial de Pasos</string>
+    <string name="title_recent_runs">Actividades Recientes</string>
+    <string name="msg_no_runs">Sin actividades. ¡Empieza tu primera carrera!</string>
+    <string name="msg_run_deleted">Actividad eliminada</string>
+    <string name="btn_undo">Deshacer</string>
+
+    <!-- Replay screen -->
+    <string name="msg_no_route_data">No hay datos de ruta para esta carrera</string>
+    <string name="replay_play">REPRODUCIR</string>
+    <string name="replay_pause">PAUSA</string>
+    <string name="replay_replay">REPETIR</string>
+    <string name="replay_speed_1x">1×</string>
+    <string name="replay_speed_2x">2×</string>
+    <string name="replay_speed_5x">5×</string>
+    <string name="replay_speed_10x">10×</string>
+    <string name="cd_replay_route">Reproducir ruta</string>
+
+    <!-- Charts screen -->
+    <string name="btn_replay_route">▶  REPRODUCIR RUTA</string>
+    <string name="calories_format">%1$d kcal</string>
+
+    <!-- History steps chart tabs -->
+    <string name="steps_tab_daily">Últimos 7 Días</string>
+    <string name="steps_tab_weekly">Últimas 4 Semanas</string>
+    <string name="steps_tab_monthly">Últimos 6 Meses</string>
+    <string name="steps_total_label">Total: %1$s pasos en %2$s</string>
+    <string name="steps_period_days">7 días</string>
+    <string name="steps_period_weeks">4 semanas</string>
+    <string name="steps_period_months">6 meses</string>
+
+    <!-- User Info / Weight screen -->
+    <string name="title_personal_info">Información Personal</string>
+    <string name="btn_edit">Editar</string>
+    <string name="btn_save_info">Guardar</string>
+    <string name="hint_height">Altura (cm)</string>
+    <string name="hint_age">Edad</string>
+    <string name="title_add_weight">Añadir Peso</string>
+    <string name="hint_weight">Peso (kg)</string>
+    <string name="btn_add">Añadir</string>
+    <string name="title_weight_history">Historial de Peso</string>
+    <string name="title_bmi_history">Historial de IMC</string>
+    <string name="msg_bmi_no_height">Ingresa tu altura en Información Personal para ver el gráfico de IMC</string>
+    <string name="title_bmi_indicator">Indicador de IMC</string>
+
+    <!-- Settings preference titles / categories -->
+    <string name="pref_category_units">Unidades</string>
+    <string name="pref_distance_unit_title">Unidad de distancia</string>
+    <string name="pref_weight_unit_title">Unidad de peso</string>
+    <string name="pref_category_voice">Guía por Voz</string>
+    <string name="pref_voice_enabled_title">Activar anuncios de voz</string>
+    <string name="pref_voice_enabled_summary">Anunciar kilómetros durante la carrera</string>
+    <string name="pref_voice_frequency_title">Anunciar cada</string>
+    <string name="pref_category_appearance">Apariencia</string>
+    <string name="pref_theme_title">Tema</string>
+    <string name="pref_language_title">Idioma</string>
+    <string name="pref_category_about">Acerca de</string>
+    <string name="pref_version_title">Versión</string>
+
+    <!-- Settings arrays -->
+    <string-array name="pref_distance_entries">
+        <item>Kilómetros (km)</item>
+        <item>Millas (mi)</item>
+    </string-array>
+    <string-array name="pref_weight_entries">
+        <item>Kilogramos (kg)</item>
+        <item>Libras (lbs)</item>
+    </string-array>
+    <string-array name="pref_voice_freq_entries">
+        <item>Cada 1 km</item>
+        <item>Cada 2 km</item>
+        <item>Cada 5 km</item>
+    </string-array>
+    <string-array name="pref_theme_entries">
+        <item>Sistema</item>
+        <item>Claro</item>
+        <item>Oscuro</item>
+    </string-array>
+</resources>

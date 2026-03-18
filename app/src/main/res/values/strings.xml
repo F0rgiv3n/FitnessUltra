@@ -1,15 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">FitnessUltra</string>
+
+    <!-- Bottom navigation -->
     <string name="nav_run">Run</string>
     <string name="nav_history">History</string>
     <string name="nav_charts">Charts</string>
     <string name="nav_weight">User Info</string>
 
+    <!-- Common labels -->
+    <string name="label_distance">Distance</string>
+    <string name="label_duration">Duration</string>
+    <string name="label_speed">Speed</string>
+    <string name="label_pace">Pace</string>
+    <string name="label_calories">Calories</string>
+    <string name="label_steps">Steps</string>
+    <string name="label_elevation">Elevation</string>
+    <string name="label_time">Time</string>
+
+    <!-- Run screen -->
+    <string name="btn_start">START</string>
+    <string name="btn_finish">FINISH</string>
+
+    <!-- History screen -->
+    <string name="title_steps_history">Steps History</string>
+    <string name="title_recent_runs">Recent Runs</string>
+    <string name="msg_no_runs">No runs yet. Start your first run!</string>
+    <string name="msg_run_deleted">Run deleted</string>
+    <string name="btn_undo">Undo</string>
+
     <!-- Replay screen -->
+    <string name="msg_no_route_data">No route data for this run</string>
     <string name="replay_play">PLAY</string>
     <string name="replay_pause">PAUSE</string>
     <string name="replay_replay">REPLAY</string>
+    <string name="replay_speed_1x">1×</string>
+    <string name="replay_speed_2x">2×</string>
+    <string name="replay_speed_5x">5×</string>
+    <string name="replay_speed_10x">10×</string>
+    <string name="cd_replay_route">Replay route</string>
+
+    <!-- Charts screen -->
+    <string name="btn_replay_route">▶  REPLAY ROUTE</string>
+    <string name="calories_format">%1$d kcal</string>
 
     <!-- History steps chart tabs -->
     <string name="steps_tab_daily">Last 7 Days</string>
@@ -20,13 +53,38 @@
     <string name="steps_period_weeks">4 weeks</string>
     <string name="steps_period_months">6 months</string>
 
-    <!-- Charts screen -->
-    <string name="calories_format">%1$d kcal</string>
+    <!-- User Info / Weight screen -->
+    <string name="title_personal_info">Personal Info</string>
+    <string name="btn_edit">Edit</string>
+    <string name="btn_save_info">Save Info</string>
+    <string name="hint_height">Height (cm)</string>
+    <string name="hint_age">Age</string>
+    <string name="title_add_weight">Add Weight Entry</string>
+    <string name="hint_weight">Weight (kg)</string>
+    <string name="btn_add">Add</string>
+    <string name="title_weight_history">Weight History</string>
+    <string name="title_bmi_history">BMI History</string>
+    <string name="msg_bmi_no_height">Enter your height in Personal Info to see BMI chart</string>
+    <string name="title_bmi_indicator">BMI Indicator</string>
+
+    <!-- Settings preference titles / categories -->
+    <string name="pref_category_units">Units</string>
+    <string name="pref_distance_unit_title">Distance unit</string>
+    <string name="pref_weight_unit_title">Weight unit</string>
+    <string name="pref_category_voice">Voice Feedback</string>
+    <string name="pref_voice_enabled_title">Enable voice announcements</string>
+    <string name="pref_voice_enabled_summary">Announce distance milestones during a run</string>
+    <string name="pref_voice_frequency_title">Announce every</string>
+    <string name="pref_category_appearance">Appearance</string>
+    <string name="pref_theme_title">Theme</string>
+    <string name="pref_language_title">Language</string>
+    <string name="pref_category_about">About</string>
+    <string name="pref_version_title">Version</string>
 
     <!-- Route gray color -->
     <color name="routeGray">#BDBDBD</color>
 
-    <!-- Settings arrays -->
+    <!-- Settings arrays (values never translated, entries translated per locale) -->
     <string-array name="pref_language_entries">
         <item>English</item>
         <item>Ελληνικά</item>
