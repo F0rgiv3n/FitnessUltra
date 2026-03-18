@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
@@ -17,6 +16,7 @@ import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.graphics.toColorInt
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -50,7 +50,7 @@ class RunFragment : Fragment() {
     private var workoutConfig: WorkoutConfig = WorkoutConfig.FreeRun
     private var intervalJob: Job? = null
     private var lastPaceAlertMs = 0L
-    private val PACE_ALERT_COOLDOWN_MS = 30_000L
+    private val paceAlertCooldownMs = 30_000L
 
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -157,13 +157,15 @@ class RunFragment : Fragment() {
         if (config is WorkoutConfig.Intervals) {
             intervalJob?.cancel()
             intervalJob = viewLifecycleOwner.lifecycleScope.launch {
-                for (rep in 0 until config.reps) {
-                    if (!isActive) break
-                    speakTts(getString(R.string.tts_start_running, config.runSeconds))
-                    waitActiveSeconds(config.runSeconds)
-                    if (!isActive) break
-                    speakTts(getString(R.string.tts_start_walking, config.walkSeconds))
-                    waitActiveSeconds(config.walkSeconds)
+                run {
+                    repeat(config.reps) {
+                        if (!isActive) return@run
+                        speakTts(getString(R.string.tts_start_running, config.runSeconds))
+                        waitActiveSeconds(config.runSeconds)
+                        if (!isActive) return@run
+                        speakTts(getString(R.string.tts_start_walking, config.walkSeconds))
+                        waitActiveSeconds(config.walkSeconds)
+                    }
                 }
                 if (isActive) speakTts(getString(R.string.tts_workout_complete))
             }
@@ -225,7 +227,7 @@ class RunFragment : Fragment() {
         val config = workoutConfig as? WorkoutConfig.TargetPace ?: return
         if (meters < 500f) return  // wait for meaningful distance
         val now = System.currentTimeMillis()
-        if (now - lastPaceAlertMs < PACE_ALERT_COOLDOWN_MS) return
+        if (now - lastPaceAlertMs < paceAlertCooldownMs) return
 
         val currentPaceSec = TrackingUtils.calculatePaceSec(meters, durationMs, useMiles)
         val diff = currentPaceSec - config.paceSecPerUnit
@@ -290,22 +292,19 @@ class RunFragment : Fragment() {
     }
 
     private fun promptBatteryOptimizationIfNeeded() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
         val pm = requireContext().getSystemService(Context.POWER_SERVICE) as PowerManager
         val pkg = requireContext().packageName
         if (pm.isIgnoringBatteryOptimizations(pkg)) return
 
         val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         if (prefs.getBoolean("battery_opt_asked", false)) return
-        prefs.edit().putBoolean("battery_opt_asked", true).apply()
+        prefs.edit { putBoolean("battery_opt_asked", true) }
 
         AlertDialog.Builder(requireContext())
             .setTitle(getString(R.string.battery_opt_title))
             .setMessage(getString(R.string.battery_opt_message))
             .setPositiveButton(getString(R.string.battery_opt_open)) { _, _ ->
-                startActivity(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                    data = Uri.parse("package:$pkg")
-                })
+                startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
             }
             .setNegativeButton(android.R.string.cancel, null)
             .show()

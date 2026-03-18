@@ -23,8 +23,8 @@ class BmiGaugeView @JvmOverloads constructor(
             invalidate()
         }
 
-    private val BMI_MIN = 10f
-    private val BMI_MAX = 40f
+    private val bmiMin = 10f
+    private val bmiMax = 40f
 
     private val segments = listOf(
         Triple(18.5f, "#1565C0".toColorInt(), "Under"),
@@ -75,10 +75,10 @@ class BmiGaugeView @JvmOverloads constructor(
 
         // Colored segments
         arcPaint.strokeWidth = strokeW
-        var prevBmi = BMI_MIN
+        var prevBmi = bmiMin
         for ((bmiEnd, color, _) in segments) {
-            val startAngle = 180f + (prevBmi - BMI_MIN) / (BMI_MAX - BMI_MIN) * 180f
-            val sweep = (bmiEnd - prevBmi) / (BMI_MAX - BMI_MIN) * 180f
+            val startAngle = 180f + (prevBmi - bmiMin) / (bmiMax - bmiMin) * 180f
+            val sweep = (bmiEnd - prevBmi) / (bmiMax - bmiMin) * 180f
             arcPaint.color = color
             canvas.drawArc(oval, startAngle, sweep, false, arcPaint)
             prevBmi = bmiEnd
@@ -88,7 +88,7 @@ class BmiGaugeView @JvmOverloads constructor(
         tickPaint.strokeWidth = strokeW * 0.12f
         val innerR = radius - strokeW * 0.5f
         val outerR = radius + strokeW * 0.5f
-        for (b in listOf(BMI_MIN, 18.5f, 25f, 30f, BMI_MAX)) {
+        for (b in listOf(bmiMin, 18.5f, 25f, 30f, bmiMax)) {
             val angleRad = bmiToRad(b)
             canvas.drawLine(
                 cx + (innerR * cos(angleRad)).toFloat(), cy + (innerR * sin(angleRad)).toFloat(),
@@ -101,7 +101,7 @@ class BmiGaugeView @JvmOverloads constructor(
         textPaint.textSize = radius * 0.16f
         textPaint.color = "#444444".toColorInt()
         val labelR = radius + strokeW * 0.9f
-        val labelBmis  = listOf(BMI_MIN, 18.5f, 25f, 30f, BMI_MAX)
+        val labelBmis  = listOf(bmiMin, 18.5f, 25f, 30f, bmiMax)
         val labelTexts = listOf("10", "18.5", "25", "30", "40")
         for (i in labelBmis.indices) {
             val ar = bmiToRad(labelBmis[i])
@@ -113,7 +113,7 @@ class BmiGaugeView @JvmOverloads constructor(
         // Category labels inside arc
         textPaint.textSize = radius * 0.13f
         textPaint.color = "#FFFFFF".toColorInt()
-        val catMids = listOf((BMI_MIN + 18.5f) / 2f, (18.5f + 25f) / 2f, (25f + 30f) / 2f, (30f + BMI_MAX) / 2f)
+        val catMids = listOf((bmiMin + 18.5f) / 2f, (18.5f + 25f) / 2f, (25f + 30f) / 2f, (30f + bmiMax) / 2f)
         val catR = radius - strokeW * 1.15f
         for (i in segments.indices) {
             val ar = bmiToRad(catMids[i])
@@ -124,7 +124,7 @@ class BmiGaugeView @JvmOverloads constructor(
 
         // Needle
         if (bmi > 0f) {
-            val clamped = bmi.coerceIn(BMI_MIN, BMI_MAX)
+            val clamped = bmi.coerceIn(bmiMin, bmiMax)
             val ar = bmiToRad(clamped)
             val needleLen = radius * 0.80f
             val tailLen   = radius * 0.18f
@@ -145,5 +145,5 @@ class BmiGaugeView @JvmOverloads constructor(
     }
 
     private fun bmiToRad(bmi: Float): Double =
-        Math.toRadians((180.0 + (bmi - BMI_MIN) / (BMI_MAX - BMI_MIN) * 180.0))
+        Math.toRadians((180.0 + (bmi - bmiMin) / (bmiMax - bmiMin) * 180.0))
 }

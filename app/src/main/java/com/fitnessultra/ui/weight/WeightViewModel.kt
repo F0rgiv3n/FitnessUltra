@@ -2,6 +2,7 @@ package com.fitnessultra.ui.weight
 
 import android.app.Application
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -23,7 +24,7 @@ class WeightViewModel(application: Application) : AndroidViewModel(application) 
     val weightEntries = repository.allWeightEntries.asLiveData()
 
     fun saveWeight(weightKg: Float) {
-        prefs.edit().putFloat("weight_kg", weightKg).apply()
+        prefs.edit { putFloat("weight_kg", weightKg) }
         viewModelScope.launch {
             repository.insertWeightEntry(
                 WeightEntry(weightKg = weightKg, dateTimestamp = System.currentTimeMillis())
@@ -32,11 +33,11 @@ class WeightViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun saveUserInfo(heightCm: Float, age: Int) {
-        prefs.edit()
-            .putFloat("height_cm", heightCm)
-            .putFloat("height_m", heightCm / 100f)
-            .putInt("age", age)
-            .apply()
+        prefs.edit {
+            putFloat("height_cm", heightCm)
+            putFloat("height_m", heightCm / 100f)
+            putInt("age", age)
+        }
     }
 
     fun getHeightCm(): Float = prefs.getFloat("height_cm", 0f)
