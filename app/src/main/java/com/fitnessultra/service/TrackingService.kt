@@ -7,15 +7,14 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.widget.RemoteViews
-import android.content.Context
 import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.location.Location
+import android.os.Build
 import android.os.HandlerThread
-import android.os.Looper
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
@@ -87,12 +86,14 @@ class TrackingService : LifecycleService() {
 
     override fun onCreate() {
         super.onCreate()
-        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(
-            NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW)
-        )
+        notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationManager.createNotificationChannel(
+                NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW)
+            )
+        }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
@@ -151,6 +152,7 @@ class TrackingService : LifecycleService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
         intent?.action?.let { action ->
             when (action) {
                 ACTION_START_OR_RESUME -> {
@@ -194,11 +196,11 @@ class TrackingService : LifecycleService() {
                     val distanceMeters  = totalDistanceMeters.value ?: 0f
                     val elevGain        = elevationGainMeters.value ?: 0f
                     val steps           = stepCount.value ?: 0
-                    val rawLocSnapshot  = rawLocations.value?.toList() ?: emptyList()
+                    val rawLocationSnapshot = rawLocations.value?.toList() ?: emptyList()
                     val splitsSnapshot  = kmSplits.value?.toList() ?: emptyList()
 
-                    serviceScope.launch {
-                        saveRunToDb(finalTimeRun, distanceMeters, elevGain, steps, rawLocSnapshot, splitsSnapshot)
+                    serviceScope.launch(Dispatchers.IO) {
+                        saveRunToDb(finalTimeRun, distanceMeters, elevGain, steps, rawLocationSnapshot, splitsSnapshot)
                         withContext(Dispatchers.Main) {
                             stopForeground(STOP_FOREGROUND_REMOVE)
                             stopSelf()
@@ -217,17 +219,16 @@ class TrackingService : LifecycleService() {
         distanceMeters: Float,
         elevGain: Float,
         steps: Int,
-        rawLocs: List<Location>,
+        rawLocationList: List<Location>,
         splits: List<Long>
-    ) {
-        if (distanceMeters < 10f || durationMillis < 5_000L) return  // skip trivial runs
+    ) = withContext(Dispatchers.IO) {
+        if (distanceMeters < 10f || durationMillis < 5_000L) return@withContext
 
-        val prefs = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val weightKg = prefs.getFloat("weight_kg", 70f)
-        val gender = SettingsManager.gender(this)
+        val gender = SettingsManager.gender(this@TrackingService)
 
-        val avgSpeedKmh = if (durationMillis > 0)
-            (distanceMeters / 1000f) / (durationMillis / 1000f / 3600f) else 0f
+        val avgSpeedKmh = (distanceMeters / 1000f) / (durationMillis / 1000f / 3600f)
         val calories = TrackingUtils.calculateCalories(distanceMeters, weightKg, gender)
 
         val run = RunEntity(
@@ -240,11 +241,11 @@ class TrackingService : LifecycleService() {
             stepCount = steps
         )
 
-        val db = AppDatabase.getInstance(this)
+        val db = AppDatabase.getInstance(this@TrackingService)
         val runId = db.runDao().insertRun(run)
 
-        if (rawLocs.isNotEmpty()) {
-            val points = rawLocs.map { loc ->
+        if (rawLocationList.isNotEmpty()) {
+            val points = rawLocationList.map { loc ->
                 LocationPoint(
                     runId = runId,
                     latitude = loc.latitude,
@@ -256,7 +257,7 @@ class TrackingService : LifecycleService() {
             }
             db.runDao().insertLocationPoints(points)
 
-            val bitmap = ThumbnailUtils.render(rawLocs)
+            val bitmap = ThumbnailUtils.render(rawLocationList)
             if (bitmap != null) {
                 val dir = File(filesDir, "thumbnails")
                 dir.mkdirs()
@@ -399,8 +400,8 @@ class TrackingService : LifecycleService() {
         val pos = GeoPoint(location.latitude, location.longitude)
         val points = pathPoints.value?.apply { add(pos) } ?: mutableListOf(pos)
         pathPoints.postValue(points)
-        val locs = rawLocations.value?.apply { add(location) } ?: mutableListOf(location)
-        rawLocations.postValue(locs)
+        val locationList = rawLocations.value?.apply { add(location) } ?: mutableListOf(location)
+        rawLocations.postValue(locationList)
 
         if (points.size > 1) {
             val last = points[points.size - 2]
@@ -501,7 +502,7 @@ class TrackingService : LifecycleService() {
     }
 
     private fun acquireWakeLock() {
-        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+        val pm = getSystemService(POWER_SERVICE) as PowerManager
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "FitnessUltra::TrackingWakeLock")
         wakeLock?.acquire(6 * 60 * 60 * 1000L)
     }

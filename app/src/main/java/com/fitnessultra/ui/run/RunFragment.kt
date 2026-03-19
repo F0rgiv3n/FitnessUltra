@@ -117,6 +117,7 @@ class RunFragment : Fragment() {
             intervalJob?.cancel()
             intervalJob = null
             workoutConfig = WorkoutConfig.FreeRun
+            updateConfigButton()
             lastVoiceKm = 0
             lastPaceAlertMs = 0L
             val weightKg = getUserWeight()
@@ -139,7 +140,6 @@ class RunFragment : Fragment() {
             add(0, 1, 1, getString(R.string.workout_type_intervals))
             add(0, 2, 2, getString(R.string.workout_type_target_pace))
         }
-        // Mark current selection
         val checkedId = when (workoutConfig) {
             is WorkoutConfig.FreeRun    -> 0
             is WorkoutConfig.Intervals  -> 1
@@ -148,24 +148,29 @@ class RunFragment : Fragment() {
         popup.menu.getItem(checkedId).isChecked = true
 
         popup.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                0 -> workoutConfig = WorkoutConfig.FreeRun
-                1 -> openConfigSheet(R.id.radioIntervals)
-                2 -> openConfigSheet(R.id.radioTargetPace)
+            workoutConfig = when (item.itemId) {
+                1    -> WorkoutConfig.Intervals(runSeconds = 60, walkSeconds = 30, reps = 5)
+                2    -> WorkoutConfig.TargetPace(paceSecPerUnit = 360)
+                else -> WorkoutConfig.FreeRun
             }
+            updateConfigButton()
             true
         }
         popup.show()
     }
 
-    private fun openConfigSheet(preselectId: Int) {
-        WorkoutSetupBottomSheet().apply {
-            this.preselectId = preselectId
-            onStart = { config ->
-                workoutConfig = config
-                requestPermissionsAndStart()
-            }
-        }.show(parentFragmentManager, "workout_setup")
+    private fun updateConfigButton() {
+        val ctx = requireContext()
+        if (workoutConfig is WorkoutConfig.FreeRun) {
+            binding.btnWorkoutType.backgroundTintList =
+                android.content.res.ColorStateList.valueOf(android.graphics.Color.TRANSPARENT)
+            binding.btnWorkoutType.setTextColor(
+                androidx.core.content.ContextCompat.getColor(ctx, R.color.colorPrimary))
+        } else {
+            binding.btnWorkoutType.backgroundTintList =
+                androidx.core.content.ContextCompat.getColorStateList(ctx, R.color.colorPrimary)
+            binding.btnWorkoutType.setTextColor(android.graphics.Color.WHITE)
+        }
     }
 
     private fun applyMapStyle() {
