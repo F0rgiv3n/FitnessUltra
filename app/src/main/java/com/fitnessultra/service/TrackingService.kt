@@ -66,6 +66,7 @@ class TrackingService : LifecycleService() {
     private var lastAltitude = Double.MIN_VALUE
     private var timerJob: Job? = null
     private var slowUpdateCount = 0
+    private var lastAcceptedLocation: Location? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -122,6 +123,7 @@ class TrackingService : LifecycleService() {
         timeRun = 0L
         lastAltitude = Double.MIN_VALUE
         slowUpdateCount = 0
+        lastAcceptedLocation = null
         stepCounterBaseline = -1
         stepCounterAccumulated = 0
         lastStepTime = 0L
@@ -228,15 +230,29 @@ class TrackingService : LifecycleService() {
     }
 
     private fun addPathPoint(location: Location) {
+        // 1. Accuracy filter — reject readings worse than 25 m
+        if (location.accuracy > 25f) return
+
+        // 2. Spike filter — reject if implied speed vs last accepted point is physically impossible
+        val prev = lastAcceptedLocation
+        if (prev != null) {
+            val distanceM = prev.distanceTo(location)
+            val timeDeltaS = (location.time - prev.time) / 1000f
+            if (timeDeltaS > 0f) {
+                val impliedSpeedKmh = (distanceM / timeDeltaS) * 3.6f
+                if (impliedSpeedKmh > 120f) return   // spike — ignore point
+            }
+        }
+        lastAcceptedLocation = location
+
         val pos = GeoPoint(location.latitude, location.longitude)
         val points = pathPoints.value?.apply { add(pos) } ?: mutableListOf(pos)
         pathPoints.postValue(points)
 
         if (points.size > 1) {
             val last = points[points.size - 2]
-            val current = points.last()
             val results = FloatArray(1)
-            Location.distanceBetween(last.latitude, last.longitude, current.latitude, current.longitude, results)
+            Location.distanceBetween(last.latitude, last.longitude, pos.latitude, pos.longitude, results)
             totalDistanceMeters.postValue((totalDistanceMeters.value ?: 0f) + results[0])
         }
     }
