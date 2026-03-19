@@ -206,6 +206,7 @@ class TrackingService : LifecycleService() {
                         }
                     }
                 }
+                else -> {}
             }
         }
         return START_STICKY
