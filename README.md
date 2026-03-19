@@ -15,8 +15,8 @@ A personal Android fitness tracking app built with Kotlin. Track outdoor runs wi
 ### Running
 - Real-time GPS tracking with live map (OpenStreetMap, no API key)
 - **Live position marker** — blue dot on the map always centered at your current location during a run
-- Distance, speed, pace, elapsed time, and live elevation gain displayed during run
-- Step counter via device accelerometer
+- Distance, speed, pace, elapsed time, live elevation gain, and **cadence (steps/min)** displayed during run
+- Step counter via device accelerometer (`TYPE_STEP_COUNTER` with `TYPE_STEP_DETECTOR` fallback)
 - Voice announcements at configurable distance milestones (1 / 2 / 5 km) in your chosen language
 - Calories burned estimation (adjusts for gender)
 - Foreground service with WakeLock — keeps tracking alive with screen off
@@ -36,8 +36,17 @@ Interval timer correctly pauses when the run is paused — only counts active tr
 
 ### History
 - Full run log with swipe-to-delete and undo
+- **Route thumbnails** — each run shows a small rendered map of your GPS route
+- **Personal Record (⭐ PR) badges** — longest run and fastest pace are automatically highlighted
 - Steps bar chart per day / week / month
 - Tap any run → detailed charts (speed, elevation, pace)
+
+### Run Analysis (Charts)
+Per-run detail screen with:
+- Summary card: distance, duration, calories, steps, **average cadence**
+- Speed, elevation, and pace charts (MPAndroidChart)
+- Per-km split table with best split highlighted
+- **Export GPX** — share your run as a `.gpx` file compatible with Strava, Garmin Connect, and other platforms
 
 ### Run Replay
 - Animated playback of your GPS route on a map
@@ -76,7 +85,7 @@ Interval timer correctly pauses when the run is paused — only counts active tr
 | Architecture | MVVM, Navigation Component, ViewBinding, Coroutines + Flow |
 | Maps | OSMDroid 6.1.18 (OpenStreetMap) |
 | GPS | Fused Location Provider (play-services-location 21.2.0) |
-| Step Counter | `Sensor.TYPE_STEP_DETECTOR` via SensorManager |
+| Step Counter | `Sensor.TYPE_STEP_COUNTER` / `TYPE_STEP_DETECTOR` via SensorManager |
 | Database | Room 2.6.1 |
 | Charts | MPAndroidChart v3.1.0 |
 | Voice | Android TextToSpeech |
@@ -107,15 +116,18 @@ No API keys or external accounts required.
 
 ## Database
 
-Room database, version 2. Three tables:
+Room database, version 3. Four tables:
 
 | Table | Description |
 |---|---|
-| `runs` | One row per run (distance, duration, calories, steps, avg speed, timestamp) |
-| `location_points` | GPS points per run (lat, lng, altitude, speed, timestamp) — FK → runs CASCADE |
+| `runs` | One row per run (distance, duration, calories, steps, avg speed, elevation gain, timestamp) |
+| `location_points` | GPS points per run (lat, lon, altitude, speed, timestamp) — FK → runs CASCADE |
 | `weight_entries` | Weight log entries with timestamps |
+| `run_splits` | Per-km split times — FK → runs CASCADE |
 
-Migration 1→2 adds `stepCount INTEGER` to `runs` without data loss.
+Migrations:
+- 1→2: adds `stepCount INTEGER` to `runs`
+- 2→3: creates `run_splits` table with index on `runId`
 
 ---
 
