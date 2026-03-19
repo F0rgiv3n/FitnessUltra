@@ -231,7 +231,8 @@ class OfflineMapsFragment : Fragment() {
             }
             binding.tvProgress.text = resultMsg
 
-            if (done > 0) saveArea(box, done)
+            // Save whenever download ran — even if done==0 (tiles may have been skipped as non-200)
+            if (total > 0) saveArea(box, done)
         }
     }
 
