@@ -11,6 +11,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.location.Location
+import android.os.HandlerThread
 import android.os.Looper
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
@@ -55,7 +56,8 @@ class TrackingService : LifecycleService() {
     private var lastStepTime = 0L
 
     private val serviceJob = Job()
-    private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
+    private val serviceScope = CoroutineScope(Dispatchers.Default + serviceJob)
+    private var locationThread: HandlerThread? = null
 
     private var wakeLock: PowerManager.WakeLock? = null
 
@@ -151,7 +153,7 @@ class TrackingService : LifecycleService() {
                 }
             }
         }
-        return super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 
     private fun startForegroundService() {
@@ -219,9 +221,12 @@ class TrackingService : LifecycleService() {
             val request = LocationRequest.Builder(priority, 3000L)
                 .setMinUpdateIntervalMillis(2000L)
                 .build()
-            fusedLocationClient.requestLocationUpdates(request, locationCallback, Looper.getMainLooper())
+            locationThread = HandlerThread("LocationThread").apply { start() }
+            fusedLocationClient.requestLocationUpdates(request, locationCallback, locationThread!!.looper)
         } else {
             fusedLocationClient.removeLocationUpdates(locationCallback)
+            locationThread?.quit()
+            locationThread = null
         }
     }
 
@@ -325,5 +330,7 @@ class TrackingService : LifecycleService() {
         releaseWakeLock()
         serviceJob.cancel()
         stopStepCounter()
+        locationThread?.quit()
+        locationThread = null
     }
 }

@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
@@ -304,7 +305,9 @@ class RunFragment : Fragment() {
             .setTitle(getString(R.string.battery_opt_title))
             .setMessage(getString(R.string.battery_opt_message))
             .setPositiveButton(getString(R.string.battery_opt_open)) { _, _ ->
-                startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+                startActivity(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                    data = Uri.parse("package:${requireContext().packageName}")
+                })
             }
             .setNegativeButton(android.R.string.cancel, null)
             .show()
