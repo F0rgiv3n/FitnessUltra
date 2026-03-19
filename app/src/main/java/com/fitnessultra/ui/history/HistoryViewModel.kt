@@ -34,7 +34,7 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
             runs.maxByOrNull { it.distanceMeters }?.let { ids.add(it.id) }
             runs.filter { it.avgSpeedKmh > 0 }.maxByOrNull { it.avgSpeedKmh }?.let { ids.add(it.id) }
         }
-        ids as Set<Long>
+        ids
     }.asLiveData()
 
     val weeklySummary = repository.allRuns.map { runs ->
