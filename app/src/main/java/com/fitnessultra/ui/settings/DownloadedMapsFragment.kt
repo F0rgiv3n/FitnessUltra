@@ -71,8 +71,8 @@ class DownloadedMapsFragment : Fragment() {
                     .setTitle(R.string.downloaded_map_delete_title)
                     .setMessage(getString(R.string.downloaded_map_delete_message, area.description))
                     .setPositiveButton(R.string.btn_delete) { _, _ ->
-                        val pos = holder.bindingAdapterPosition
-                        if (pos != RecyclerView.NO_ID.toInt()) {
+                        val pos = holder.adapterPosition
+                        if (pos != RecyclerView.NO_POSITION) {
                             DownloadedMapsManager.delete(requireContext(), area.id)
                             items.removeAt(pos)
                             notifyItemRemoved(pos)

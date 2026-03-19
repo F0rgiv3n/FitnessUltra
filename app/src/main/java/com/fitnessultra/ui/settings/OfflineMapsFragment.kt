@@ -7,8 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AdapterView
-import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.fitnessultra.R
@@ -233,40 +231,26 @@ class OfflineMapsFragment : Fragment() {
             }
             binding.tvProgress.text = resultMsg
 
-            if (done > 0) showNameDialog(box, done)
+            if (done > 0) saveArea(box, done)
         }
     }
 
-    private fun showNameDialog(box: BoundingBox, tileCount: Int) {
+    private fun saveArea(box: BoundingBox, tileCount: Int) {
         val df = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        val defaultName = getString(R.string.downloaded_map_default_name, df.format(Date()))
-        val input = EditText(requireContext()).apply {
-            hint = getString(R.string.hint_area_name)
-            setText(defaultName)
-            selectAll()
-            setPadding(48, 32, 48, 16)
-        }
-        AlertDialog.Builder(requireContext())
-            .setTitle(R.string.downloaded_map_name_dialog_title)
-            .setView(input)
-            .setPositiveButton(R.string.btn_save) { _, _ ->
-                val name = input.text.toString().trim().ifEmpty { defaultName }
-                DownloadedMapsManager.save(
-                    requireContext(),
-                    DownloadedMapArea(
-                        id = UUID.randomUUID().toString(),
-                        description = name,
-                        latNorth = box.latNorth,
-                        latSouth = box.latSouth,
-                        lonWest = box.lonWest,
-                        lonEast = box.lonEast,
-                        downloadedAt = System.currentTimeMillis(),
-                        tileCount = tileCount
-                    )
-                )
-            }
-            .setNegativeButton(android.R.string.cancel, null)
-            .show()
+        val name = getString(R.string.downloaded_map_default_name, df.format(Date()))
+        DownloadedMapsManager.save(
+            requireContext(),
+            DownloadedMapArea(
+                id = UUID.randomUUID().toString(),
+                description = name,
+                latNorth = box.latNorth,
+                latSouth = box.latSouth,
+                lonWest = box.lonWest,
+                lonEast = box.lonEast,
+                downloadedAt = System.currentTimeMillis(),
+                tileCount = tileCount
+            )
+        )
     }
 
     private fun cancelDownload() {
