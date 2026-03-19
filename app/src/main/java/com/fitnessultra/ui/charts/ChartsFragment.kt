@@ -1,10 +1,13 @@
 package com.fitnessultra.ui.charts
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -13,9 +16,13 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.fitnessultra.R
 import com.fitnessultra.databinding.FragmentChartsBinding
+import com.fitnessultra.util.GpxExporter
 import com.fitnessultra.util.SettingsManager
 import com.fitnessultra.util.TrackingUtils
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -42,6 +49,8 @@ class ChartsFragment : Fragment() {
             findNavController().navigate(R.id.action_chartsFragment_to_replayFragment, bundle)
         }
 
+        binding.btnExportGpx.setOnClickListener { exportGpx(runId) }
+
         val useMiles = SettingsManager.useMiles(requireContext())
         val speedLabel = getString(R.string.chart_label_speed, TrackingUtils.speedUnitLabel(useMiles, requireContext()))
         val paceLabel  = getString(R.string.chart_label_pace, TrackingUtils.distanceUnitLabel(useMiles, requireContext()))
@@ -56,6 +65,14 @@ class ChartsFragment : Fragment() {
                 binding.tvRunCalories.text = getString(R.string.calories_format, run.caloriesBurned)
                 binding.tvRunSteps.text = if (run.stepCount > 0)
                     getString(R.string.steps_format, run.stepCount)
+                else getString(R.string.label_not_available)
+
+                // Cadence
+                val cadence = if (run.durationMillis > 0 && run.stepCount > 0)
+                    (run.stepCount * 60000L / run.durationMillis).toInt()
+                else 0
+                binding.tvRunCadence.text = if (cadence > 0)
+                    getString(R.string.cadence_format, cadence)
                 else getString(R.string.label_not_available)
             }
 
@@ -132,6 +149,39 @@ class ChartsFragment : Fragment() {
             }
             binding.chartPace.data = LineData(paceDataSet)
             binding.chartPace.invalidate()
+        }
+    }
+
+    private fun exportGpx(runId: Long) {
+        lifecycleScope.launch {
+            val run = viewModel.getRunById(runId)
+            val points = viewModel.getLocationPoints(runId)
+            if (run == null || points.isEmpty()) {
+                Toast.makeText(requireContext(), R.string.msg_gpx_no_data, Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+            val gpxContent = withContext(Dispatchers.IO) { GpxExporter.generate(run, points) }
+            val sdf = SimpleDateFormat("yyyyMMdd_HHmm", Locale.US)
+            val filename = getString(R.string.gpx_filename, sdf.format(Date(run.dateTimestamp)))
+            val gpxFile = withContext(Dispatchers.IO) {
+                val dir = File(requireContext().cacheDir, "gpx")
+                dir.mkdirs()
+                val f = File(dir, filename)
+                f.writeText(gpxContent)
+                f
+            }
+            val uri = FileProvider.getUriForFile(
+                requireContext(),
+                "${requireContext().packageName}.fileprovider",
+                gpxFile
+            )
+            val share = Intent(Intent.ACTION_SEND).apply {
+                type = "application/gpx+xml"
+                putExtra(Intent.EXTRA_STREAM, uri)
+                putExtra(Intent.EXTRA_SUBJECT, filename)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            startActivity(Intent.createChooser(share, getString(R.string.gpx_share_title)))
         }
     }
 

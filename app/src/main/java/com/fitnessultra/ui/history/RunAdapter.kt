@@ -1,6 +1,8 @@
 package com.fitnessultra.ui.history
 
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -9,6 +11,7 @@ import com.fitnessultra.data.db.entity.RunEntity
 import com.fitnessultra.databinding.ItemRunBinding
 import com.fitnessultra.util.SettingsManager
 import com.fitnessultra.util.TrackingUtils
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -16,10 +19,16 @@ class RunAdapter(
     private val onItemClick: (RunEntity) -> Unit
 ) : ListAdapter<RunEntity, RunAdapter.RunViewHolder>(DiffCallback()) {
 
-    class RunViewHolder(private val binding: ItemRunBinding) :
+    var prRunIds: Set<Long> = emptySet()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+
+    inner class RunViewHolder(private val binding: ItemRunBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(run: RunEntity, onItemClick: (RunEntity) -> Unit) {
+        fun bind(run: RunEntity) {
             val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
             binding.tvDate.text = sdf.format(Date(run.dateTimestamp))
             val useMiles = SettingsManager.useMiles(itemView.context)
@@ -30,6 +39,24 @@ class RunAdapter(
             binding.tvSteps.text = if (run.stepCount > 0)
                 itemView.context.getString(com.fitnessultra.R.string.steps_format, run.stepCount)
             else ""
+
+            // PR badge
+            binding.tvPrBadge.visibility = if (run.id in prRunIds) View.VISIBLE else View.GONE
+
+            // Route thumbnail
+            val thumbFile = File(itemView.context.filesDir, "thumbnails/${run.id}.png")
+            if (thumbFile.exists()) {
+                val bmp = BitmapFactory.decodeFile(thumbFile.absolutePath)
+                if (bmp != null) {
+                    binding.ivThumbnail.setImageBitmap(bmp)
+                    binding.ivThumbnail.visibility = View.VISIBLE
+                } else {
+                    binding.ivThumbnail.visibility = View.GONE
+                }
+            } else {
+                binding.ivThumbnail.visibility = View.GONE
+            }
+
             binding.root.setOnClickListener { onItemClick(run) }
         }
     }
@@ -40,7 +67,7 @@ class RunAdapter(
     }
 
     override fun onBindViewHolder(holder: RunViewHolder, position: Int) {
-        holder.bind(getItem(position), onItemClick)
+        holder.bind(getItem(position))
     }
 
     class DiffCallback : DiffUtil.ItemCallback<RunEntity>() {

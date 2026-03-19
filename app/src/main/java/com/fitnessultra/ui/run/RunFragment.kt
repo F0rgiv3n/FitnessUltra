@@ -232,6 +232,7 @@ class RunFragment : Fragment() {
 
         viewModel.stepCount.observe(viewLifecycleOwner) { steps ->
             binding.tvSteps.text = (steps ?: 0).toString()
+            updateCadence(steps ?: 0)
         }
 
         viewModel.elevationGainMeters.observe(viewLifecycleOwner) { gain ->
@@ -262,6 +263,12 @@ class RunFragment : Fragment() {
                 requireContext().getColor(android.R.color.tab_indicator_text)
             )
         }
+    }
+
+    private fun updateCadence(steps: Int) {
+        val elapsedMs = viewModel.timeRunInMillis.value ?: 0L
+        val cadence = if (elapsedMs > 0) (steps * 60000L / elapsedMs).toInt() else 0
+        binding.tvCadence.text = cadence.toString()
     }
 
     private fun updatePolyline(points: MutableList<GeoPoint>) {

@@ -219,4 +219,10 @@
     <string name="label_split_time">Zeit</string>
     <string name="label_split_pace">Tempo</string>
     <string name="label_best_split">Beste</string>
+    <string name="label_cadence">Kadenz</string>
+    <string name="cadence_format">%1$d Spm</string>
+    <string name="badge_pr">⭐ PR</string>
+    <string name="btn_export_gpx">GPX exportieren</string>
+    <string name="gpx_share_title">GPX teilen</string>
+    <string name="msg_gpx_no_data">Keine Standortdaten zum Exportieren</string>
 </resources>

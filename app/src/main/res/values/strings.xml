@@ -189,6 +189,19 @@
     <string name="label_split_pace">Pace</string>
     <string name="label_best_split">Best</string>
 
+    <!-- Cadence -->
+    <string name="label_cadence">Cadence</string>
+    <string name="cadence_format">%1$d spm</string>
+
+    <!-- Personal Records -->
+    <string name="badge_pr">⭐ PR</string>
+
+    <!-- GPX Export -->
+    <string name="btn_export_gpx">Export GPX</string>
+    <string name="gpx_share_title">Share GPX</string>
+    <string name="msg_gpx_no_data">No location data to export</string>
+    <string name="gpx_filename" translatable="false">run_%1$s.gpx</string>
+
     <!-- Route gray color -->
     <color name="routeGray">#BDBDBD</color>
 

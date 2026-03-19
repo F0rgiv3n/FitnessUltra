@@ -13,7 +13,7 @@ Open in Android Studio — Gradle sync and dependency download happens automatic
 - **Maps:** OSMDroid 6.1.18 (OpenStreetMap — no API key required)
 - **GPS:** Fused Location Provider API (`play-services-location:21.2.0`)
 - **Step Counter:** `Sensor.TYPE_STEP_DETECTOR` via `SensorManager`
-- **Local DB:** Room 2.6.1 (version 2, migration 1→2 adds `stepCount` to `runs`)
+- **Local DB:** Room 2.6.1 (version 3, migrations 1→2→3)
 - **Charts:** MPAndroidChart v3.1.0 (via JitPack)
 - **Voice:** Android TextToSpeech (milestones + workout coaching)
 - **Architecture:** MVVM, Navigation Component, ViewBinding, Coroutines + Flow
@@ -23,20 +23,22 @@ Open in Android Studio — Gradle sync and dependency download happens automatic
 ```
 com.fitnessultra
 ├── data/
-│   ├── db/           ← AppDatabase (v2, singleton + MIGRATION_1_2), entities, DAOs
+│   ├── db/           ← AppDatabase (v3, singleton + MIGRATION_1_2 + MIGRATION_2_3), entities, DAOs
 │   └── repository/   ← RunRepository, WeightRepository
 ├── service/
 │   └── TrackingService.kt   ← Foreground service: GPS, timer, step counter, LiveData
 ├── ui/
 │   ├── run/          ← RunFragment, RunViewModel, WorkoutSetupBottomSheet, WorkoutConfig
-│   ├── history/      ← HistoryFragment, RunAdapter (swipe-to-delete + Undo, tap→charts)
-│   ├── charts/       ← ChartsFragment, ChartsViewModel (per-run: speed/elevation/pace)
+│   ├── history/      ← HistoryFragment, RunAdapter (swipe-to-delete + Undo, tap→charts, PR badges, thumbnails)
+│   ├── charts/       ← ChartsFragment, ChartsViewModel (per-run: speed/elevation/pace/splits/cadence/GPX)
 │   ├── replay/       ← ReplayFragment (animated route replay, scrubber)
 │   ├── goals/        ← GoalsFragment, GoalsViewModel (weekly distance/time/steps)
 │   └── weight/       ← WeightFragment, WeightViewModel, BmiGaugeView
 ├── util/
 │   ├── TrackingUtils.kt   ← All user-visible string functions require Context (see below)
-│   └── SettingsManager.kt ← Central settings helper
+│   ├── SettingsManager.kt ← Central settings helper
+│   ├── GpxExporter.kt     ← Generates GPX XML from LocationPoint list
+│   └── ThumbnailUtils.kt  ← Renders route Canvas→Bitmap (128×128 px, dark background, blue route)
 └── MainActivity.kt   ← BottomNavigationView (5 tabs: Run · History · Charts · Goals · User Info)
 ```
 
@@ -47,7 +49,8 @@ com.fitnessultra
 
 ## Key Architecture Decisions
 
-- **TrackingService** extends `LifecycleService`, exposes data via companion `MutableLiveData`: `isTracking`, `pathPoints`, `timeRunInMillis`, `currentSpeedKmh`, `totalDistanceMeters`, `elevationGainMeters`, `stepCount`.
+- **TrackingService** extends `LifecycleService`, exposes data via companion `MutableLiveData`: `isTracking`, `pathPoints`, `rawLocations` (full `Location` objects for GPS export/thumbnail), `timeRunInMillis`, `currentSpeedKmh`, `totalDistanceMeters`, `elevationGainMeters`, `stepCount`, `kmSplits`.
+- **`rawLocations`**: companion `MutableLiveData<MutableList<Location>>` — stores full `android.location.Location` objects alongside GeoPoints. `RunViewModel.saveRun()` snapshots this to build proper `LocationPoint` rows with real `location.time`, `location.altitude`, `location.speed`.
 - **TrackingUtils string functions all require `Context`** — added in latest session:
   - `formatDistance(meters, useMiles, context)`
   - `formatSpeedKmh(kmh, useMiles, context)`
@@ -58,12 +61,16 @@ com.fitnessultra
 - **WorkoutConfig** sealed class: `FreeRun` / `Intervals(runSeconds, walkSeconds, reps)` / `TargetPace(paceSecPerUnit, toleranceSec=30)`
 - **Interval timer** uses `waitActiveSeconds()` coroutine — only counts elapsed when `isTracking == true`. Uses `for` loop (not `repeat`) inside `launch` so `isActive` is accessible. Requires `import kotlinx.coroutines.isActive`.
 - **Map tile sources:** CYCLEMAP/PUBLIC_TRANSPORT removed from OSMDroid 6.x. Use `SettingsManager.tileSource(context)` which returns custom `XYTileSource` for CyclOSM/HOT OSM.
-- **Room DB v2:** 3 tables: `runs`, `location_points` (FK → runs CASCADE), `weight_entries`. Migration 1→2 adds `stepCount INTEGER NOT NULL DEFAULT 0`.
+- **Room DB v3:** 4 tables: `runs`, `location_points` (FK → runs CASCADE), `weight_entries`, `run_splits` (FK → runs CASCADE). Migrations: 1→2 adds `stepCount`, 2→3 creates `run_splits` + index.
 - **SharedPreferences** (`user_prefs`): `weight_kg`, `height_cm`, `height_m`, `age`.
 - **BMI gauge** (`BmiGaugeView`): custom `View`, semicircle Canvas, 4 color zones, rotating needle.
 - **Replay scrubber:** `isScrubbing` flag prevents feedback loop between SeekBar and `updatePositionAt()`.
 - **Language switching:** `AppCompatDelegate.setApplicationLocales()` for runtime locale change.
 - **Auto-pause:** 3 consecutive GPS updates < 1 km/h → pause. Uses `slowUpdateCount` field in `TrackingService`.
+- **Personal Records (PRs):** `HistoryViewModel.prRunIds: LiveData<Set<Long>>` — derived from `allRuns` Flow, computes longest-distance run and fastest-pace run IDs. `RunAdapter` shows gold `⭐ PR` badge when `run.id in prRunIds`.
+- **Route thumbnails:** Generated by `ThumbnailUtils.render(List<Location>)` after each run is saved. Stored at `filesDir/thumbnails/{runId}.png`. Loaded from file in `RunAdapter` (shows 72dp ImageView if file exists).
+- **Cadence:** Computed as `steps * 60000 / durationMs`. Shown live in RunFragment (Steps | Cadence | Elevation row) and post-run in ChartsFragment summary.
+- **GPX export:** `GpxExporter.generate(run, points)` produces GPX 1.1 XML with `<trkpt lat lon><ele><time><speed>`. Written to `cacheDir/gpx/`, shared via `FileProvider` + `Intent.ACTION_SEND`. FileProvider authority: `{packageName}.fileprovider`. Paths config: `res/xml/file_paths.xml`.
 
 ## i18n Rules
 
@@ -73,13 +80,13 @@ com.fitnessultra
 
 ## Permissions (AndroidManifest)
 
-`ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION`, `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_LOCATION`, `POST_NOTIFICATIONS`, `INTERNET`, `ACTIVITY_RECOGNITION`
+`ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION`, `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_LOCATION`, `POST_NOTIFICATIONS`, `INTERNET`, `ACTIVITY_RECOGNITION`, `WAKE_LOCK`
 
 ## Build Notes
 
 - Min SDK: 24, Target SDK: 34, Gradle 8.4
-- OSMDroid: set `Configuration.getInstance().userAgentValue` before map use (done in `RunFragment.onViewCreated` and `ReplayFragment`)
-- `fallbackToDestructiveMigration` is **not used** — proper `MIGRATION_1_2` is defined in `AppDatabase`
+- OSMDroid: set `Configuration.getInstance().userAgentValue` before map use (done in `FitnessUltraApp.onCreate`)
+- `fallbackToDestructiveMigration` is **not used** — proper migrations defined in `AppDatabase`
 
 ## What Still Needs Building
 

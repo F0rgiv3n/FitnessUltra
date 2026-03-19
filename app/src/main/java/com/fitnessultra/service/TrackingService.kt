@@ -39,6 +39,7 @@ class TrackingService : LifecycleService() {
 
         val isTracking = MutableLiveData<Boolean>()
         val pathPoints = MutableLiveData<MutableList<GeoPoint>>()
+        val rawLocations = MutableLiveData<MutableList<Location>>()
         val timeRunInMillis = MutableLiveData<Long>()
         val currentSpeedKmh = MutableLiveData<Float>()
         val totalDistanceMeters = MutableLiveData<Float>()
@@ -119,6 +120,7 @@ class TrackingService : LifecycleService() {
     private fun initValues() {
         isTracking.postValue(false)
         pathPoints.postValue(mutableListOf())
+        rawLocations.postValue(mutableListOf())
         timeRunInMillis.postValue(0L)
         currentSpeedKmh.postValue(0f)
         totalDistanceMeters.postValue(0f)
@@ -255,6 +257,8 @@ class TrackingService : LifecycleService() {
         val pos = GeoPoint(location.latitude, location.longitude)
         val points = pathPoints.value?.apply { add(pos) } ?: mutableListOf(pos)
         pathPoints.postValue(points)
+        val locs = rawLocations.value?.apply { add(location) } ?: mutableListOf(location)
+        rawLocations.postValue(locs)
 
         if (points.size > 1) {
             val last = points[points.size - 2]

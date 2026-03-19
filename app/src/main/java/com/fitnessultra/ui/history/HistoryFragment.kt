@@ -76,6 +76,10 @@ class HistoryFragment : Fragment() {
             updateStepsChart()
         }
 
+        viewModel.prRunIds.observe(viewLifecycleOwner) { ids ->
+            runAdapter.prRunIds = ids
+        }
+
         binding.tabsSteps.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 selectedTab = tab.position

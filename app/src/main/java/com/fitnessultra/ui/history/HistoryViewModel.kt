@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.fitnessultra.data.db.AppDatabase
 import com.fitnessultra.data.db.entity.RunEntity
 import com.fitnessultra.data.repository.RunRepository
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class HistoryViewModel(application: Application) : AndroidViewModel(application) {
@@ -16,6 +17,16 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
     )
 
     val runs = repository.allRuns.asLiveData()
+
+    /** Set of run IDs that currently hold a personal record (longest distance or fastest pace). */
+    val prRunIds = repository.allRuns.map { runs ->
+        val ids = mutableSetOf<Long>()
+        if (runs.isNotEmpty()) {
+            runs.maxByOrNull { it.distanceMeters }?.let { ids.add(it.id) }
+            runs.filter { it.avgSpeedKmh > 0 }.maxByOrNull { it.avgSpeedKmh }?.let { ids.add(it.id) }
+        }
+        ids as Set<Long>
+    }.asLiveData()
 
     fun deleteRun(run: RunEntity) {
         viewModelScope.launch {

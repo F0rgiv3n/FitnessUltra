@@ -2,6 +2,7 @@ package com.fitnessultra.ui.run
 
 import android.app.Application
 import android.content.Intent
+import android.graphics.Bitmap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.fitnessultra.data.db.AppDatabase
@@ -10,9 +11,12 @@ import com.fitnessultra.data.db.entity.RunEntity
 import com.fitnessultra.data.db.entity.RunSplit
 import com.fitnessultra.data.repository.RunRepository
 import com.fitnessultra.service.TrackingService
+import com.fitnessultra.util.ThumbnailUtils
 import com.fitnessultra.util.TrackingUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
 
 class RunViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -42,7 +46,7 @@ class RunViewModel(application: Application) : AndroidViewModel(application) {
         val durationMillis = timeRunInMillis.value ?: return
         val elevationGain = elevationGainMeters.value ?: 0f
         val steps = stepCount.value ?: 0
-        val pathSnapshot = pathPoints.value?.map { it } ?: emptyList()
+        val rawLocSnapshot = TrackingService.rawLocations.value?.map { it } ?: emptyList()
         val splitsSnapshot = TrackingService.kmSplits.value?.toList() ?: emptyList()
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -61,26 +65,41 @@ class RunViewModel(application: Application) : AndroidViewModel(application) {
                 stepCount = steps
             )
 
-            val points = pathSnapshot.mapIndexed { index, geoPoint ->
+            val points = rawLocSnapshot.map { loc ->
                 LocationPoint(
                     runId = 0,
-                    latitude = geoPoint.latitude,
-                    longitude = geoPoint.longitude,
-                    altitude = 0.0,
-                    speedMs = 0f,
-                    timestamp = System.currentTimeMillis() + index
+                    latitude = loc.latitude,
+                    longitude = loc.longitude,
+                    altitude = if (loc.hasAltitude()) loc.altitude else 0.0,
+                    speedMs = loc.speed,
+                    timestamp = loc.time
                 )
             }
 
             val runId = repository.insertRun(run)
             if (points.isNotEmpty()) {
                 repository.insertLocationPoints(points.map { it.copy(runId = runId) })
+                saveThumbnail(runId, rawLocSnapshot)
             }
             if (splitsSnapshot.isNotEmpty()) {
                 repository.insertSplits(splitsSnapshot.mapIndexed { i, ms ->
                     RunSplit(runId = runId, kmNumber = i + 1, splitMs = ms)
                 })
             }
+        }
+    }
+
+    private fun saveThumbnail(runId: Long, locs: List<android.location.Location>) {
+        val bitmap = ThumbnailUtils.render(locs) ?: return
+        val dir = File(getApplication<Application>().filesDir, "thumbnails")
+        dir.mkdirs()
+        val file = File(dir, "$runId.png")
+        try {
+            FileOutputStream(file).use { out ->
+                bitmap.compress(Bitmap.CompressFormat.PNG, 85, out)
+            }
+        } finally {
+            bitmap.recycle()
         }
     }
 }

@@ -219,4 +219,10 @@
     <string name="label_split_time">Χρόνος</string>
     <string name="label_split_pace">Ρυθμός</string>
     <string name="label_best_split">Καλύτερο</string>
+    <string name="label_cadence">Ρυθμός βημάτων</string>
+    <string name="cadence_format">%1$d βήμ/λεπτό</string>
+    <string name="badge_pr">⭐ ΡΕ</string>
+    <string name="btn_export_gpx">Εξαγωγή GPX</string>
+    <string name="gpx_share_title">Κοινοποίηση GPX</string>
+    <string name="msg_gpx_no_data">Δεν υπάρχουν δεδομένα τοποθεσίας</string>
 </resources>
