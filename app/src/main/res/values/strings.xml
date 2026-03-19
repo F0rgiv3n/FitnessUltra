@@ -79,6 +79,11 @@
     <string name="target_pace_min_hint">Min</string>
     <string name="target_pace_sec_hint">Sec</string>
     <string name="btn_start_workout">Start</string>
+    <string name="sheet_interval_sec">sec</string>
+    <string name="sheet_interval_rounds">rounds</string>
+    <string name="sheet_interval_summary">%1$d × (%2$ds + %3$ds) ≈ %4$d:%5$02d</string>
+    <string name="sheet_pace_tolerance">Voice alert when pace varies by ±30 sec</string>
+    <string name="btn_set">SET</string>
     <string name="tts_start_running">Start running, %1$d seconds</string>
     <string name="tts_start_walking">Start walking, %1$d seconds</string>
     <string name="tts_workout_complete">Workout complete</string>

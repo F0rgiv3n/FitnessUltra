@@ -97,14 +97,6 @@
                 android:gravity="center">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn1x"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/replay_speed_1x"
-                    android:layout_marginEnd="4dp" />
-
-                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn2x"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
@@ -118,14 +110,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/replay_speed_5x"
-                    android:layout_marginEnd="4dp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn10x"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/replay_speed_10x"
                     android:layout_marginEnd="16dp" />
 
                 <com.google.android.material.button.MaterialButton
@@ -133,7 +117,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/replay_play"
-                    android:enabled="false"
+                    android:minWidth="120dp"
                     app:backgroundTint="?attr/colorPrimary" />
 
             </LinearLayout>

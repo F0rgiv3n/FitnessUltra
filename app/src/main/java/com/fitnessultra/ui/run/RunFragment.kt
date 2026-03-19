@@ -129,6 +129,7 @@ class RunFragment : Fragment() {
             binding.mapView.invalidate()
         }
 
+        updateConfigButton()
         observeTracking()
     }
 
@@ -148,12 +149,15 @@ class RunFragment : Fragment() {
         popup.menu.getItem(checkedId).isChecked = true
 
         popup.setOnMenuItemClickListener { item ->
-            workoutConfig = when (item.itemId) {
-                1    -> WorkoutConfig.Intervals(runSeconds = 60, walkSeconds = 30, reps = 5)
-                2    -> WorkoutConfig.TargetPace(paceSecPerUnit = 360)
-                else -> WorkoutConfig.FreeRun
+            when (item.itemId) {
+                1 -> IntervalsSetupSheet().apply {
+                    onApply = { config -> workoutConfig = config; updateConfigButton() }
+                }.show(parentFragmentManager, "intervals_setup")
+                2 -> TargetPaceSetupSheet().apply {
+                    onApply = { config -> workoutConfig = config; updateConfigButton() }
+                }.show(parentFragmentManager, "pace_setup")
+                else -> { workoutConfig = WorkoutConfig.FreeRun; updateConfigButton() }
             }
-            updateConfigButton()
             true
         }
         popup.show()
@@ -161,15 +165,25 @@ class RunFragment : Fragment() {
 
     private fun updateConfigButton() {
         val ctx = requireContext()
-        if (workoutConfig is WorkoutConfig.FreeRun) {
-            binding.btnWorkoutType.backgroundTintList =
-                android.content.res.ColorStateList.valueOf(android.graphics.Color.TRANSPARENT)
-            binding.btnWorkoutType.setTextColor(
-                androidx.core.content.ContextCompat.getColor(ctx, R.color.colorPrimary))
-        } else {
-            binding.btnWorkoutType.backgroundTintList =
-                androidx.core.content.ContextCompat.getColorStateList(ctx, R.color.colorPrimary)
-            binding.btnWorkoutType.setTextColor(android.graphics.Color.WHITE)
+        when (workoutConfig) {
+            is WorkoutConfig.FreeRun -> {
+                binding.btnWorkoutType.setText(R.string.workout_type_free)
+                binding.btnWorkoutType.backgroundTintList =
+                    ContextCompat.getColorStateList(ctx, R.color.colorPrimary)
+                binding.btnWorkoutType.setTextColor(android.graphics.Color.WHITE)
+            }
+            is WorkoutConfig.Intervals -> {
+                binding.btnWorkoutType.setText(R.string.workout_type_intervals)
+                binding.btnWorkoutType.backgroundTintList =
+                    ContextCompat.getColorStateList(ctx, R.color.colorPrimary)
+                binding.btnWorkoutType.setTextColor(android.graphics.Color.WHITE)
+            }
+            is WorkoutConfig.TargetPace -> {
+                binding.btnWorkoutType.setText(R.string.workout_type_target_pace)
+                binding.btnWorkoutType.backgroundTintList =
+                    ContextCompat.getColorStateList(ctx, R.color.colorPrimary)
+                binding.btnWorkoutType.setTextColor(android.graphics.Color.WHITE)
+            }
         }
     }
 

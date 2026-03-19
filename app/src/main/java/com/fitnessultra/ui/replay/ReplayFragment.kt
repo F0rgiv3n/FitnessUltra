@@ -97,10 +97,11 @@ class ReplayFragment : Fragment() {
             updateStatsAt(0)
             binding.seekBar.max = points.size - 1
             binding.seekBar.progress = 0
-            binding.btnPlayPause.isEnabled = true
         }
 
         binding.btnPlayPause.setOnClickListener { togglePlayPause() }
+        binding.btn2x.setOnClickListener  { setSpeed(2f) }
+        binding.btn5x.setOnClickListener  { setSpeed(5f) }
 
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             private var wasPlaying = false
@@ -123,12 +124,6 @@ class ReplayFragment : Fragment() {
                 if (wasPlaying) startReplay()
             }
         })
-        binding.btn1x.setOnClickListener  { setSpeed(1f) }
-        binding.btn2x.setOnClickListener  { setSpeed(2f) }
-        binding.btn5x.setOnClickListener  { setSpeed(5f) }
-        binding.btn10x.setOnClickListener { setSpeed(10f) }
-
-        setSpeed(1f) // highlight 1x by default
     }
 
     private fun setupOverlays() {
@@ -176,6 +171,7 @@ class ReplayFragment : Fragment() {
     }
 
     private fun togglePlayPause() {
+        if (points.isEmpty()) return
         if (isPlaying) pauseReplay() else startReplay()
     }
 
@@ -229,10 +225,8 @@ class ReplayFragment : Fragment() {
         speedMultiplier = multiplier
         val selectedColor = ContextCompat.getColor(requireContext(), R.color.colorPrimary)
         listOf(
-            binding.btn1x  to 1f,
-            binding.btn2x  to 2f,
-            binding.btn5x  to 5f,
-            binding.btn10x to 10f
+            binding.btn2x to 2f,
+            binding.btn5x to 5f
         ).forEach { (btn, value) ->
             btn.setBackgroundColor(if (value == multiplier) selectedColor else "#00000000".toColorInt())
             btn.setTextColor(

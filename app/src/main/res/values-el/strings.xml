@@ -78,6 +78,11 @@
     <string name="target_pace_min_hint">Λεπτά</string>
     <string name="target_pace_sec_hint">Δλ</string>
     <string name="btn_start_workout">Εκκίνηση</string>
+    <string name="sheet_interval_sec">δλ</string>
+    <string name="sheet_interval_rounds">γύροι</string>
+    <string name="sheet_interval_summary">%1$d × (%2$dδλ + %3$dδλ) ≈ %4$d:%5$02d</string>
+    <string name="sheet_pace_tolerance">Φωνητική ειδοποίηση κατά απόκλιση ±30 δλ</string>
+    <string name="btn_set">ΟΡΙΣΜΟΣ</string>
     <string name="tts_start_running">Ξεκίνα τρέχοντας, %1$d δευτερόλεπτα</string>
     <string name="tts_start_walking">Ξεκίνα βαδίζοντας, %1$d δευτερόλεπτα</string>
     <string name="tts_workout_complete">Η προπόνηση ολοκληρώθηκε</string>
