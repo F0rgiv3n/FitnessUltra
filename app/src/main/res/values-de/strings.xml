@@ -21,6 +21,7 @@
     <!-- Run screen -->
     <string name="btn_start">START</string>
     <string name="btn_resume">WEITER</string>
+    <string name="btn_config">CONFIG</string>
     <string name="btn_finish">BEENDEN</string>
     <string name="battery_opt_title">Hintergrundtracking</string>
     <string name="battery_opt_message">Damit das Tracking bei ausgeschaltetem Bildschirm weiterläuft, erlaube FitnessUltra ohne Akkubeschränkungen zu laufen.</string>

@@ -13,6 +13,7 @@ import com.fitnessultra.util.TrackingUtils
 class WorkoutSetupBottomSheet : BottomSheetDialogFragment() {
 
     var onStart: ((WorkoutConfig) -> Unit)? = null
+    var preselectId: Int = R.id.radioFreeRun
 
     private var _binding: FragmentWorkoutSetupBinding? = null
     private val binding get() = _binding!!
@@ -27,6 +28,10 @@ class WorkoutSetupBottomSheet : BottomSheetDialogFragment() {
 
         val unitLabel = TrackingUtils.distanceUnitLabel(SettingsManager.useMiles(requireContext()), requireContext())
         binding.tvPaceLabel.text = getString(R.string.target_pace_label, unitLabel)
+
+        if (preselectId != R.id.radioFreeRun) {
+            binding.radioGroup.check(preselectId)
+        }
 
         binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
             binding.layoutIntervals.visibility =

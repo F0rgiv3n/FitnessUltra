@@ -110,20 +110,13 @@ class RunFragment : Fragment() {
         }
 
         binding.btnWorkoutType.setOnClickListener {
-            WorkoutSetupBottomSheet().apply {
-                onStart = { config ->
-                    workoutConfig = config
-                    updateWorkoutTypeButton()
-                    requestPermissionsAndStart()
-                }
-            }.show(parentFragmentManager, "workout_setup")
+            showWorkoutTypePopup()
         }
 
         binding.btnStopRun.setOnClickListener {
             intervalJob?.cancel()
             intervalJob = null
             workoutConfig = WorkoutConfig.FreeRun
-            updateWorkoutTypeButton()
             lastVoiceKm = 0
             lastPaceAlertMs = 0L
             val weightKg = getUserWeight()
@@ -138,13 +131,41 @@ class RunFragment : Fragment() {
         observeTracking()
     }
 
-    private fun updateWorkoutTypeButton() {
-        val label = when (workoutConfig) {
-            is WorkoutConfig.FreeRun    -> getString(R.string.workout_type_free)
-            is WorkoutConfig.Intervals  -> getString(R.string.workout_type_intervals)
-            is WorkoutConfig.TargetPace -> getString(R.string.workout_type_target_pace)
+    private fun showWorkoutTypePopup() {
+        val popup = android.widget.PopupMenu(requireContext(), binding.btnWorkoutType)
+        popup.menu.apply {
+            setGroupCheckable(0, true, true)
+            add(0, 0, 0, getString(R.string.workout_type_free))
+            add(0, 1, 1, getString(R.string.workout_type_intervals))
+            add(0, 2, 2, getString(R.string.workout_type_target_pace))
         }
-        binding.btnWorkoutType.text = label
+        // Mark current selection
+        val checkedId = when (workoutConfig) {
+            is WorkoutConfig.FreeRun    -> 0
+            is WorkoutConfig.Intervals  -> 1
+            is WorkoutConfig.TargetPace -> 2
+        }
+        popup.menu.getItem(checkedId).isChecked = true
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                0 -> workoutConfig = WorkoutConfig.FreeRun
+                1 -> openConfigSheet(R.id.radioIntervals)
+                2 -> openConfigSheet(R.id.radioTargetPace)
+            }
+            true
+        }
+        popup.show()
+    }
+
+    private fun openConfigSheet(preselectId: Int) {
+        WorkoutSetupBottomSheet().apply {
+            this.preselectId = preselectId
+            onStart = { config ->
+                workoutConfig = config
+                requestPermissionsAndStart()
+            }
+        }.show(parentFragmentManager, "workout_setup")
     }
 
     private fun applyMapStyle() {
