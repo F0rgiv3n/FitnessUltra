@@ -10,6 +10,7 @@ import com.fitnessultra.data.db.entity.RunEntity
 import com.fitnessultra.data.repository.RunRepository
 import com.fitnessultra.service.TrackingService
 import com.fitnessultra.util.TrackingUtils
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class RunViewModel(application: Application) : AndroidViewModel(application) {
@@ -35,41 +36,43 @@ class RunViewModel(application: Application) : AndroidViewModel(application) {
 
     /** Call this when user presses Stop to persist the run. */
     fun saveRun(weightKg: Float, gender: String = "none") {
+        // Snapshot LiveData values on main thread before switching dispatcher
         val distanceMeters = totalDistanceMeters.value ?: return
         val durationMillis = timeRunInMillis.value ?: return
         val elevationGain = elevationGainMeters.value ?: 0f
         val steps = stepCount.value ?: 0
-        val avgSpeedKmh = if (durationMillis > 0)
-            (distanceMeters / 1000f) / (durationMillis / 1000f / 3600f)
-        else 0f
-        val calories = TrackingUtils.calculateCalories(distanceMeters, weightKg, gender)
+        val pathSnapshot = pathPoints.value?.map { it } ?: emptyList()
 
-        val run = RunEntity(
-            dateTimestamp = System.currentTimeMillis(),
-            avgSpeedKmh = avgSpeedKmh,
-            distanceMeters = distanceMeters,
-            durationMillis = durationMillis,
-            caloriesBurned = calories,
-            elevationGainMeters = elevationGain,
-            stepCount = steps
-        )
+        viewModelScope.launch(Dispatchers.IO) {
+            val avgSpeedKmh = if (durationMillis > 0)
+                (distanceMeters / 1000f) / (durationMillis / 1000f / 3600f)
+            else 0f
+            val calories = TrackingUtils.calculateCalories(distanceMeters, weightKg, gender)
 
-        val points = pathPoints.value?.mapIndexed { index, geoPoint ->
-            LocationPoint(
-                runId = 0, // updated after insert
-                latitude = geoPoint.latitude,
-                longitude = geoPoint.longitude,
-                altitude = 0.0,
-                speedMs = 0f,
-                timestamp = System.currentTimeMillis() + index
+            val run = RunEntity(
+                dateTimestamp = System.currentTimeMillis(),
+                avgSpeedKmh = avgSpeedKmh,
+                distanceMeters = distanceMeters,
+                durationMillis = durationMillis,
+                caloriesBurned = calories,
+                elevationGainMeters = elevationGain,
+                stepCount = steps
             )
-        } ?: emptyList()
 
-        viewModelScope.launch {
+            val points = pathSnapshot.mapIndexed { index, geoPoint ->
+                LocationPoint(
+                    runId = 0,
+                    latitude = geoPoint.latitude,
+                    longitude = geoPoint.longitude,
+                    altitude = 0.0,
+                    speedMs = 0f,
+                    timestamp = System.currentTimeMillis() + index
+                )
+            }
+
             val runId = repository.insertRun(run)
-            val pointsWithId = points.map { it.copy(runId = runId) }
-            if (pointsWithId.isNotEmpty()) {
-                repository.insertLocationPoints(pointsWithId)
+            if (points.isNotEmpty()) {
+                repository.insertLocationPoints(points.map { it.copy(runId = runId) })
             }
         }
     }

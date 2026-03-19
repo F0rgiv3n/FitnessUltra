@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
@@ -31,8 +30,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import java.util.Locale
 
@@ -44,6 +43,7 @@ class RunFragment : Fragment() {
     private val viewModel: RunViewModel by viewModels()
     private var isTracking = false
     private var routePolyline: Polyline? = null
+    private var locationMarker: Marker? = null
 
     private lateinit var tts: TextToSpeech
     private var lastVoiceKm = 0
@@ -69,8 +69,6 @@ class RunFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Configuration.getInstance().userAgentValue = requireContext().packageName
-
         binding.mapView.apply {
             applyMapStyle()
             setMultiTouchControls(true)
@@ -82,6 +80,15 @@ class RunFragment : Fragment() {
             outlinePaint.strokeWidth = 8f
         }
         binding.mapView.overlays.add(routePolyline)
+
+        locationMarker = Marker(binding.mapView).apply {
+            icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_runner_marker)
+            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+            title = null
+            infoWindow = null
+            isEnabled = false
+        }
+        binding.mapView.overlays.add(locationMarker)
 
         tts = TextToSpeech(requireContext()) { status ->
             if (status == TextToSpeech.SUCCESS) {
@@ -116,6 +123,7 @@ class RunFragment : Fragment() {
             viewModel.saveRun(weightKg, gender)
             viewModel.sendCommand(TrackingService.ACTION_STOP)
             routePolyline?.setPoints(emptyList())
+            locationMarker?.isEnabled = false
             binding.mapView.invalidate()
         }
 
@@ -192,8 +200,15 @@ class RunFragment : Fragment() {
 
         viewModel.pathPoints.observe(viewLifecycleOwner) { points ->
             updatePolyline(points)
-            if (points.isNotEmpty() && SettingsManager.isMapFollow(requireContext())) {
-                binding.mapView.controller.animateTo(points.last())
+            if (points.isNotEmpty()) {
+                val lastPoint = points.last()
+                locationMarker?.position = lastPoint
+                locationMarker?.isEnabled = true
+                if (SettingsManager.isMapFollow(requireContext())) {
+                    binding.mapView.controller.setCenter(lastPoint)
+                }
+            } else {
+                locationMarker?.isEnabled = false
             }
             checkVoiceMilestone()
         }
@@ -305,9 +320,7 @@ class RunFragment : Fragment() {
             .setTitle(getString(R.string.battery_opt_title))
             .setMessage(getString(R.string.battery_opt_message))
             .setPositiveButton(getString(R.string.battery_opt_open)) { _, _ ->
-                startActivity(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                    data = Uri.parse("package:${requireContext().packageName}")
-                })
+                startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
             }
             .setNegativeButton(android.R.string.cancel, null)
             .show()

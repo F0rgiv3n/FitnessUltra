@@ -14,6 +14,7 @@ A personal Android fitness tracking app built with Kotlin. Track outdoor runs wi
 
 ### Running
 - Real-time GPS tracking with live map (OpenStreetMap, no API key)
+- **Live position marker** — blue dot on the map always centered at your current location during a run
 - Distance, speed, pace, elapsed time, and live elevation gain displayed during run
 - Step counter via device accelerometer
 - Voice announcements at configurable distance milestones (1 / 2 / 5 km) in your chosen language
@@ -128,6 +129,7 @@ FOREGROUND_SERVICE_LOCATION
 POST_NOTIFICATIONS
 INTERNET
 ACTIVITY_RECOGNITION
+WAKE_LOCK
 ```
 
 ---
