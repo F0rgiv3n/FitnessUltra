@@ -49,6 +49,10 @@ class TrackingService : LifecycleService() {
     private lateinit var notificationManager: NotificationManager
     private lateinit var sensorManager: SensorManager
     private var stepSensorListener: SensorEventListener? = null
+    private var usingStepCounter = false
+    private var stepCounterBaseline = -1
+    private var stepCounterAccumulated = 0
+    private var lastStepTime = 0L
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
@@ -113,6 +117,9 @@ class TrackingService : LifecycleService() {
         timeRun = 0L
         lastAltitude = Double.MIN_VALUE
         slowUpdateCount = 0
+        stepCounterBaseline = -1
+        stepCounterAccumulated = 0
+        lastStepTime = 0L
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -255,19 +262,49 @@ class TrackingService : LifecycleService() {
     }
 
     private fun startStepCounter() {
-        val stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR) ?: return
-        stepSensorListener = object : SensorEventListener {
-            override fun onSensorChanged(event: SensorEvent) {
-                if (isTracking.value == true) {
-                    stepCount.postValue((stepCount.value ?: 0) + 1)
+        val counterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+        val detectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+
+        when {
+            counterSensor != null -> {
+                usingStepCounter = true
+                stepCounterBaseline = -1
+                stepSensorListener = object : SensorEventListener {
+                    override fun onSensorChanged(event: SensorEvent) {
+                        if (isTracking.value != true) return
+                        val hardwareCount = event.values[0].toInt()
+                        if (stepCounterBaseline == -1) stepCounterBaseline = hardwareCount
+                        stepCount.postValue(stepCounterAccumulated + (hardwareCount - stepCounterBaseline))
+                    }
+                    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
                 }
+                sensorManager.registerListener(stepSensorListener, counterSensor, SensorManager.SENSOR_DELAY_NORMAL)
             }
-            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+            detectorSensor != null -> {
+                usingStepCounter = false
+                stepSensorListener = object : SensorEventListener {
+                    override fun onSensorChanged(event: SensorEvent) {
+                        if (isTracking.value != true) return
+                        // Debounce: ignore events closer than 250ms (avoid double-counts from vibration)
+                        val now = System.currentTimeMillis()
+                        if (now - lastStepTime < 250L) return
+                        // GPS cross-validation: reject if we have a valid GPS reading showing near-zero speed
+                        val speed = currentSpeedKmh.value ?: 0f
+                        if (speed in 0.01f..0.5f) return
+                        lastStepTime = now
+                        stepCount.postValue((stepCount.value ?: 0) + 1)
+                    }
+                    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+                }
+                sensorManager.registerListener(stepSensorListener, detectorSensor, SensorManager.SENSOR_DELAY_FASTEST)
+            }
         }
-        sensorManager.registerListener(stepSensorListener, stepSensor, SensorManager.SENSOR_DELAY_FASTEST)
     }
 
     private fun stopStepCounter() {
+        if (usingStepCounter) {
+            stepCounterAccumulated = stepCount.value ?: 0
+        }
         stepSensorListener?.let { sensorManager.unregisterListener(it) }
         stepSensorListener = null
     }
