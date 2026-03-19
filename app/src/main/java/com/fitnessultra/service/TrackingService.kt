@@ -35,6 +35,7 @@ class TrackingService : LifecycleService() {
         private const val NOTIFICATION_CHANNEL_ID = "tracking_channel"
         private const val NOTIFICATION_CHANNEL_NAME = "Tracking"
         private const val NOTIFICATION_ID = 1
+        private const val ELEVATION_THRESHOLD = 3.0 // metres — filters GPS altitude noise
 
         val isTracking = MutableLiveData<Boolean>()
         val pathPoints = MutableLiveData<MutableList<GeoPoint>>()
@@ -258,14 +259,26 @@ class TrackingService : LifecycleService() {
     }
 
     private fun trackElevation(location: Location) {
-        if (lastAltitude != Double.MIN_VALUE) {
-            val diff = location.altitude - lastAltitude
-            if (diff > 0) {
-                elevationGainMeters.postValue((elevationGainMeters.value ?: 0f) + diff.toFloat())
-            }
+        if (!location.hasAltitude()) return
+        val alt = location.altitude
+        if (lastAltitude == Double.MIN_VALUE) {
+            lastAltitude = alt
+            return
         }
-        lastAltitude = location.altitude
+        val diff = alt - lastAltitude
+        when {
+            diff >= ELEVATION_THRESHOLD -> {
+                elevationGainMeters.postValue((elevationGainMeters.value ?: 0f) + diff.toFloat())
+                lastAltitude = alt
+            }
+            diff <= -ELEVATION_THRESHOLD -> {
+                // Significant descent: reset baseline so next climb is measured correctly
+                lastAltitude = alt
+            }
+            // |diff| < threshold: GPS noise — ignore, keep lastAltitude unchanged
+        }
     }
+
 
     private fun startTimer() {
         timeStarted = System.currentTimeMillis()
