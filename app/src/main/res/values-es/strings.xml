@@ -212,4 +212,11 @@
         <item>Español</item>
         <item>Alemán</item>
     </string-array>
+
+    <!-- Splits -->
+    <string name="label_km_splits">Splits</string>
+    <string name="label_split_km">KM</string>
+    <string name="label_split_time">Tiempo</string>
+    <string name="label_split_pace">Ritmo</string>
+    <string name="label_best_split">Mejor</string>
 </resources>

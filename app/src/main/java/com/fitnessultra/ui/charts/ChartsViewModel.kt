@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import com.fitnessultra.data.db.AppDatabase
 import com.fitnessultra.data.db.entity.LocationPoint
 import com.fitnessultra.data.db.entity.RunEntity
+import com.fitnessultra.data.db.entity.RunSplit
 import com.fitnessultra.data.repository.RunRepository
 
 class ChartsViewModel(application: Application) : AndroidViewModel(application) {
@@ -17,4 +18,6 @@ class ChartsViewModel(application: Application) : AndroidViewModel(application) 
 
     suspend fun getLocationPoints(runId: Long): List<LocationPoint> =
         repository.getLocationPointsForRun(runId)
+
+    suspend fun getSplits(runId: Long): List<RunSplit> = repository.getSplitsForRun(runId)
 }

@@ -182,6 +182,13 @@
         <item>Thu</item><item>Fri</item><item>Sat</item><item>Sun</item>
     </string-array>
 
+    <!-- Splits -->
+    <string name="label_km_splits">Splits</string>
+    <string name="label_split_km">KM</string>
+    <string name="label_split_time">Time</string>
+    <string name="label_split_pace">Pace</string>
+    <string name="label_best_split">Best</string>
+
     <!-- Route gray color -->
     <color name="routeGray">#BDBDBD</color>
 

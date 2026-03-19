@@ -3,6 +3,7 @@ package com.fitnessultra.data.db.dao
 import androidx.room.*
 import com.fitnessultra.data.db.entity.LocationPoint
 import com.fitnessultra.data.db.entity.RunEntity
+import com.fitnessultra.data.db.entity.RunSplit
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -28,4 +29,13 @@ interface RunDao {
 
     @Query("SELECT * FROM location_points WHERE runId = :runId ORDER BY timestamp ASC")
     suspend fun getLocationPointsForRun(runId: Long): List<LocationPoint>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSplits(splits: List<RunSplit>)
+
+    @Query("SELECT * FROM run_splits WHERE runId = :runId ORDER BY kmNumber ASC")
+    suspend fun getSplitsForRun(runId: Long): List<RunSplit>
+
+    @Query("DELETE FROM run_splits WHERE runId = :runId")
+    suspend fun deleteSplitsForRun(runId: Long)
 }

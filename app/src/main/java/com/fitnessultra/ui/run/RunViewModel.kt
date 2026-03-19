@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.fitnessultra.data.db.AppDatabase
 import com.fitnessultra.data.db.entity.LocationPoint
 import com.fitnessultra.data.db.entity.RunEntity
+import com.fitnessultra.data.db.entity.RunSplit
 import com.fitnessultra.data.repository.RunRepository
 import com.fitnessultra.service.TrackingService
 import com.fitnessultra.util.TrackingUtils
@@ -42,6 +43,7 @@ class RunViewModel(application: Application) : AndroidViewModel(application) {
         val elevationGain = elevationGainMeters.value ?: 0f
         val steps = stepCount.value ?: 0
         val pathSnapshot = pathPoints.value?.map { it } ?: emptyList()
+        val splitsSnapshot = TrackingService.kmSplits.value?.toList() ?: emptyList()
 
         viewModelScope.launch(Dispatchers.IO) {
             val avgSpeedKmh = if (durationMillis > 0)
@@ -73,6 +75,11 @@ class RunViewModel(application: Application) : AndroidViewModel(application) {
             val runId = repository.insertRun(run)
             if (points.isNotEmpty()) {
                 repository.insertLocationPoints(points.map { it.copy(runId = runId) })
+            }
+            if (splitsSnapshot.isNotEmpty()) {
+                repository.insertSplits(splitsSnapshot.mapIndexed { i, ms ->
+                    RunSplit(runId = runId, kmNumber = i + 1, splitMs = ms)
+                })
             }
         }
     }

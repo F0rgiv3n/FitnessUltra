@@ -3,6 +3,7 @@ package com.fitnessultra.data.repository
 import com.fitnessultra.data.db.dao.RunDao
 import com.fitnessultra.data.db.entity.LocationPoint
 import com.fitnessultra.data.db.entity.RunEntity
+import com.fitnessultra.data.db.entity.RunSplit
 import kotlinx.coroutines.flow.Flow
 
 class RunRepository(private val runDao: RunDao) {
@@ -20,4 +21,8 @@ class RunRepository(private val runDao: RunDao) {
 
     suspend fun getLocationPointsForRun(runId: Long): List<LocationPoint> =
         runDao.getLocationPointsForRun(runId)
+
+    suspend fun insertSplits(splits: List<RunSplit>) = runDao.insertSplits(splits)
+
+    suspend fun getSplitsForRun(runId: Long): List<RunSplit> = runDao.getSplitsForRun(runId)
 }

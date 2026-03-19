@@ -59,6 +59,25 @@ class ChartsFragment : Fragment() {
                 else getString(R.string.label_not_available)
             }
 
+            // Split table (independent of location points)
+            val splits = viewModel.getSplits(runId)
+            if (splits.isNotEmpty()) {
+                binding.splitCard.visibility = View.VISIBLE
+                splits.forEach { split ->
+                    val row = buildSplitRow(split.kmNumber.toString(), split.splitMs, useMiles)
+                    binding.splitTableContainer.addView(row)
+                }
+                val best = splits.minByOrNull { it.splitMs }!!
+                binding.bestSplitRow.visibility = View.VISIBLE
+                binding.tvBestSplitTime.text = TrackingUtils.formatTime(best.splitMs)
+                binding.tvBestSplitPace.text = TrackingUtils.calculatePace(
+                    if (useMiles) 1609.344f else 1000f,
+                    best.splitMs,
+                    useMiles,
+                    requireContext()
+                )
+            }
+
             val points = viewModel.getLocationPoints(runId)
             if (points.isEmpty()) return@launch
 
@@ -114,6 +133,29 @@ class ChartsFragment : Fragment() {
             binding.chartPace.data = LineData(paceDataSet)
             binding.chartPace.invalidate()
         }
+    }
+
+    private fun buildSplitRow(label: String, splitMs: Long, useMiles: Boolean): android.widget.LinearLayout {
+        val row = android.widget.LinearLayout(requireContext()).apply {
+            layoutParams = android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            orientation = android.widget.LinearLayout.HORIZONTAL
+            setPadding(0, 6, 0, 6)
+        }
+        fun cell(text: String, weight: Float, bold: Boolean = false) = android.widget.TextView(requireContext()).apply {
+            layoutParams = android.widget.LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, weight)
+            this.text = text
+            textSize = 14f
+            gravity = android.view.Gravity.CENTER
+            if (bold) setTypeface(null, android.graphics.Typeface.BOLD)
+        }
+        val distanceM = if (useMiles) 1609.344f else 1000f
+        row.addView(cell(label, 1f, bold = true))
+        row.addView(cell(TrackingUtils.formatTime(splitMs), 2f))
+        row.addView(cell(TrackingUtils.calculatePace(distanceM, splitMs, useMiles, requireContext()), 2f))
+        return row
     }
 
     private fun setupCharts() {

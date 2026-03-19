@@ -212,4 +212,11 @@
         <item>Ισπανικά</item>
         <item>Γερμανικά</item>
     </string-array>
+
+    <!-- Splits -->
+    <string name="label_km_splits">Splits</string>
+    <string name="label_split_km">KM</string>
+    <string name="label_split_time">Χρόνος</string>
+    <string name="label_split_pace">Ρυθμός</string>
+    <string name="label_best_split">Καλύτερο</string>
 </resources>

@@ -44,6 +44,7 @@ class TrackingService : LifecycleService() {
         val totalDistanceMeters = MutableLiveData<Float>()
         val elevationGainMeters = MutableLiveData<Float>()
         val stepCount = MutableLiveData<Int>()
+        val kmSplits = MutableLiveData<MutableList<Long>>()
     }
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -68,6 +69,8 @@ class TrackingService : LifecycleService() {
     private var timerJob: Job? = null
     private var slowUpdateCount = 0
     private var lastAcceptedLocation: Location? = null
+    private var lastKmReached = 0
+    private val splitTimesMs = mutableListOf<Long>()
 
     override fun onCreate() {
         super.onCreate()
@@ -128,6 +131,9 @@ class TrackingService : LifecycleService() {
         stepCounterBaseline = -1L
         stepCounterAccumulated = 0
         lastStepTime = 0L
+        kmSplits.postValue(mutableListOf())
+        lastKmReached = 0
+        splitTimesMs.clear()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -254,7 +260,20 @@ class TrackingService : LifecycleService() {
             val last = points[points.size - 2]
             val results = FloatArray(1)
             Location.distanceBetween(last.latitude, last.longitude, pos.latitude, pos.longitude, results)
-            totalDistanceMeters.postValue((totalDistanceMeters.value ?: 0f) + results[0])
+            val newTotal = (totalDistanceMeters.value ?: 0f) + results[0]
+            totalDistanceMeters.postValue(newTotal)
+            checkKmSplit(newTotal)
+        }
+    }
+
+    private fun checkKmSplit(totalMeters: Float) {
+        val newKm = (totalMeters / 1000f).toInt()
+        if (newKm > lastKmReached && newKm > 0) {
+            val elapsed = timeRun + (System.currentTimeMillis() - timeStarted)
+            val prevCumulative = splitTimesMs.sum()
+            splitTimesMs.add(elapsed - prevCumulative)
+            kmSplits.postValue(ArrayList(splitTimesMs))
+            lastKmReached = newKm
         }
     }
 
