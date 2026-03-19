@@ -326,6 +326,20 @@
         <item>de</item>
     </string-array>
 
+    <!-- My Offline Maps -->
+    <string name="pref_my_maps_title">My Offline Maps</string>
+    <string name="pref_my_maps_summary">View and manage downloaded map areas</string>
+    <string name="downloaded_maps_empty">No offline maps downloaded yet</string>
+    <string name="downloaded_map_name_dialog_title">Name this area</string>
+    <string name="downloaded_map_default_name">Area %1$s</string>
+    <string name="downloaded_map_info">%1$d tiles · %2$s</string>
+    <string name="downloaded_map_delete_title">Delete area</string>
+    <string name="downloaded_map_delete_message">Delete "%1$s"?</string>
+    <string name="downloaded_map_preview_title">Area preview</string>
+    <string name="hint_area_name">Area name</string>
+    <string name="btn_view_area">View</string>
+    <string name="msg_name_saved">Name saved</string>
+
     <!-- Offline Maps -->
     <string name="pref_offline_maps_title">Download offline map</string>
     <string name="pref_offline_maps_summary">Save map tiles for use without internet</string>

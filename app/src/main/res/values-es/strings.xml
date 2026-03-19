@@ -238,6 +238,20 @@
     <string name="gpx_share_title">Compartir GPX</string>
     <string name="msg_gpx_no_data">Sin datos de ubicación para exportar</string>
 
+    <!-- My Offline Maps -->
+    <string name="pref_my_maps_title">Mis Mapas sin Conexión</string>
+    <string name="pref_my_maps_summary">Ver y gestionar áreas de mapa descargadas</string>
+    <string name="downloaded_maps_empty">Aún no se han descargado mapas</string>
+    <string name="downloaded_map_name_dialog_title">Nombra esta área</string>
+    <string name="downloaded_map_default_name">Área %1$s</string>
+    <string name="downloaded_map_info">%1$d teselas · %2$s</string>
+    <string name="downloaded_map_delete_title">Eliminar área</string>
+    <string name="downloaded_map_delete_message">¿Eliminar "%1$s"?</string>
+    <string name="downloaded_map_preview_title">Vista previa del área</string>
+    <string name="hint_area_name">Nombre del área</string>
+    <string name="btn_view_area">Ver</string>
+    <string name="msg_name_saved">Nombre guardado</string>
+
     <!-- Offline Maps -->
     <string name="pref_offline_maps_title">Descargar mapa sin conexión</string>
     <string name="pref_offline_maps_summary">Guardar teselas del mapa para usar sin internet</string>

@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
+import androidx.navigation.fragment.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -39,6 +40,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
             AppCompatDelegate.setApplicationLocales(
                 LocaleListCompat.forLanguageTags(newValue as String)
             )
+            true
+        }
+
+        // Navigate to offline maps screen
+        findPreference<Preference>("pref_offline_maps")?.setOnPreferenceClickListener {
+            findNavController().navigate(R.id.action_settingsFragment_to_offlineMapsFragment)
+            true
+        }
+
+        // Navigate to downloaded maps list
+        findPreference<Preference>("pref_my_maps")?.setOnPreferenceClickListener {
+            findNavController().navigate(R.id.action_settingsFragment_to_downloadedMapsFragment)
             true
         }
     }

@@ -46,7 +46,37 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.fitnessultra.ui.settings.SettingsFragment"
-        android:label="Settings" />
+        android:label="Settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_offlineMapsFragment"
+            app:destination="@id/offlineMapsFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_downloadedMapsFragment"
+            app:destination="@id/downloadedMapsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/offlineMapsFragment"
+        android:name="com.fitnessultra.ui.settings.OfflineMapsFragment"
+        android:label="Offline Map" />
+
+    <fragment
+        android:id="@+id/downloadedMapsFragment"
+        android:name="com.fitnessultra.ui.settings.DownloadedMapsFragment"
+        android:label="@string/pref_my_maps_title">
+        <action
+            android:id="@+id/action_downloadedMapsFragment_to_downloadedMapPreviewFragment"
+            app:destination="@id/downloadedMapPreviewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/downloadedMapPreviewFragment"
+        android:name="com.fitnessultra.ui.settings.DownloadedMapPreviewFragment"
+        android:label="@string/downloaded_map_preview_title">
+        <argument
+            android:name="areaId"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/replayFragment"

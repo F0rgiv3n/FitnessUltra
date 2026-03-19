@@ -84,6 +84,16 @@
             android:summary="@string/pref_map_follow_summary"
             android:defaultValue="true" />
 
+        <Preference
+            android:key="pref_offline_maps"
+            android:title="@string/pref_offline_maps_title"
+            android:summary="@string/pref_offline_maps_summary" />
+
+        <Preference
+            android:key="pref_my_maps"
+            android:title="@string/pref_my_maps_title"
+            android:summary="@string/pref_my_maps_summary" />
+
     </PreferenceCategory>
 
     <!-- Voice Feedback -->
