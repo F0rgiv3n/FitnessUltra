@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary — Sky Blue (brighter on dark) -->
+    <color name="colorPrimary">#38BDF8</color>
+    <color name="colorPrimaryVariant">#0EA5E9</color>
+    <color name="colorOnPrimary">#0C1A2E</color>
+
+    <!-- Secondary — Emerald -->
+    <color name="colorSecondary">#34D399</color>
+    <color name="colorOnSecondary">#0C1A2E</color>
+
+    <!-- Surfaces -->
+    <color name="colorBackground">#0F172A</color>
+    <color name="colorSurface">#1E293B</color>
+    <color name="statBackground">#1E293B</color>
+
+    <!-- Semantic -->
+    <color name="goalLow">#475569</color>
+</resources>

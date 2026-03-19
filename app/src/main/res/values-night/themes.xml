@@ -8,12 +8,7 @@
         <item name="colorOnSecondary">@color/colorOnSecondary</item>
         <item name="android:colorBackground">@color/colorBackground</item>
         <item name="colorSurface">@color/colorSurface</item>
-        <item name="android:statusBarColor">@color/colorPrimaryVariant</item>
-        <item name="android:windowLightStatusBar">true</item>
-    </style>
-
-    <!-- Kept for backwards-compat; manifest uses this -->
-    <style name="Theme.FitnessUltra.NoActionBar">
-        <!-- NoActionBar is now baked into the parent above -->
+        <item name="android:statusBarColor">@color/colorBackground</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>

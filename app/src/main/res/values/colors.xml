@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FF6200EE</color>
-    <color name="colorPrimaryVariant">#FF3700B3</color>
-    <color name="colorOnPrimary">#FFFFFFFF</color>
-    <color name="colorSecondary">#FF03DAC5</color>
-    <color name="colorOnSecondary">#FF000000</color>
-    <color name="colorSurface">#FFFFFFFF</color>
-    <color name="colorBackground">#FFFFFFFF</color>
-    <color name="red">#FFE53935</color>
-    <color name="green">#FF43A047</color>
-    <color name="goalComplete">#FF388E3C</color>
-    <color name="goalLow">#FFBDBDBD</color>
+    <!-- Primary — Sky Blue -->
+    <color name="colorPrimary">#0EA5E9</color>
+    <color name="colorPrimaryVariant">#0284C7</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+
+    <!-- Secondary — Emerald -->
+    <color name="colorSecondary">#10B981</color>
+    <color name="colorOnSecondary">#FFFFFF</color>
+
+    <!-- Surfaces -->
+    <color name="colorBackground">#F8FAFC</color>
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="statBackground">#F1F5F9</color>
+
+    <!-- Semantic -->
+    <color name="red">#EF4444</color>
+    <color name="green">#10B981</color>
+    <color name="goalComplete">#059669</color>
+    <color name="goalLow">#CBD5E1</color>
 </resources>

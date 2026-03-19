@@ -3,8 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -264,7 +263,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/msg_bmi_no_height"
                     android:textSize="12sp"
-                    android:textColor="#888888"
+                    android:textColor="?android:attr/textColorSecondary"
                     android:layout_marginBottom="4dp"
                     android:visibility="gone" />
 
