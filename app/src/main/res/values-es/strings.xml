@@ -20,6 +20,7 @@
 
     <!-- Run screen -->
     <string name="btn_start">INICIAR</string>
+    <string name="btn_resume">CONTINUAR</string>
     <string name="btn_finish">FINALIZAR</string>
     <string name="battery_opt_title">Seguimiento en segundo plano</string>
     <string name="battery_opt_message">Para continuar el seguimiento con la pantalla apagada, permite que FitnessUltra funcione sin restricciones de batería.</string>

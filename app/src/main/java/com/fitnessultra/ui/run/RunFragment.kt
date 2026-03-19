@@ -103,19 +103,27 @@ class RunFragment : Fragment() {
         binding.btnToggleRun.setOnClickListener {
             if (isTracking) {
                 viewModel.sendCommand(TrackingService.ACTION_PAUSE)
-            } else if ((viewModel.timeRunInMillis.value ?: 0L) > 0L) {
-                // Resuming from pause — no setup dialog
-                requestPermissionsAndStart()
             } else {
-                // Fresh start — show workout setup
-                showWorkoutSetup()
+                // Start fresh (with current workoutConfig) or resume from pause
+                requestPermissionsAndStart()
             }
+        }
+
+        binding.btnWorkoutType.setOnClickListener {
+            WorkoutSetupBottomSheet().apply {
+                onStart = { config ->
+                    workoutConfig = config
+                    updateWorkoutTypeButton()
+                    requestPermissionsAndStart()
+                }
+            }.show(parentFragmentManager, "workout_setup")
         }
 
         binding.btnStopRun.setOnClickListener {
             intervalJob?.cancel()
             intervalJob = null
             workoutConfig = WorkoutConfig.FreeRun
+            updateWorkoutTypeButton()
             lastVoiceKm = 0
             lastPaceAlertMs = 0L
             val weightKg = getUserWeight()
@@ -130,13 +138,13 @@ class RunFragment : Fragment() {
         observeTracking()
     }
 
-    private fun showWorkoutSetup() {
-        WorkoutSetupBottomSheet().apply {
-            onStart = { config ->
-                workoutConfig = config
-                requestPermissionsAndStart()
-            }
-        }.show(parentFragmentManager, "workout_setup")
+    private fun updateWorkoutTypeButton() {
+        val label = when (workoutConfig) {
+            is WorkoutConfig.FreeRun    -> getString(R.string.workout_type_free)
+            is WorkoutConfig.Intervals  -> getString(R.string.workout_type_intervals)
+            is WorkoutConfig.TargetPace -> getString(R.string.workout_type_target_pace)
+        }
+        binding.btnWorkoutType.text = label
     }
 
     private fun applyMapStyle() {
@@ -193,9 +201,18 @@ class RunFragment : Fragment() {
     private fun observeTracking() {
         viewModel.isTracking.observe(viewLifecycleOwner) { tracking ->
             isTracking = tracking
-            binding.btnToggleRun.setText(if (tracking) R.string.replay_pause else R.string.btn_start)
-            binding.btnStopRun.visibility =
-                if (!tracking && (viewModel.timeRunInMillis.value ?: 0L) > 0L) View.VISIBLE else View.GONE
+            val hasElapsed = (viewModel.timeRunInMillis.value ?: 0L) > 0L
+            binding.btnToggleRun.setText(
+                when {
+                    tracking   -> R.string.replay_pause
+                    hasElapsed -> R.string.btn_resume
+                    else       -> R.string.btn_start
+                }
+            )
+            // Type selector only shown before run starts
+            binding.btnWorkoutType.visibility = if (!tracking && !hasElapsed) View.VISIBLE else View.GONE
+            // Stop button shown only when paused mid-run
+            binding.btnStopRun.visibility = if (!tracking && hasElapsed) View.VISIBLE else View.GONE
         }
 
         viewModel.pathPoints.observe(viewLifecycleOwner) { points ->

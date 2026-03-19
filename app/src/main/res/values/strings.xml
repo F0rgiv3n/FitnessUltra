@@ -20,6 +20,7 @@
 
     <!-- Run screen -->
     <string name="btn_start">START</string>
+    <string name="btn_resume">RESUME</string>
     <string name="btn_finish">FINISH</string>
     <string name="battery_opt_title">Background tracking</string>
     <string name="battery_opt_message">To keep tracking when the screen is off, allow FitnessUltra to run without battery restrictions.</string>

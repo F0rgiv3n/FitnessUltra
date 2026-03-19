@@ -20,6 +20,7 @@
 
     <!-- Run screen -->
     <string name="btn_start">ΕΚΚΙΝΗΣΗ</string>
+    <string name="btn_resume">ΣΥΝΕΧΕΙΑ</string>
     <string name="btn_finish">ΤΕΛΟΣ</string>
     <string name="battery_opt_title">Παρακολούθηση στο background</string>
     <string name="battery_opt_message">Για να συνεχίσει η παρακολούθηση όταν η οθόνη είναι κλειστή, επίτρεψε στο FitnessUltra να τρέχει χωρίς περιορισμούς μπαταρίας.</string>
