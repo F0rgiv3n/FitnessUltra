@@ -251,6 +251,7 @@
     <string name="hint_area_name">Nombre del área</string>
     <string name="btn_view_area">Ver</string>
     <string name="msg_name_saved">Nombre guardado</string>
+    <string name="msg_area_saved">Área guardada en Mis Mapas sin Conexión</string>
 
     <!-- Offline Maps -->
     <string name="pref_offline_maps_title">Descargar mapa sin conexión</string>

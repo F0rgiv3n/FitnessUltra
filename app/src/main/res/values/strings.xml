@@ -339,6 +339,7 @@
     <string name="hint_area_name">Area name</string>
     <string name="btn_view_area">View</string>
     <string name="msg_name_saved">Name saved</string>
+    <string name="msg_area_saved">Area saved to My Offline Maps</string>
 
     <!-- Offline Maps -->
     <string name="pref_offline_maps_title">Download offline map</string>

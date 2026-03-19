@@ -33,6 +33,11 @@ class DownloadedMapsFragment : Fragment() {
         loadList()
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadList()
+    }
+
     private fun loadList() {
         val areas = DownloadedMapsManager.getAll(requireContext()).toMutableList()
         binding.tvEmpty.visibility = if (areas.isEmpty()) View.VISIBLE else View.GONE

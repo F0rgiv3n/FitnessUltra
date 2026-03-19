@@ -256,6 +256,7 @@
     <string name="hint_area_name">Όνομα περιοχής</string>
     <string name="btn_view_area">Προβολή</string>
     <string name="msg_name_saved">Το όνομα αποθηκεύτηκε</string>
+    <string name="msg_area_saved">Η περιοχή αποθηκεύτηκε στους Χάρτες μου</string>
 
     <!-- Offline Maps -->
     <string name="pref_offline_maps_title">Λήψη offline χάρτη</string>

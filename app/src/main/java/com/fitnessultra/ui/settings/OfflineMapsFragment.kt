@@ -251,6 +251,7 @@ class OfflineMapsFragment : Fragment() {
                 tileCount = tileCount
             )
         )
+        android.widget.Toast.makeText(requireContext(), R.string.msg_area_saved, android.widget.Toast.LENGTH_SHORT).show()
     }
 
     private fun cancelDownload() {

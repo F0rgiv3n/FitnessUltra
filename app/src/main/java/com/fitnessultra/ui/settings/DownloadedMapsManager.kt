@@ -21,7 +21,7 @@ object DownloadedMapsManager {
         val p = prefs(context)
         val arr = JSONArray(p.getString(KEY_AREAS, "[]") ?: "[]")
         arr.put(area.toJson())
-        p.edit().putString(KEY_AREAS, arr.toString()).apply()
+        p.edit().putString(KEY_AREAS, arr.toString()).commit()
     }
 
     fun update(context: Context, area: DownloadedMapArea) {
@@ -32,7 +32,7 @@ object DownloadedMapsManager {
             val obj = arr.getJSONObject(i)
             if (obj.getString("id") == area.id) newArr.put(area.toJson()) else newArr.put(obj)
         }
-        p.edit().putString(KEY_AREAS, newArr.toString()).apply()
+        p.edit().putString(KEY_AREAS, newArr.toString()).commit()
     }
 
     fun delete(context: Context, id: String) {
@@ -43,7 +43,7 @@ object DownloadedMapsManager {
             val obj = arr.getJSONObject(i)
             if (obj.getString("id") != id) newArr.put(obj)
         }
-        p.edit().putString(KEY_AREAS, newArr.toString()).apply()
+        p.edit().putString(KEY_AREAS, newArr.toString()).commit()
     }
 
     private fun prefs(context: Context) =

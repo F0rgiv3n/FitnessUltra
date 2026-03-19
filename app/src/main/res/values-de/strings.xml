@@ -251,6 +251,7 @@
     <string name="hint_area_name">Bereichsname</string>
     <string name="btn_view_area">Anzeigen</string>
     <string name="msg_name_saved">Name gespeichert</string>
+    <string name="msg_area_saved">Bereich in Meine Offline-Karten gespeichert</string>
 
     <!-- Offline Maps -->
     <string name="pref_offline_maps_title">Offline-Karte herunterladen</string>
