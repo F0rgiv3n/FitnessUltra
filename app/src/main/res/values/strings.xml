@@ -325,4 +325,27 @@
         <item>es</item>
         <item>de</item>
     </string-array>
+
+    <!-- Offline Maps -->
+    <string name="pref_offline_maps_title">Download offline map</string>
+    <string name="pref_offline_maps_summary">Save map tiles for use without internet</string>
+    <string name="offline_maps_instruction">Pan and zoom the map to the area you want to save, then tap Download.</string>
+    <string name="offline_maps_detail_label">Detail level</string>
+    <string name="offline_maps_estimate">Estimated: %1$d tiles (~%2$d MB)</string>
+    <string name="offline_maps_btn_download">DOWNLOAD THIS AREA</string>
+    <string name="offline_maps_btn_cancel">CANCEL</string>
+    <string name="offline_maps_clear_cache">Clear cache (%1$d MB)</string>
+    <string name="offline_maps_clear_cache_default">Clear cache</string>
+    <string name="offline_maps_downloading">Downloading… %1$d%% (~%2$d MB)</string>
+    <string name="offline_maps_complete">Download complete!</string>
+    <string name="offline_maps_partial">Downloaded %1$d tiles (%2$d failed)</string>
+    <string name="offline_maps_failed">Download failed (%1$d errors)</string>
+    <string name="offline_maps_cache_cleared">Cache cleared</string>
+    <string name="offline_maps_too_large">Area too large (%1$d tiles). Zoom in or reduce detail level (max %2$d tiles).</string>
+    <string-array name="offline_maps_detail_entries">
+        <item>Normal (zoom 14)</item>
+        <item>Detailed (zoom 16)</item>
+        <item>HD (zoom 17)</item>
+    </string-array>
+
 </resources>

@@ -237,4 +237,26 @@
     <string name="btn_export_gpx">GPX exportieren</string>
     <string name="gpx_share_title">GPX teilen</string>
     <string name="msg_gpx_no_data">Keine Standortdaten zum Exportieren</string>
+
+    <!-- Offline Maps -->
+    <string name="pref_offline_maps_title">Offline-Karte herunterladen</string>
+    <string name="pref_offline_maps_summary">Kartenkacheln für die Verwendung ohne Internet speichern</string>
+    <string name="offline_maps_instruction">Verschiebe und zoome die Karte auf den gewünschten Bereich und tippe dann auf Herunterladen.</string>
+    <string name="offline_maps_detail_label">Detailstufe</string>
+    <string name="offline_maps_estimate">Geschätzt: %1$d Kacheln (~%2$d MB)</string>
+    <string name="offline_maps_btn_download">DIESEN BEREICH HERUNTERLADEN</string>
+    <string name="offline_maps_btn_cancel">ABBRECHEN</string>
+    <string name="offline_maps_clear_cache">Cache leeren (%1$d MB)</string>
+    <string name="offline_maps_clear_cache_default">Cache leeren</string>
+    <string name="offline_maps_downloading">Herunterladen… %1$d%% (~%2$d MB)</string>
+    <string name="offline_maps_complete">Download abgeschlossen!</string>
+    <string name="offline_maps_partial">%1$d Kacheln heruntergeladen (%2$d fehlgeschlagen)</string>
+    <string name="offline_maps_failed">Download fehlgeschlagen (%1$d Fehler)</string>
+    <string name="offline_maps_cache_cleared">Cache geleert</string>
+    <string-array name="offline_maps_detail_entries">
+        <item>Normal (Zoom 14)</item>
+        <item>Detailliert (Zoom 16)</item>
+        <item>HD (Zoom 17)</item>
+    </string-array>
+
 </resources>

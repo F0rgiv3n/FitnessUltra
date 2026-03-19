@@ -242,4 +242,27 @@
     <string name="btn_export_gpx">Εξαγωγή GPX</string>
     <string name="gpx_share_title">Κοινοποίηση GPX</string>
     <string name="msg_gpx_no_data">Δεν υπάρχουν δεδομένα τοποθεσίας</string>
+
+    <!-- Offline Maps -->
+    <string name="pref_offline_maps_title">Λήψη offline χάρτη</string>
+    <string name="pref_offline_maps_summary">Αποθήκευση πλακιδίων χάρτη για χρήση χωρίς ίντερνετ</string>
+    <string name="offline_maps_instruction">Μετακινήστε και ζουμάρετε τον χάρτη στην περιοχή που θέλετε να αποθηκεύσετε, κατόπιν πατήστε Λήψη.</string>
+    <string name="offline_maps_detail_label">Επίπεδο λεπτομέρειας</string>
+    <string name="offline_maps_estimate">Εκτίμηση: %1$d πλακίδια (~%2$d MB)</string>
+    <string name="offline_maps_btn_download">ΛΗΨΗ ΑΥΤΗΣ ΤΗΣ ΠΕΡΙΟΧΗΣ</string>
+    <string name="offline_maps_btn_cancel">ΑΚΥΡΩΣΗ</string>
+    <string name="offline_maps_clear_cache">Εκκαθάριση cache (%1$d MB)</string>
+    <string name="offline_maps_clear_cache_default">Εκκαθάριση cache</string>
+    <string name="offline_maps_downloading">Λήψη… %1$d%% (~%2$d MB)</string>
+    <string name="offline_maps_complete">Η λήψη ολοκληρώθηκε!</string>
+    <string name="offline_maps_partial">Λήφθηκαν %1$d tiles (%2$d απέτυχαν)</string>
+    <string name="offline_maps_failed">Η λήψη απέτυχε (%1$d σφάλματα)</string>
+    <string name="offline_maps_cache_cleared">Το cache διαγράφηκε</string>
+    <string name="offline_maps_too_large">Η περιοχή είναι πολύ μεγάλη (%1$d tiles). Ζουμάρετε ή μειώστε το επίπεδο λεπτομέρειας (μέγ. %2$d).</string>
+    <string-array name="offline_maps_detail_entries">
+        <item>Κανονικό (zoom 14)</item>
+        <item>Λεπτομερές (zoom 16)</item>
+        <item>HD (zoom 17)</item>
+    </string-array>
+
 </resources>

@@ -237,4 +237,26 @@
     <string name="btn_export_gpx">Exportar GPX</string>
     <string name="gpx_share_title">Compartir GPX</string>
     <string name="msg_gpx_no_data">Sin datos de ubicación para exportar</string>
+
+    <!-- Offline Maps -->
+    <string name="pref_offline_maps_title">Descargar mapa sin conexión</string>
+    <string name="pref_offline_maps_summary">Guardar teselas del mapa para usar sin internet</string>
+    <string name="offline_maps_instruction">Desplaza y amplía el mapa hasta el área que deseas guardar, luego pulsa Descargar.</string>
+    <string name="offline_maps_detail_label">Nivel de detalle</string>
+    <string name="offline_maps_estimate">Estimado: %1$d teselas (~%2$d MB)</string>
+    <string name="offline_maps_btn_download">DESCARGAR ESTA ÁREA</string>
+    <string name="offline_maps_btn_cancel">CANCELAR</string>
+    <string name="offline_maps_clear_cache">Borrar caché (%1$d MB)</string>
+    <string name="offline_maps_clear_cache_default">Borrar caché</string>
+    <string name="offline_maps_downloading">Descargando… %1$d%% (~%2$d MB)</string>
+    <string name="offline_maps_complete">¡Descarga completada!</string>
+    <string name="offline_maps_partial">Descargadas %1$d teselas (%2$d fallidas)</string>
+    <string name="offline_maps_failed">Descarga fallida (%1$d errores)</string>
+    <string name="offline_maps_cache_cleared">Caché borrada</string>
+    <string-array name="offline_maps_detail_entries">
+        <item>Normal (zoom 14)</item>
+        <item>Detallado (zoom 16)</item>
+        <item>HD (zoom 17)</item>
+    </string-array>
+
 </resources>
