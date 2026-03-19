@@ -26,6 +26,14 @@
     <string name="battery_opt_message">Για να συνεχίσει η παρακολούθηση όταν η οθόνη είναι κλειστή, επίτρεψε στο FitnessUltra να τρέχει χωρίς περιορισμούς μπαταρίας.</string>
     <string name="battery_opt_open">Άνοιγμα ρυθμίσεων</string>
 
+    <!-- Weekly summary -->
+    <string name="label_this_week">Αυτή την Εβδομάδα</string>
+    <string name="label_runs">Δρόμοι</string>
+    <string name="week_minutes_format">%1$d λεπ</string>
+    <string name="week_delta_format">έναντι περασμένης: %1$s%2$d δρόμοι  ·  %3$s%.1f %4$s  ·  %5$s%6$d λεπ</string>
+    <!-- Widget -->
+    <string name="widget_no_run">Πάτα για εκκίνηση</string>
+
     <!-- History screen -->
     <string name="title_steps_history">Ιστορικό Βημάτων</string>
     <string name="title_recent_runs">Πρόσφατες Δραστηριότητες</string>

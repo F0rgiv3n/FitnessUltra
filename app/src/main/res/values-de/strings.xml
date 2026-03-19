@@ -26,6 +26,14 @@
     <string name="battery_opt_message">Damit das Tracking bei ausgeschaltetem Bildschirm weiterläuft, erlaube FitnessUltra ohne Akkubeschränkungen zu laufen.</string>
     <string name="battery_opt_open">Einstellungen öffnen</string>
 
+    <!-- Weekly summary -->
+    <string name="label_this_week">Diese Woche</string>
+    <string name="label_runs">Läufe</string>
+    <string name="week_minutes_format">%1$d Min.</string>
+    <string name="week_delta_format">vs. letzte Woche: %1$s%2$d Läufe  ·  %3$s%.1f %4$s  ·  %5$s%6$d Min.</string>
+    <!-- Widget -->
+    <string name="widget_no_run">Tippen zum Starten</string>
+
     <!-- History screen -->
     <string name="title_steps_history">Schrittverlauf</string>
     <string name="title_recent_runs">Letzte Aktivitäten</string>

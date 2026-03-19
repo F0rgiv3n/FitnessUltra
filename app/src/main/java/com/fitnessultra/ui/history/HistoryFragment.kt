@@ -80,6 +80,38 @@ class HistoryFragment : Fragment() {
             runAdapter.prRunIds = ids
         }
 
+        viewModel.weeklySummary.observe(viewLifecycleOwner) { s ->
+            if (s.thisWeekRuns == 0 && s.lastWeekRuns == 0) {
+                binding.cardWeeklySummary.visibility = View.GONE
+                return@observe
+            }
+            binding.cardWeeklySummary.visibility = View.VISIBLE
+            val useMiles = com.fitnessultra.util.SettingsManager.useMiles(requireContext())
+            val distLabel = com.fitnessultra.util.TrackingUtils.distanceUnitLabel(useMiles, requireContext())
+            val thisKm = if (useMiles) s.thisWeekKm * 0.621371f else s.thisWeekKm
+
+            binding.tvWeekRuns.text = s.thisWeekRuns.toString()
+            binding.tvWeekDistance.text = "%.1f %s".format(thisKm, distLabel)
+            binding.tvWeekTime.text = getString(R.string.week_minutes_format, s.thisWeekMinutes)
+
+            // Delta vs last week
+            val deltaRuns = s.thisWeekRuns - s.lastWeekRuns
+            val lastKm = if (useMiles) s.lastWeekKm * 0.621371f else s.lastWeekKm
+            val deltaKm = thisKm - lastKm
+            val deltaMin = s.thisWeekMinutes - s.lastWeekMinutes
+            if (s.lastWeekRuns > 0 || s.lastWeekKm > 0f) {
+                val sign = { v: Float -> if (v >= 0) "+" else "" }
+                binding.tvWeekDelta.text = getString(
+                    R.string.week_delta_format,
+                    sign(deltaRuns.toFloat()), deltaRuns,
+                    sign(deltaKm), deltaKm, distLabel,
+                    sign(deltaMin.toFloat()), deltaMin
+                )
+            } else {
+                binding.tvWeekDelta.text = ""
+            }
+        }
+
         binding.tabsSteps.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 selectedTab = tab.position
