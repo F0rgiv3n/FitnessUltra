@@ -219,6 +219,8 @@
     <string name="label_split_time">Χρόνος</string>
     <string name="label_split_pace">Ρυθμός</string>
     <string name="label_best_split">Καλύτερο</string>
+    <string name="btn_share_run">Κοινοποίηση Run</string>
+    <string name="share_run_title">Κοινοποίησε το run σου</string>
     <string name="label_cadence">Ρυθμός βημάτων</string>
     <string name="cadence_format">%1$d βήμ/λεπτό</string>
     <string name="badge_pr">⭐ ΡΕ</string>

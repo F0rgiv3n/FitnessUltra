@@ -196,6 +196,11 @@
     <!-- Personal Records -->
     <string name="badge_pr">⭐ PR</string>
 
+    <!-- Share Run -->
+    <string name="btn_share_run">Share Run</string>
+    <string name="share_run_title">Share your run</string>
+    <string name="share_filename" translatable="false">run_%1$s.jpg</string>
+
     <!-- GPX Export -->
     <string name="btn_export_gpx">Export GPX</string>
     <string name="gpx_share_title">Share GPX</string>

@@ -219,6 +219,8 @@
     <string name="label_split_time">Tiempo</string>
     <string name="label_split_pace">Ritmo</string>
     <string name="label_best_split">Mejor</string>
+    <string name="btn_share_run">Compartir carrera</string>
+    <string name="share_run_title">Comparte tu carrera</string>
     <string name="label_cadence">Cadencia</string>
     <string name="cadence_format">%1$d ppm</string>
     <string name="badge_pr">⭐ RM</string>

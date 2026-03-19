@@ -1,6 +1,7 @@
 package com.fitnessultra.ui.charts
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,6 +19,7 @@ import com.fitnessultra.R
 import com.fitnessultra.databinding.FragmentChartsBinding
 import com.fitnessultra.util.GpxExporter
 import com.fitnessultra.util.SettingsManager
+import com.fitnessultra.util.ShareImageGenerator
 import com.fitnessultra.util.TrackingUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,6 +34,10 @@ class ChartsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: ChartsViewModel by viewModels()
+
+    // Cached after load so share button can use them without re-querying
+    private var cachedRun: com.fitnessultra.data.db.entity.RunEntity? = null
+    private var cachedPoints: List<com.fitnessultra.data.db.entity.LocationPoint> = emptyList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentChartsBinding.inflate(inflater, container, false)
@@ -50,6 +56,7 @@ class ChartsFragment : Fragment() {
         }
 
         binding.btnExportGpx.setOnClickListener { exportGpx(runId) }
+        binding.btnShareRun.setOnClickListener { shareRun() }
 
         val useMiles = SettingsManager.useMiles(requireContext())
         val speedLabel = getString(R.string.chart_label_speed, TrackingUtils.speedUnitLabel(useMiles, requireContext()))
@@ -57,6 +64,7 @@ class ChartsFragment : Fragment() {
 
         lifecycleScope.launch {
             val run = viewModel.getRunById(runId)
+            cachedRun = run
             if (run != null) {
                 val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
                 binding.tvRunDate.text = sdf.format(Date(run.dateTimestamp))
@@ -96,6 +104,7 @@ class ChartsFragment : Fragment() {
             }
 
             val points = viewModel.getLocationPoints(runId)
+            cachedPoints = points
             if (points.isEmpty()) return@launch
 
             val startTime = points.first().timestamp.toFloat()
@@ -149,6 +158,53 @@ class ChartsFragment : Fragment() {
             }
             binding.chartPace.data = LineData(paceDataSet)
             binding.chartPace.invalidate()
+        }
+    }
+
+    private fun shareRun() {
+        val run = cachedRun ?: run {
+            Toast.makeText(requireContext(), R.string.msg_gpx_no_data, Toast.LENGTH_SHORT).show()
+            return
+        }
+        val useMiles = SettingsManager.useMiles(requireContext())
+        lifecycleScope.launch {
+            binding.btnShareRun.isEnabled = false
+            val bitmap = withContext(Dispatchers.IO) {
+                ShareImageGenerator.generate(cachedPoints, run, useMiles, requireContext())
+            }
+            val sdf = SimpleDateFormat("yyyyMMdd_HHmm", Locale.US)
+            val filename = getString(R.string.share_filename, sdf.format(Date(run.dateTimestamp)))
+            val imageFile = withContext(Dispatchers.IO) {
+                val dir = File(requireContext().cacheDir, "share")
+                dir.mkdirs()
+                val f = File(dir, filename)
+                f.outputStream().use { out ->
+                    bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 92, out)
+                }
+                bitmap.recycle()
+                f
+            }
+            binding.btnShareRun.isEnabled = true
+            val uri = FileProvider.getUriForFile(
+                requireContext(),
+                "${requireContext().packageName}.fileprovider",
+                imageFile
+            )
+            // Try Instagram Stories first, fall back to generic share sheet
+            val instagramIntent = Intent("com.instagram.share.ADD_TO_STORY").apply {
+                setDataAndType(uri, "image/jpeg")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            if (requireContext().packageManager.resolveActivity(instagramIntent, 0) != null) {
+                startActivity(instagramIntent)
+            } else {
+                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                    type = "image/jpeg"
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                startActivity(Intent.createChooser(shareIntent, getString(R.string.share_run_title)))
+            }
         }
     }
 
