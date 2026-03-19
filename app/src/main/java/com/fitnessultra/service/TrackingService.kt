@@ -51,7 +51,7 @@ class TrackingService : LifecycleService() {
     private lateinit var sensorManager: SensorManager
     private var stepSensorListener: SensorEventListener? = null
     private var usingStepCounter = false
-    private var stepCounterBaseline = -1
+    private var stepCounterBaseline = -1L
     private var stepCounterAccumulated = 0
     private var lastStepTime = 0L
 
@@ -124,7 +124,7 @@ class TrackingService : LifecycleService() {
         lastAltitude = Double.MIN_VALUE
         slowUpdateCount = 0
         lastAcceptedLocation = null
-        stepCounterBaseline = -1
+        stepCounterBaseline = -1L
         stepCounterAccumulated = 0
         lastStepTime = 0L
     }
@@ -286,13 +286,13 @@ class TrackingService : LifecycleService() {
         when {
             counterSensor != null -> {
                 usingStepCounter = true
-                stepCounterBaseline = -1
+                stepCounterBaseline = -1L
                 stepSensorListener = object : SensorEventListener {
                     override fun onSensorChanged(event: SensorEvent) {
                         if (isTracking.value != true) return
-                        val hardwareCount = event.values[0].toInt()
-                        if (stepCounterBaseline == -1) stepCounterBaseline = hardwareCount
-                        stepCount.postValue(stepCounterAccumulated + (hardwareCount - stepCounterBaseline))
+                        val hardwareCount = event.values[0].toLong()
+                        if (stepCounterBaseline == -1L) stepCounterBaseline = hardwareCount
+                        stepCount.postValue((stepCounterAccumulated + (hardwareCount - stepCounterBaseline)).toInt())
                     }
                     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
                 }
@@ -303,12 +303,9 @@ class TrackingService : LifecycleService() {
                 stepSensorListener = object : SensorEventListener {
                     override fun onSensorChanged(event: SensorEvent) {
                         if (isTracking.value != true) return
-                        // Debounce: ignore events closer than 250ms (avoid double-counts from vibration)
+                        // Debounce: 200ms covers cadences up to 300 spm without dropping steps
                         val now = System.currentTimeMillis()
-                        if (now - lastStepTime < 250L) return
-                        // GPS cross-validation: reject if we have a valid GPS reading showing near-zero speed
-                        val speed = currentSpeedKmh.value ?: 0f
-                        if (speed in 0.01f..0.5f) return
+                        if (now - lastStepTime < 200L) return
                         lastStepTime = now
                         stepCount.postValue((stepCount.value ?: 0) + 1)
                     }
