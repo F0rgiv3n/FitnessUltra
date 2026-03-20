@@ -36,9 +36,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
-import org.osmdroid.views.overlay.Overlay
 import org.osmdroid.views.overlay.Polyline
 import java.util.Locale
 
@@ -104,26 +102,19 @@ class RunFragment : Fragment() {
         }
         binding.mapView.overlays.add(routePolyline)
 
-        // Easter egg: 10 rapid taps on the map
-        binding.mapView.overlays.add(0, object : Overlay() {
-            override fun onSingleTapConfirmed(e: android.view.MotionEvent, mapView: MapView): Boolean {
-                val now = System.currentTimeMillis()
-                if (now - lastEasterEggTapMs < 600L) {
-                    easterEggTapCount++
-                } else {
-                    easterEggTapCount = 1
-                }
-                lastEasterEggTapMs = now
-                if (easterEggTapCount >= 10) {
-                    easterEggTapCount = 0
-                    AlertDialog.Builder(requireContext())
-                        .setMessage("🐾 This is an easter egg! 🐾")
-                        .setPositiveButton("OK", null)
-                        .show()
-                }
-                return false
+        // Easter egg: 10 rapid taps on the timer
+        binding.tvTimer.setOnClickListener {
+            val now = System.currentTimeMillis()
+            if (now - lastEasterEggTapMs < 600L) easterEggTapCount++ else easterEggTapCount = 1
+            lastEasterEggTapMs = now
+            if (easterEggTapCount >= 10) {
+                easterEggTapCount = 0
+                AlertDialog.Builder(requireContext())
+                    .setMessage("🐾 This is an easter egg! 🐾")
+                    .setPositiveButton("OK", null)
+                    .show()
             }
-        })
+        }
 
         locationMarker = Marker(binding.mapView).apply {
             icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_runner_marker)
