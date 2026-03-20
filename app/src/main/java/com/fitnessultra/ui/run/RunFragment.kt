@@ -4,8 +4,12 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.AudioManager
+import android.media.ToneGenerator
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.PowerManager
 import android.provider.Settings
 import android.speech.tts.TextToSpeech
@@ -202,6 +206,7 @@ class RunFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             for (i in 3 downTo 1) {
                 binding.tvCountdown.text = i.toString()
+                playBeep()
                 delay(1000L)
             }
             binding.tvCountdown.visibility = View.GONE
@@ -231,13 +236,23 @@ class RunFragment : Fragment() {
         }
     }
 
-    /** Waits [totalSeconds] of active (non-paused) tracking time. */
+    /** Waits [totalSeconds] of active (non-paused) tracking time, beeping at the last 3 seconds. */
     private suspend fun waitActiveSeconds(totalSeconds: Int) {
         var elapsed = 0
         while (elapsed < totalSeconds) {
             delay(1000L)
             if (viewModel.isTracking.value == true) elapsed++
+            val remaining = totalSeconds - elapsed
+            if (remaining in 1..3) playBeep()
         }
+    }
+
+    private fun playBeep() {
+        try {
+            val tg = ToneGenerator(AudioManager.STREAM_MUSIC, 80)
+            tg.startTone(ToneGenerator.TONE_PROP_BEEP, 150)
+            Handler(Looper.getMainLooper()).postDelayed({ tg.release() }, 300L)
+        } catch (_: Exception) {}
     }
 
     private fun updateButtonStates() {
