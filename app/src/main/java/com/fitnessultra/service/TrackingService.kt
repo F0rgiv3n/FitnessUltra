@@ -46,7 +46,9 @@ class TrackingService : LifecycleService() {
         private const val NOTIFICATION_CHANNEL_ID   = "tracking_channel"
         private const val NOTIFICATION_CHANNEL_NAME = "Tracking"
         private const val NOTIFICATION_ID           = 1
-        private const val ELEVATION_THRESHOLD       = 3.0 // metres — filters GPS altitude noise
+        private const val ELEVATION_THRESHOLD = 2.0  // metres — filters altitude noise
+        private const val SPEED_ALPHA         = 0.25f // EMA smoothing for speed display
+        private const val PRESSURE_ALPHA      = 0.15f // EMA smoothing for barometer
 
         val isTracking           = MutableLiveData<Boolean>()
         val pathPoints           = MutableLiveData<MutableList<GeoPoint>>()
@@ -68,6 +70,11 @@ class TrackingService : LifecycleService() {
     private var stepCounterBaseline = -1L
     private var stepCounterAccumulated = 0
     private var lastStepTime = 0L
+
+    private var pressureSensorListener: SensorEventListener? = null
+    private var usingBarometer = false
+    private var smoothedPressure = 0f
+    private var smoothedSpeedKmh = 0f
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Default + serviceJob)
@@ -120,8 +127,10 @@ class TrackingService : LifecycleService() {
                             }
                         }
                         addPathPoint(location)
-                        currentSpeedKmh.postValue(location.speed * 3.6f)
-                        trackElevation(location)
+                        val rawKmh = location.speed * 3.6f
+                        smoothedSpeedKmh = SPEED_ALPHA * rawKmh + (1f - SPEED_ALPHA) * smoothedSpeedKmh
+                        currentSpeedKmh.postValue(smoothedSpeedKmh)
+                        if (!usingBarometer) trackElevation(location)
                     }
                 } else if (runInProgress && SettingsManager.isAutoResumeEnabled(this@TrackingService)) {
                     result.locations.forEach { location ->
@@ -133,6 +142,7 @@ class TrackingService : LifecycleService() {
                                 isTracking.postValue(true)
                                 startTimer()
                                 startStepCounter()
+                                startBarometer()
                             }
                         } else {
                             fastUpdateCount = 0
@@ -162,6 +172,8 @@ class TrackingService : LifecycleService() {
         fastUpdateCount = 0
         runInProgress = false
         lastAcceptedLocation = null
+        smoothedPressure = 0f
+        smoothedSpeedKmh = 0f
         stepCounterBaseline = -1L
         stepCounterAccumulated = 0
         lastStepTime = 0L
@@ -181,6 +193,7 @@ class TrackingService : LifecycleService() {
                     isTracking.postValue(true)
                     startTimer()
                     startStepCounter()
+                    startBarometer()
                 }
                 ACTION_PAUSE -> {
                     releaseWakeLock()
@@ -190,6 +203,8 @@ class TrackingService : LifecycleService() {
                     updateNotification(timeRun, totalDistanceMeters.value ?: 0f, tracking = false)
                     updateWidget(timeRun, totalDistanceMeters.value ?: 0f, tracking = false)
                     stopStepCounter()
+                    stopBarometer()
+                    smoothedSpeedKmh = 0f
                 }
                 ACTION_STOP -> {
                     runInProgress = false
@@ -197,6 +212,7 @@ class TrackingService : LifecycleService() {
                     isTracking.postValue(false)
                     timerJob?.cancel()
                     stopStepCounter()
+                    stopBarometer()
                     updateWidget(0L, 0f, tracking = false)
                     stopForeground(STOP_FOREGROUND_REMOVE)
                     stopSelf()
@@ -212,6 +228,7 @@ class TrackingService : LifecycleService() {
                     isTracking.postValue(false)
                     timerJob?.cancel()
                     stopStepCounter()
+                    stopBarometer()
                     updateWidget(0L, 0f, tracking = false)
 
                     // Snapshot LiveData on main thread before going background
@@ -393,8 +410,8 @@ class TrackingService : LifecycleService() {
                 Priority.PRIORITY_HIGH_ACCURACY
             else
                 Priority.PRIORITY_BALANCED_POWER_ACCURACY
-            val request = LocationRequest.Builder(priority, 3000L)
-                .setMinUpdateIntervalMillis(2000L)
+            val request = LocationRequest.Builder(priority, 1000L)
+                .setMinUpdateIntervalMillis(1000L)
                 .build()
             locationThread = HandlerThread("LocationThread").apply { start() }
             fusedLocationClient.requestLocationUpdates(request, locationCallback, locationThread!!.looper)
@@ -406,7 +423,7 @@ class TrackingService : LifecycleService() {
     }
 
     private fun addPathPoint(location: Location) {
-        if (location.accuracy > 25f) return
+        if (location.accuracy > 20f) return
 
         val prev = lastAcceptedLocation
         if (prev != null) {
@@ -520,6 +537,40 @@ class TrackingService : LifecycleService() {
         }
     }
 
+    private fun startBarometer() {
+        val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE) ?: return
+        usingBarometer = true
+        smoothedPressure = 0f
+        lastAltitude = Double.MIN_VALUE
+        pressureSensorListener = object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent) {
+                if (isTracking.value != true) return
+                val p = event.values[0]
+                smoothedPressure = if (smoothedPressure == 0f) p
+                                   else PRESSURE_ALPHA * p + (1f - PRESSURE_ALPHA) * smoothedPressure
+                val alt = SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, smoothedPressure).toDouble()
+                val prev = lastAltitude
+                if (prev == Double.MIN_VALUE) { lastAltitude = alt; return }
+                val diff = alt - prev
+                when {
+                    diff >= ELEVATION_THRESHOLD -> {
+                        elevationGainMeters.postValue((elevationGainMeters.value ?: 0f) + diff.toFloat())
+                        lastAltitude = alt
+                    }
+                    diff <= -ELEVATION_THRESHOLD -> lastAltitude = alt
+                }
+            }
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+        }
+        sensorManager.registerListener(pressureSensorListener, sensor, SensorManager.SENSOR_DELAY_NORMAL)
+    }
+
+    private fun stopBarometer() {
+        pressureSensorListener?.let { sensorManager.unregisterListener(it) }
+        pressureSensorListener = null
+        usingBarometer = false
+    }
+
     private fun stopStepCounter() {
         if (usingStepCounter) {
             stepCounterAccumulated = stepCount.value ?: 0
@@ -544,6 +595,7 @@ class TrackingService : LifecycleService() {
         releaseWakeLock()
         serviceJob.cancel()
         stopStepCounter()
+        stopBarometer()
         locationThread?.quit()
         locationThread = null
     }
