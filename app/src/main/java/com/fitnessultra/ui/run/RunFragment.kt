@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.os.PowerManager
 import android.provider.Settings
 import android.speech.tts.TextToSpeech
@@ -92,8 +93,11 @@ class RunFragment : Fragment() {
             LocationServices.getFusedLocationProviderClient(requireContext())
                 .lastLocation.addOnSuccessListener { loc ->
                     if (loc != null && _binding != null) {
-                        binding.mapView.controller.setZoom(17.0)
-                        binding.mapView.controller.setCenter(GeoPoint(loc.latitude, loc.longitude))
+                        val ageMs = SystemClock.elapsedRealtime() - loc.elapsedRealtimeNanos / 1_000_000
+                        if (ageMs < 30 * 60 * 1000L) {  // only if < 30 min old
+                            binding.mapView.controller.setZoom(17.0)
+                            binding.mapView.controller.setCenter(GeoPoint(loc.latitude, loc.longitude))
+                        }
                     }
                 }
         }
