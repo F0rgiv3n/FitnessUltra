@@ -487,12 +487,16 @@ class TrackingService : LifecycleService() {
             counterSensor != null -> {
                 usingStepCounter = true
                 stepCounterBaseline = -1L
+                var discardedSteps = 0
                 stepSensorListener = object : SensorEventListener {
                     override fun onSensorChanged(event: SensorEvent) {
                         if (isTracking.value != true) return
                         val hardwareCount = event.values[0].toLong()
                         if (stepCounterBaseline == -1L) stepCounterBaseline = hardwareCount
-                        stepCount.postValue((stepCounterAccumulated + (hardwareCount - stepCounterBaseline)).toInt())
+                        // Discard steps when GPS speed shows the user is stationary
+                        if ((currentSpeedKmh.value ?: 0f) < 0.5f) { discardedSteps++; return }
+                        val valid = maxOf(0, (hardwareCount - stepCounterBaseline).toInt() - discardedSteps)
+                        stepCount.postValue(stepCounterAccumulated + valid)
                     }
                     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
                 }
@@ -503,6 +507,7 @@ class TrackingService : LifecycleService() {
                 stepSensorListener = object : SensorEventListener {
                     override fun onSensorChanged(event: SensorEvent) {
                         if (isTracking.value != true) return
+                        if ((currentSpeedKmh.value ?: 0f) < 0.5f) return
                         val now = System.currentTimeMillis()
                         if (now - lastStepTime < 200L) return
                         lastStepTime = now
