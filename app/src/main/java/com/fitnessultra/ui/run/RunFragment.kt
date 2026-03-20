@@ -272,14 +272,19 @@ class RunFragment : Fragment() {
                 run {
                     repeat(config.reps) {
                         if (!isActive) return@run
+                        playLongBeep()
                         speakTts(getTtsString(R.string.tts_start_running, config.runSeconds))
                         waitActiveSeconds(config.runSeconds)
                         if (!isActive) return@run
+                        playLongBeep()
                         speakTts(getTtsString(R.string.tts_start_walking, config.walkSeconds))
                         waitActiveSeconds(config.walkSeconds)
                     }
                 }
-                if (isActive) speakTts(getTtsString(R.string.tts_workout_complete))
+                if (isActive) {
+                    playLongBeep()
+                    speakTts(getTtsString(R.string.tts_workout_complete))
+                }
             }
         }
     }
@@ -300,6 +305,15 @@ class RunFragment : Fragment() {
             val tg = ToneGenerator(AudioManager.STREAM_MUSIC, 80)
             tg.startTone(ToneGenerator.TONE_PROP_BEEP, 150)
             Handler(Looper.getMainLooper()).postDelayed({ tg.release() }, 300L)
+        } catch (_: Exception) {}
+    }
+
+    /** Longer, higher-pitched beep (DTMF-A = 1633 Hz) marking phase transitions. */
+    private fun playLongBeep() {
+        try {
+            val tg = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+            tg.startTone(ToneGenerator.TONE_DTMF_A, 600)
+            Handler(Looper.getMainLooper()).postDelayed({ tg.release() }, 800L)
         } catch (_: Exception) {}
     }
 
