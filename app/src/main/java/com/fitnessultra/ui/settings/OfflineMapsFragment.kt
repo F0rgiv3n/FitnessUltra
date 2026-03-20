@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
@@ -182,9 +183,20 @@ class OfflineMapsFragment : Fragment() {
         val done      = AtomicInteger(0)
         val errors    = AtomicInteger(0)
         val processed = AtomicInteger(0)
-        val semaphore = Semaphore(4)  // 4 parallel connections
+        val semaphore = Semaphore(8)  // 8 parallel HTTP connections
+        // Channel decouples downloads from SQLite writes (saveFile is synchronized)
+        val writeChannel = Channel<Pair<Long, ByteArray>>(capacity = 32)
 
         downloadJob = viewLifecycleOwner.lifecycleScope.launch {
+            // Single writer coroutine — no lock contention on SQLite
+            val writerJob = launch(Dispatchers.IO) {
+                val expiry = System.currentTimeMillis() + 30L * 24 * 60 * 60 * 1000
+                for ((tileIndex, bytes) in writeChannel) {
+                    try { tileCache.saveFile(tileSource, tileIndex, bytes.inputStream(), expiry) }
+                    catch (_: Exception) {}
+                }
+            }
+
             withContext(Dispatchers.IO) {
                 tiles.map { (zoom, x, y) ->
                     async {
@@ -198,29 +210,29 @@ class OfflineMapsFragment : Fragment() {
                                     val conn = URL(urlString).openConnection() as HttpURLConnection
                                     conn.setRequestProperty("User-Agent", Configuration.getInstance().userAgentValue)
                                     conn.instanceFollowRedirects = true
-                                    conn.connectTimeout = 15000
-                                    conn.readTimeout = 15000
+                                    conn.connectTimeout = 10000
+                                    conn.readTimeout = 10000
                                     val code = conn.responseCode
                                     if (code == 200) {
                                         val bytes = conn.inputStream.use { it.readBytes() }
                                         conn.disconnect()
                                         done.incrementAndGet()
-                                        try {
-                                            val expiry = System.currentTimeMillis() + 30L * 24 * 60 * 60 * 1000
-                                            tileCache.saveFile(tileSource, tileIndex, bytes.inputStream(), expiry)
-                                        } catch (_: Exception) {}
+                                        writeChannel.send(tileIndex to bytes)
                                     } else {
                                         conn.disconnect()
                                     }
                                 }
                             } catch (_: Exception) { errors.incrementAndGet() }
                             val p = processed.incrementAndGet()
-                            val progress = if (total > 0) p * 100 / total else 100
-                            withContext(Dispatchers.Main) {
-                                if (_binding != null) {
-                                    binding.progressBar.progress = progress
-                                    binding.tvProgress.text =
-                                        getString(R.string.offline_maps_downloading, progress, sizeMb)
+                            // Update UI every 20 tiles to avoid flooding the main thread
+                            if (p % 20 == 0 || p == total) {
+                                val progress = if (total > 0) p * 100 / total else 100
+                                withContext(Dispatchers.Main) {
+                                    if (_binding != null) {
+                                        binding.progressBar.progress = progress
+                                        binding.tvProgress.text =
+                                            getString(R.string.offline_maps_downloading, progress, sizeMb)
+                                    }
                                 }
                             }
                         } finally {
@@ -229,6 +241,9 @@ class OfflineMapsFragment : Fragment() {
                     }
                 }.awaitAll()
             }
+
+            writeChannel.close()
+            writerJob.join()  // wait for all SQLite writes to finish
 
             if (_binding == null) return@launch
             isDownloading = false
