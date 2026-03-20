@@ -77,15 +77,17 @@ class RunFragment : Fragment() {
         binding.mapView.apply {
             applyMapStyle()
             setMultiTouchControls(true)
-            controller.setZoom(17.0)
         }
 
-        // Center on last known location so offline tiles are visible from the start
+        // Center on last known location; fall back to Greece overview
+        binding.mapView.controller.setZoom(6.0)
+        binding.mapView.controller.setCenter(GeoPoint(38.5, 24.0))
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED) {
             LocationServices.getFusedLocationProviderClient(requireContext())
                 .lastLocation.addOnSuccessListener { loc ->
                     if (loc != null && _binding != null) {
+                        binding.mapView.controller.setZoom(17.0)
                         binding.mapView.controller.setCenter(GeoPoint(loc.latitude, loc.longitude))
                     }
                 }
