@@ -15,10 +15,13 @@ import com.fitnessultra.service.TrackingService
 import com.fitnessultra.util.SettingsManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.withContext
+import java.util.concurrent.atomic.AtomicInteger
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapListener
 import org.osmdroid.events.ScrollEvent
@@ -166,20 +169,28 @@ class OfflineMapsFragment : Fragment() {
         binding.tvProgress.visibility = View.VISIBLE
         binding.tvProgress.text = getString(R.string.offline_maps_downloading, 0, sizeMb)
 
-        downloadJob = viewLifecycleOwner.lifecycleScope.launch {
-            var done = 0
-            var errors = 0
-            var processed = 0
+        // Build the full tile list up front
+        val tiles = mutableListOf<Triple<Int, Int, Int>>()
+        for (zoom in minZoom..maxZoom) {
+            val x1 = lonToTileX(box.lonWest, zoom)
+            val x2 = lonToTileX(box.lonEast, zoom)
+            val y1 = latToTileY(box.latNorth, zoom)
+            val y2 = latToTileY(box.latSouth, zoom)
+            for (x in x1..x2) for (y in y1..y2) tiles.add(Triple(zoom, x, y))
+        }
 
+        val done      = AtomicInteger(0)
+        val errors    = AtomicInteger(0)
+        val processed = AtomicInteger(0)
+        val semaphore = Semaphore(4)  // 4 parallel connections
+
+        downloadJob = viewLifecycleOwner.lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                outer@ for (zoom in minZoom..maxZoom) {
-                    val x1 = lonToTileX(box.lonWest, zoom)
-                    val x2 = lonToTileX(box.lonEast, zoom)
-                    val y1 = latToTileY(box.latNorth, zoom)
-                    val y2 = latToTileY(box.latSouth, zoom)
-                    for (x in x1..x2) {
-                        for (y in y1..y2) {
-                            if (!isActive) break@outer
+                tiles.map { (zoom, x, y) ->
+                    async {
+                        if (!isActive) return@async
+                        semaphore.acquire()
+                        try {
                             val tileIndex = (zoom.toLong() shl 40) or (x.toLong() shl 20) or y.toLong()
                             try {
                                 val urlString = tileSource.getTileURLString(tileIndex)
@@ -193,19 +204,18 @@ class OfflineMapsFragment : Fragment() {
                                     if (code == 200) {
                                         val bytes = conn.inputStream.use { it.readBytes() }
                                         conn.disconnect()
-                                        done++  // count downloaded regardless of cache write result
+                                        done.incrementAndGet()
                                         try {
                                             val expiry = System.currentTimeMillis() + 30L * 24 * 60 * 60 * 1000
                                             tileCache.saveFile(tileSource, tileIndex, bytes.inputStream(), expiry)
-                                        } catch (_: Exception) { /* cache write failure, tile will load live */ }
+                                        } catch (_: Exception) {}
                                     } else {
                                         conn.disconnect()
-                                        // non-200 = tile doesn't exist or server issue, skip silently
                                     }
                                 }
-                            } catch (_: Exception) { errors++ }
-                            processed++
-                            val progress = if (total > 0) processed * 100 / total else 100
+                            } catch (_: Exception) { errors.incrementAndGet() }
+                            val p = processed.incrementAndGet()
+                            val progress = if (total > 0) p * 100 / total else 100
                             withContext(Dispatchers.Main) {
                                 if (_binding != null) {
                                     binding.progressBar.progress = progress
@@ -213,10 +223,11 @@ class OfflineMapsFragment : Fragment() {
                                         getString(R.string.offline_maps_downloading, progress, sizeMb)
                                 }
                             }
-                            delay(300L)  // respect OSM fair-use policy (≤2 req/sec)
+                        } finally {
+                            semaphore.release()
                         }
                     }
-                }
+                }.awaitAll()
             }
 
             if (_binding == null) return@launch
@@ -225,14 +236,13 @@ class OfflineMapsFragment : Fragment() {
             binding.progressBar.visibility = View.GONE
             @SuppressLint("StringFormatMatches")
             val resultMsg = when {
-                errors == 0 -> getString(R.string.offline_maps_complete)
-                done > 0    -> getString(R.string.offline_maps_partial, done, errors)
-                else        -> getString(R.string.offline_maps_failed, errors)
+                errors.get() == 0 -> getString(R.string.offline_maps_complete)
+                done.get() > 0    -> getString(R.string.offline_maps_partial, done.get(), errors.get())
+                else              -> getString(R.string.offline_maps_failed, errors.get())
             }
             binding.tvProgress.text = resultMsg
 
-            // Save whenever download ran — even if done==0 (tiles may have been skipped as non-200)
-            if (total > 0) saveArea(box, done)
+            if (total > 0) saveArea(box, done.get())
         }
     }
 
