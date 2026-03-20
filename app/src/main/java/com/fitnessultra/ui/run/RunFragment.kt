@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
+import androidx.annotation.StringRes
 import java.util.Locale
 
 class RunFragment : Fragment() {
@@ -51,6 +52,7 @@ class RunFragment : Fragment() {
     private var locationMarker: Marker? = null
 
     private lateinit var tts: TextToSpeech
+    private var ttsContext: android.content.Context? = null
     private var lastVoiceKm = 0
 
     private var workoutConfig: WorkoutConfig = WorkoutConfig.FreeRun
@@ -109,10 +111,16 @@ class RunFragment : Fragment() {
             lastEasterEggTapMs = now
             if (easterEggTapCount >= 10) {
                 easterEggTapCount = 0
-                AlertDialog.Builder(requireContext())
+                val dialog = AlertDialog.Builder(requireContext())
                     .setMessage("🐾 This is an easter egg! 🐾")
                     .setPositiveButton("OK", null)
                     .show()
+                dialog.window?.setLayout(
+                    (resources.displayMetrics.widthPixels * 0.80).toInt(),
+                    WindowManager.LayoutParams.WRAP_CONTENT
+                )
+                dialog.findViewById<android.widget.TextView>(android.R.id.message)
+                    ?.textSize = 20f
             }
         }
 
@@ -129,7 +137,12 @@ class RunFragment : Fragment() {
             if (status == TextToSpeech.SUCCESS) {
                 val langCode = SettingsManager.voiceLanguage(requireContext())
                 val locale = if (langCode == "default") Locale.getDefault() else Locale(langCode)
-                tts.language = locale
+                val result = tts.setLanguage(locale)
+                if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED) {
+                    val cfg = android.content.res.Configuration(requireContext().resources.configuration)
+                    cfg.setLocale(locale)
+                    ttsContext = requireContext().createConfigurationContext(cfg)
+                }
             }
         }
 
@@ -255,14 +268,14 @@ class RunFragment : Fragment() {
                 run {
                     repeat(config.reps) {
                         if (!isActive) return@run
-                        speakTts(getString(R.string.tts_start_running, config.runSeconds))
+                        speakTts(getTtsString(R.string.tts_start_running, config.runSeconds))
                         waitActiveSeconds(config.runSeconds)
                         if (!isActive) return@run
-                        speakTts(getString(R.string.tts_start_walking, config.walkSeconds))
+                        speakTts(getTtsString(R.string.tts_start_walking, config.walkSeconds))
                         waitActiveSeconds(config.walkSeconds)
                     }
                 }
-                if (isActive) speakTts(getString(R.string.tts_workout_complete))
+                if (isActive) speakTts(getTtsString(R.string.tts_workout_complete))
             }
         }
     }
@@ -359,12 +372,12 @@ class RunFragment : Fragment() {
         val diff = currentPaceSec - config.paceSecPerUnit
         when {
             diff > config.toleranceSec -> {
-                speakTts(getString(R.string.tts_pace_too_slow))
+                speakTts(getTtsString(R.string.tts_pace_too_slow))
                 binding.tvPace.setTextColor("#D32F2F".toColorInt())
                 lastPaceAlertMs = now
             }
             diff < -config.toleranceSec -> {
-                speakTts(getString(R.string.tts_pace_too_fast))
+                speakTts(getTtsString(R.string.tts_pace_too_fast))
                 binding.tvPace.setTextColor("#1565C0".toColorInt())
                 lastPaceAlertMs = now
             }
@@ -395,9 +408,12 @@ class RunFragment : Fragment() {
             val kmAnnounced = milestonePassed * freqKm
             val durationMs = viewModel.timeRunInMillis.value ?: 0L
             val paceStr = TrackingUtils.calculatePace(kmAnnounced * 1000f, durationMs, context = requireContext())
-            speakTts(getString(R.string.tts_voice_milestone, kmAnnounced, paceStr))
+            speakTts(getTtsString(R.string.tts_voice_milestone, kmAnnounced, paceStr))
         }
     }
+
+    private fun getTtsString(@StringRes resId: Int, vararg formatArgs: Any): String =
+        (ttsContext ?: requireContext()).getString(resId, *formatArgs)
 
     private fun speakTts(text: String) {
         tts.speak(text, TextToSpeech.QUEUE_ADD, null, null)
