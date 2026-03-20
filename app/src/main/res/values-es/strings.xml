@@ -163,6 +163,8 @@
     <string name="pref_gps_accuracy_title">Precisión GPS</string>
     <string name="pref_auto_pause_title">Pausa automática</string>
     <string name="pref_auto_pause_summary">Pausar cuando la velocidad baje de 1 km/h</string>
+    <string name="pref_auto_resume_title">Reanudación automática</string>
+    <string name="pref_auto_resume_summary">Reanudar automáticamente al detectar movimiento</string>
     <string name="pref_screen_on_title">Mantener pantalla encendida</string>
     <string name="pref_screen_on_summary">Evitar que la pantalla se apague durante la carrera</string>
     <string name="pref_countdown_title">Cuenta regresiva antes de iniciar</string>

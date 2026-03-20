@@ -40,6 +40,10 @@ object SettingsManager {
         PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean("pref_auto_pause", false)
 
+    fun isAutoResumeEnabled(context: Context): Boolean =
+        PreferenceManager.getDefaultSharedPreferences(context)
+            .getBoolean("pref_auto_resume", false)
+
     fun isKeepScreenOn(context: Context): Boolean =
         PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean("pref_screen_on", true)

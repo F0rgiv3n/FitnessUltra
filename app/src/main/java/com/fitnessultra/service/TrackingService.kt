@@ -80,6 +80,8 @@ class TrackingService : LifecycleService() {
     private var lastAltitude = Double.MIN_VALUE
     private var timerJob: Job? = null
     private var slowUpdateCount = 0
+    private var fastUpdateCount = 0
+    private var runInProgress = false
     private var lastAcceptedLocation: Location? = null
     private var lastKmReached = 0
     private val splitTimesMs = mutableListOf<Long>()
@@ -121,6 +123,21 @@ class TrackingService : LifecycleService() {
                         currentSpeedKmh.postValue(location.speed * 3.6f)
                         trackElevation(location)
                     }
+                } else if (runInProgress && SettingsManager.isAutoResumeEnabled(this@TrackingService)) {
+                    result.locations.forEach { location ->
+                        if (location.speed * 3.6f >= 1.0f) {
+                            fastUpdateCount++
+                            if (fastUpdateCount >= 2) {
+                                fastUpdateCount = 0
+                                acquireWakeLock()
+                                isTracking.postValue(true)
+                                startTimer()
+                                startStepCounter()
+                            }
+                        } else {
+                            fastUpdateCount = 0
+                        }
+                    }
                 }
             }
         }
@@ -142,6 +159,8 @@ class TrackingService : LifecycleService() {
         timeRun = 0L
         lastAltitude = Double.MIN_VALUE
         slowUpdateCount = 0
+        fastUpdateCount = 0
+        runInProgress = false
         lastAcceptedLocation = null
         stepCounterBaseline = -1L
         stepCounterAccumulated = 0
@@ -156,6 +175,7 @@ class TrackingService : LifecycleService() {
         intent?.action?.let { action ->
             when (action) {
                 ACTION_START_OR_RESUME -> {
+                    runInProgress = true
                     acquireWakeLock()
                     startForegroundService()
                     isTracking.postValue(true)
@@ -172,6 +192,7 @@ class TrackingService : LifecycleService() {
                     stopStepCounter()
                 }
                 ACTION_STOP -> {
+                    runInProgress = false
                     releaseWakeLock()
                     isTracking.postValue(false)
                     timerJob?.cancel()
@@ -182,6 +203,7 @@ class TrackingService : LifecycleService() {
                     initValues()
                 }
                 ACTION_STOP_AND_SAVE -> {
+                    runInProgress = false
                     releaseWakeLock()
                     // Accumulate any remaining active time
                     val finalTimeRun = if (isTracking.value == true)

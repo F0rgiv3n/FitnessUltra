@@ -198,12 +198,14 @@ class RunFragment : Fragment() {
             return
         }
         binding.tvCountdown.visibility = View.VISIBLE
+        binding.btnToggleRun.isEnabled = false
         viewLifecycleOwner.lifecycleScope.launch {
             for (i in 3 downTo 1) {
                 binding.tvCountdown.text = i.toString()
                 delay(1000L)
             }
             binding.tvCountdown.visibility = View.GONE
+            binding.btnToggleRun.isEnabled = true
             viewModel.sendCommand(TrackingService.ACTION_START_OR_RESUME)
             startWorkoutLogic()
         }
@@ -238,21 +240,24 @@ class RunFragment : Fragment() {
         }
     }
 
+    private fun updateButtonStates() {
+        val tracking = isTracking
+        val hasElapsed = (viewModel.timeRunInMillis.value ?: 0L) > 0L
+        binding.btnToggleRun.setText(
+            when {
+                tracking   -> R.string.replay_pause
+                hasElapsed -> R.string.btn_resume
+                else       -> R.string.btn_start
+            }
+        )
+        binding.btnWorkoutType.visibility = if (!tracking && !hasElapsed) View.VISIBLE else View.GONE
+        binding.btnStopRun.visibility = if (!tracking && hasElapsed) View.VISIBLE else View.GONE
+    }
+
     private fun observeTracking() {
         viewModel.isTracking.observe(viewLifecycleOwner) { tracking ->
             isTracking = tracking
-            val hasElapsed = (viewModel.timeRunInMillis.value ?: 0L) > 0L
-            binding.btnToggleRun.setText(
-                when {
-                    tracking   -> R.string.replay_pause
-                    hasElapsed -> R.string.btn_resume
-                    else       -> R.string.btn_start
-                }
-            )
-            // Type selector only shown before run starts
-            binding.btnWorkoutType.visibility = if (!tracking && !hasElapsed) View.VISIBLE else View.GONE
-            // Stop button shown only when paused mid-run
-            binding.btnStopRun.visibility = if (!tracking && hasElapsed) View.VISIBLE else View.GONE
+            updateButtonStates()
         }
 
         viewModel.pathPoints.observe(viewLifecycleOwner) { points ->
@@ -272,6 +277,7 @@ class RunFragment : Fragment() {
 
         viewModel.timeRunInMillis.observe(viewLifecycleOwner) { ms ->
             binding.tvTimer.text = TrackingUtils.formatTime(ms)
+            updateButtonStates()
         }
 
         viewModel.totalDistanceMeters.observe(viewLifecycleOwner) { meters ->

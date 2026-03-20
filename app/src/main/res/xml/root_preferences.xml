@@ -53,6 +53,13 @@
             android:defaultValue="false" />
 
         <SwitchPreferenceCompat
+            android:key="pref_auto_resume"
+            android:title="@string/pref_auto_resume_title"
+            android:summary="@string/pref_auto_resume_summary"
+            android:defaultValue="false"
+            android:dependency="pref_auto_pause" />
+
+        <SwitchPreferenceCompat
             android:key="pref_screen_on"
             android:title="@string/pref_screen_on_title"
             android:summary="@string/pref_screen_on_summary"

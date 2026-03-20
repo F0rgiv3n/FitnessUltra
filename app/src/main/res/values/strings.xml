@@ -158,6 +158,8 @@
     <string name="pref_gps_accuracy_title">GPS accuracy</string>
     <string name="pref_auto_pause_title">Auto-pause</string>
     <string name="pref_auto_pause_summary">Pause when speed drops below 1 km/h</string>
+    <string name="pref_auto_resume_title">Auto-resume</string>
+    <string name="pref_auto_resume_summary">Resume automatically when movement is detected</string>
     <string name="pref_screen_on_title">Keep screen on</string>
     <string name="pref_screen_on_summary">Prevent screen from sleeping during a run</string>
     <string name="pref_countdown_title">Countdown before start</string>

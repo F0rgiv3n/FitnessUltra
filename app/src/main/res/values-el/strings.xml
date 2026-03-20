@@ -168,6 +168,8 @@
     <string name="pref_gps_accuracy_title">Ακρίβεια GPS</string>
     <string name="pref_auto_pause_title">Αυτόματη παύση</string>
     <string name="pref_auto_pause_summary">Παύση όταν η ταχύτητα πέσει κάτω από 1 km/h</string>
+    <string name="pref_auto_resume_title">Αυτόματη συνέχεια</string>
+    <string name="pref_auto_resume_summary">Αυτόματη συνέχεια όταν ανιχνευτεί κίνηση</string>
     <string name="pref_screen_on_title">Οθόνη πάντα ενεργή</string>
     <string name="pref_screen_on_summary">Αποτροπή απενεργοποίησης οθόνης κατά το τρέξιμο</string>
     <string name="pref_countdown_title">Αντίστροφη μέτρηση πριν την εκκίνηση</string>

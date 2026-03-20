@@ -1,7 +1,9 @@
 package com.fitnessultra.ui.weight
 
 import androidx.core.graphics.toColorInt
+import android.content.Context
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import com.fitnessultra.R
 import com.fitnessultra.util.SettingsManager
 import android.view.LayoutInflater
@@ -79,6 +81,7 @@ class WeightFragment : Fragment() {
             viewModel.saveUserInfo(height, age ?: 0)
             showInfoSummary(height, age ?: 0)
             viewModel.weightEntries.value?.let { updateAll(it) }
+            hideKeyboard()
         }
 
         binding.btnEditInfo.setOnClickListener { showInfoForm() }
@@ -91,6 +94,7 @@ class WeightFragment : Fragment() {
             }
             viewModel.saveWeight(toKg(inputValue))
             binding.etWeight.text?.clear()
+            hideKeyboard()
         }
 
         viewModel.weightEntries.observe(viewLifecycleOwner) { entries ->
@@ -261,5 +265,10 @@ class WeightFragment : Fragment() {
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
+    }
+
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
 }
