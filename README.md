@@ -14,66 +14,96 @@ A personal Android fitness tracking app built with Kotlin. Track outdoor runs wi
 
 ### Running
 - Real-time GPS tracking with live map (OpenStreetMap, no API key)
-- **Live position marker** — blue dot on the map always centered at your current location during a run
-- Distance, speed, pace, elapsed time, live elevation gain, and **cadence (steps/min)** displayed during run
-- Step counter via device accelerometer (`TYPE_STEP_COUNTER` with `TYPE_STEP_DETECTOR` fallback)
-- Voice announcements at configurable distance milestones (1 / 2 / 5 km) in your chosen language
-- Calories burned estimation (adjusts for gender)
+- Live position marker on map, auto-centered during run
+- Distance, speed, pace, elapsed time, elevation gain, and **cadence (steps/min)** displayed live
+- Step counter via `TYPE_STEP_COUNTER` (with `TYPE_STEP_DETECTOR` fallback), speed-gated to ignore false counts when stationary
+- Voice announcements at configurable distance milestones in your chosen language
+- **Calorie calculation** accounting for both running distance and elevation gain
 - Foreground service with WakeLock — keeps tracking alive with screen off
-- Live notification showing time, distance, pace + Pause/Resume button
-- 3-2-1 countdown overlay before tracking starts
+- Live notification with time, distance, pace + Pause / Resume / Finish actions
+- 3-2-1 countdown overlay with beep before tracking starts
+- **Auto-pause** when speed drops below 1 km/h (3 consecutive updates); optional **auto-resume** when movement is detected
+- Home screen widget showing live timer, distance, and pace
 
 ### Workout Modes
-Choose a workout type before each run via a setup sheet:
 
 | Mode | Description |
 |---|---|
 | **Free Run** | Standard run with no additional guidance |
-| **Interval Training** | Alternates run/walk segments with configurable durations and reps; TTS announces each phase |
-| **Target Pace** | Set a target pace (min/km or min/mi); TTS alerts and pace color feedback when too fast or too slow |
+| **Interval Training** | Alternates run/walk phases with configurable durations and reps; TTS announces each phase with a distinct high-pitched beep at every transition |
+| **Target Pace** | Set a target pace; TTS alerts and color feedback on the pace display when too fast or too slow |
 
-Interval timer correctly pauses when the run is paused — only counts active tracking time.
+- Interval timer correctly pauses with the run — only counts active tracking time
+- Countdown beeps at the last 3 seconds of each phase; a longer, higher-pitched beep marks every transition
 
 ### History
-- Full run log with swipe-to-delete and undo
-- **Route thumbnails** — each run shows a small rendered map of your GPS route
-- **Personal Record (⭐ PR) badges** — longest run and fastest pace are automatically highlighted
-- Steps bar chart per day / week / month
-- Tap any run → detailed charts (speed, elevation, pace)
+- Full run log with swipe-to-delete and Undo
+- **Route thumbnails** — each run shows a rendered minimap of the GPS route
+- **Personal Record (⭐ PR) badges** — longest distance and fastest pace highlighted automatically
+- Weekly summary card at the top with delta vs. the previous week
+- Tap any run → detailed charts and route map
 
 ### Run Analysis (Charts)
-Per-run detail screen with:
-- Summary card: distance, duration, calories, steps, **average cadence**
-- Speed, elevation, and pace charts (MPAndroidChart)
+Per-run detail screen:
+- Summary card: distance, duration, calories, steps, average cadence, avg speed
+- Speed, elevation, and pace charts over time
 - Per-km split table with best split highlighted
-- **Export GPX** — share your run as a `.gpx` file compatible with Strava, Garmin Connect, and other platforms
+- **GPX export** — share as `.gpx` compatible with Strava, Garmin Connect, etc.
 
 ### Run Replay
-- Animated playback of your GPS route on a map
-- Adjustable speed: 1× / 2× / 5× / 10×
-- Scrubber bar — drag to jump to any point in the route
-- Live stats (time, distance, speed) update while scrubbing
+- Animated playback of the GPS route on a live map
+- Adjustable speed: 1× / 2× / 5×
+- Scrubber bar — drag to any point; playback pauses during scrubbing and resumes after
+- Live elapsed time, distance covered, and current speed update while scrubbing
 
 ### Goals
 - Weekly targets for distance, time, and steps
-- Progress bars with colour feedback (gray / primary / green at 100%)
+- Progress bars with colour feedback (gray → primary → green at 100%)
 - Day-dot row showing which days of the week you were active
 
-### User Info
+### Weight & BMI
 - Personal data (height, age) stored locally
-- Weight history log with trend chart (kg or lbs)
+- Weight history log with colour-coded trend chart (kg or lbs)
 - BMI history chart
-- BMI gauge — semicircle dial with colour-coded zones (underweight / normal / overweight / obese)
+- BMI gauge — semicircle dial with WHO colour-coded zones:
+
+| Zone | BMI |
+|---|---|
+| Underweight | < 18.5 |
+| Normal | 18.5 – 24.9 |
+| Overweight | 25 – 29.9 |
+| Obese | ≥ 30 |
+
+### Offline Maps
+- Download map tiles for any area for use without internet
+- Configurable detail level: Normal (zoom 10–14), Detailed (10–16), HD (10–17)
+- Tile estimate (count + MB) shown before downloading
+- Parallel download (8 connections) with progress bar
+- Saved areas listed with name, date, tile count; tap to preview on map
 
 ### Settings
 
 | Category | Options |
 |---|---|
-| **Units** | Distance: km / miles · Weight: kg / lbs · Gender: for calorie calculation |
-| **Run** | GPS accuracy (high / battery saving) · Auto-pause · Keep screen on · Countdown |
-| **Map** | Style: Standard / Cycle / Transport · Auto-center on position |
+| **Units** | Distance: km / miles · Weight: kg / lbs · Gender for calorie calculation |
+| **Run** | GPS accuracy · Auto-pause · Auto-resume · Keep screen on · Countdown |
+| **Map** | Style: Standard / CyclOSM / HOT · Auto-center on position |
 | **Voice** | Enable / frequency / language (device default, English, Greek, Spanish, German) |
-| **Appearance** | Theme: system / light / dark · App language |
+| **Appearance** | Theme: system / light / dark · App language (EN / EL / ES / DE) |
+| **Offline Maps** | Download, manage, and preview downloaded map areas |
+
+---
+
+## Sensor Accuracy
+
+| Sensor | Implementation |
+|---|---|
+| **GPS** | 1 Hz updates, ≤20m accuracy filter, `setWaitForAccurateLocation(false)` for fast first fix, `setMinUpdateDistanceMeters(1m)` to suppress jitter |
+| **Speed** | GPS Doppler speed (more accurate than position-derived), exponential moving average (α=0.5) to smooth display |
+| **Distance** | Accumulated only from ≤20m accuracy fixes; first fix accepted at ≤50m for instant map display without counting toward distance |
+| **Elevation** | Barometric pressure sensor (`TYPE_PRESSURE`) when available (±1–2m vs ±15–30m for GPS altitude), EMA smoothed; falls back to GPS altitude |
+| **Steps** | Hardware step counter, speed-gated (discards steps when GPS speed < 0.5 km/h); gate only activates after first GPS fix to avoid missing steps at start |
+| **Calories** | di Prampero formula (1.036 kcal/kg/km male, 0.945 female) + elevation cost (0.009 kcal/kg/m) |
 
 ---
 
@@ -85,8 +115,9 @@ Per-run detail screen with:
 | Architecture | MVVM, Navigation Component, ViewBinding, Coroutines + Flow |
 | Maps | OSMDroid 6.1.18 (OpenStreetMap) |
 | GPS | Fused Location Provider (play-services-location 21.2.0) |
-| Step Counter | `Sensor.TYPE_STEP_COUNTER` / `TYPE_STEP_DETECTOR` via SensorManager |
-| Database | Room 2.6.1 |
+| Step Counter | `Sensor.TYPE_STEP_COUNTER` / `TYPE_STEP_DETECTOR` |
+| Elevation | `Sensor.TYPE_PRESSURE` (barometer) with GPS fallback |
+| Database | Room 2.6.1 (v3, proper migrations) |
 | Charts | MPAndroidChart v3.1.0 |
 | Voice | Android TextToSpeech |
 | UI | Material Components 1.11.0 |
