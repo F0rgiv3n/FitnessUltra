@@ -97,7 +97,19 @@ class ReplayFragment : Fragment() {
             updateStatsAt(0)
             binding.seekBar.max = points.size - 1
             binding.seekBar.progress = 0
+
+            // Enable controls now that data is ready
+            binding.btnPlayPause.isEnabled = true
+            binding.btn2x.isEnabled = true
+            binding.btn5x.isEnabled = true
+            binding.seekBar.isEnabled = true
         }
+
+        // Disable controls until data is loaded
+        binding.btnPlayPause.isEnabled = false
+        binding.btn2x.isEnabled = false
+        binding.btn5x.isEnabled = false
+        binding.seekBar.isEnabled = false
 
         binding.btnPlayPause.setOnClickListener { togglePlayPause() }
         binding.btn2x.setOnClickListener  { setSpeed(2f) }
@@ -202,6 +214,7 @@ class ReplayFragment : Fragment() {
     }
 
     private fun updatePositionAt(index: Int) {
+        if (points.isEmpty() || index !in points.indices) return
         val geoPoint = GeoPoint(points[index].latitude, points[index].longitude)
         runnerMarker?.position = geoPoint
         completedPolyline?.setPoints(
@@ -249,6 +262,7 @@ class ReplayFragment : Fragment() {
 
     override fun onDestroyView() {
         replayJob?.cancel()
+        binding.replayMapView.onDetach()
         _binding = null
         super.onDestroyView()
     }
