@@ -57,6 +57,7 @@ class ReplayFragment : Fragment() {
         binding.replayMapView.apply {
             setTileSource(SettingsManager.tileSource(requireContext()))
             setMultiTouchControls(true)
+            setBuiltInZoomControls(false)
         }
 
         val runId = arguments?.getLong("runId") ?: return

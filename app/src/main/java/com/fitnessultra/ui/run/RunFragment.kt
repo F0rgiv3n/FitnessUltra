@@ -83,6 +83,7 @@ class RunFragment : Fragment() {
         binding.mapView.apply {
             applyMapStyle()
             setMultiTouchControls(true)
+            setBuiltInZoomControls(false)
         }
 
         // Center on last known location; fall back to Greece overview

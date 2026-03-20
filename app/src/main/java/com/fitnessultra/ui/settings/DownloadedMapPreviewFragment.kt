@@ -35,6 +35,7 @@ class DownloadedMapPreviewFragment : Fragment() {
         binding.mapView.apply {
             setTileSource(SettingsManager.tileSource(requireContext()))
             setMultiTouchControls(true)
+            setBuiltInZoomControls(false)
         }
 
         // Draw the downloaded area as a filled rectangle

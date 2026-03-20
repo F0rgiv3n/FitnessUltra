@@ -67,6 +67,7 @@ class OfflineMapsFragment : Fragment() {
         binding.mapView.apply {
             setTileSource(SettingsManager.tileSource(requireContext()))
             setMultiTouchControls(true)
+            setBuiltInZoomControls(false)
         }
 
         val lastPoint = TrackingService.pathPoints.value?.lastOrNull()
