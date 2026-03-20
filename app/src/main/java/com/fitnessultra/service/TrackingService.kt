@@ -47,7 +47,7 @@ class TrackingService : LifecycleService() {
         private const val NOTIFICATION_CHANNEL_NAME = "Tracking"
         private const val NOTIFICATION_ID           = 1
         private const val ELEVATION_THRESHOLD = 2.0  // metres — filters altitude noise
-        private const val SPEED_ALPHA         = 0.25f // EMA smoothing for speed display
+        private const val SPEED_ALPHA         = 0.5f  // EMA for speed display (α=0.5 → responsive yet smooth)
         private const val PRESSURE_ALPHA      = 0.15f // EMA smoothing for barometer
 
         val isTracking           = MutableLiveData<Boolean>()
@@ -89,7 +89,8 @@ class TrackingService : LifecycleService() {
     private var slowUpdateCount = 0
     private var fastUpdateCount = 0
     private var runInProgress = false
-    private var lastAcceptedLocation: Location? = null
+    private var lastAcceptedLocation: Location? = null  // for map display + teleport check
+    private var lastDistanceLocation: Location? = null  // for distance calc (requires ≤20m accuracy)
     private var lastKmReached = 0
     private val splitTimesMs = mutableListOf<Long>()
 
@@ -128,7 +129,9 @@ class TrackingService : LifecycleService() {
                         }
                         addPathPoint(location)
                         val rawKmh = location.speed * 3.6f
-                        smoothedSpeedKmh = SPEED_ALPHA * rawKmh + (1f - SPEED_ALPHA) * smoothedSpeedKmh
+                        // Seed EMA on first non-zero reading so display is instant
+                        smoothedSpeedKmh = if (smoothedSpeedKmh == 0f && rawKmh > 0f) rawKmh
+                                           else SPEED_ALPHA * rawKmh + (1f - SPEED_ALPHA) * smoothedSpeedKmh
                         currentSpeedKmh.postValue(smoothedSpeedKmh)
                         if (!usingBarometer) trackElevation(location)
                     }
@@ -172,6 +175,7 @@ class TrackingService : LifecycleService() {
         fastUpdateCount = 0
         runInProgress = false
         lastAcceptedLocation = null
+        lastDistanceLocation = null
         smoothedPressure = 0f
         smoothedSpeedKmh = 0f
         stepCounterBaseline = -1L
@@ -412,6 +416,8 @@ class TrackingService : LifecycleService() {
                 Priority.PRIORITY_BALANCED_POWER_ACCURACY
             val request = LocationRequest.Builder(priority, 1000L)
                 .setMinUpdateIntervalMillis(1000L)
+                .setMinUpdateDistanceMeters(1f)   // suppress GPS jitter < 1m
+                .setWaitForAccurateLocation(false) // deliver first fix immediately
                 .build()
             locationThread = HandlerThread("LocationThread").apply { start() }
             fusedLocationClient.requestLocationUpdates(request, locationCallback, locationThread!!.looper)
@@ -423,16 +429,16 @@ class TrackingService : LifecycleService() {
     }
 
     private fun addPathPoint(location: Location) {
-        if (location.accuracy > 20f) return
+        val isFirstFix = lastAcceptedLocation == null
+        // First fix: accept up to 50m so the user appears on the map immediately.
+        // Subsequent fixes: require ≤20m for both map and distance accuracy.
+        val displayThreshold = if (isFirstFix) 50f else 20f
+        if (location.accuracy > displayThreshold) return
 
-        val prev = lastAcceptedLocation
-        if (prev != null) {
-            val distanceM = prev.distanceTo(location)
-            val timeDeltaS = (location.time - prev.time) / 1000f
-            if (timeDeltaS > 0f) {
-                val impliedSpeedKmh = (distanceM / timeDeltaS) * 3.6f
-                if (impliedSpeedKmh > 120f) return
-            }
+        // Teleport guard: reject impossibly fast movement (>120 km/h)
+        lastAcceptedLocation?.let { prev ->
+            val dtS = (location.time - prev.time) / 1000f
+            if (dtS > 0f && (prev.distanceTo(location) / dtS) * 3.6f > 120f) return
         }
         lastAcceptedLocation = location
 
@@ -442,13 +448,20 @@ class TrackingService : LifecycleService() {
         val locationList = rawLocations.value?.apply { add(location) } ?: mutableListOf(location)
         rawLocations.postValue(locationList)
 
-        if (points.size > 1) {
-            val last = points[points.size - 2]
-            val results = FloatArray(1)
-            Location.distanceBetween(last.latitude, last.longitude, pos.latitude, pos.longitude, results)
-            val newTotal = (totalDistanceMeters.value ?: 0f) + results[0]
-            totalDistanceMeters.postValue(newTotal)
-            checkKmSplit(newTotal)
+        // Distance accumulation only from accurate fixes (≤20m) after the first display fix
+        if (!isFirstFix && location.accuracy <= 20f) {
+            val prevDist = lastDistanceLocation
+            if (prevDist != null) {
+                val results = FloatArray(1)
+                Location.distanceBetween(
+                    prevDist.latitude, prevDist.longitude,
+                    location.latitude, location.longitude, results
+                )
+                val newTotal = (totalDistanceMeters.value ?: 0f) + results[0]
+                totalDistanceMeters.postValue(newTotal)
+                checkKmSplit(newTotal)
+            }
+            lastDistanceLocation = location
         }
     }
 
@@ -510,8 +523,9 @@ class TrackingService : LifecycleService() {
                         if (isTracking.value != true) return
                         val hardwareCount = event.values[0].toLong()
                         if (stepCounterBaseline == -1L) stepCounterBaseline = hardwareCount
-                        // Discard steps when GPS speed shows the user is stationary
-                        if ((currentSpeedKmh.value ?: 0f) < 0.5f) { discardedSteps++; return }
+                        // Discard steps when stationary — but only after first GPS fix arrives
+                        // (before that, speed = 0f by default which would wrongly discard real steps)
+                        if (lastAcceptedLocation != null && (currentSpeedKmh.value ?: 0f) < 0.5f) { discardedSteps++; return }
                         val valid = maxOf(0, (hardwareCount - stepCounterBaseline).toInt() - discardedSteps)
                         stepCount.postValue(stepCounterAccumulated + valid)
                     }
@@ -524,7 +538,7 @@ class TrackingService : LifecycleService() {
                 stepSensorListener = object : SensorEventListener {
                     override fun onSensorChanged(event: SensorEvent) {
                         if (isTracking.value != true) return
-                        if ((currentSpeedKmh.value ?: 0f) < 0.5f) return
+                        if (lastAcceptedLocation != null && (currentSpeedKmh.value ?: 0f) < 0.5f) return
                         val now = System.currentTimeMillis()
                         if (now - lastStepTime < 200L) return
                         lastStepTime = now
