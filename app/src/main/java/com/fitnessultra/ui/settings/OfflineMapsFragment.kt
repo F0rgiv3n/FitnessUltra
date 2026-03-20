@@ -286,6 +286,7 @@ class OfflineMapsFragment : Fragment() {
 
     override fun onDestroyView() {
         downloadJob?.cancel()
+        binding.mapView.onDetach()
         _binding = null
         super.onDestroyView()
     }

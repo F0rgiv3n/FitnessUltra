@@ -29,6 +29,7 @@ import com.fitnessultra.R
 import com.fitnessultra.databinding.FragmentRunBinding
 import com.fitnessultra.service.TrackingService
 import com.fitnessultra.util.SettingsManager
+import com.google.android.gms.location.LocationServices
 import com.fitnessultra.util.TrackingUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -77,6 +78,17 @@ class RunFragment : Fragment() {
             applyMapStyle()
             setMultiTouchControls(true)
             controller.setZoom(17.0)
+        }
+
+        // Center on last known location so offline tiles are visible from the start
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED) {
+            LocationServices.getFusedLocationProviderClient(requireContext())
+                .lastLocation.addOnSuccessListener { loc ->
+                    if (loc != null && _binding != null) {
+                        binding.mapView.controller.setCenter(GeoPoint(loc.latitude, loc.longitude))
+                    }
+                }
         }
 
         routePolyline = Polyline().apply {
@@ -434,6 +446,7 @@ class RunFragment : Fragment() {
     override fun onDestroyView() {
         intervalJob?.cancel()
         tts.shutdown()
+        binding.mapView.onDetach()
         _binding = null
         super.onDestroyView()
     }

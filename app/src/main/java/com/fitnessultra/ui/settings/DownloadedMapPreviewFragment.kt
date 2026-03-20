@@ -80,6 +80,7 @@ class DownloadedMapPreviewFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        binding.mapView.onDetach()
         _binding = null
         super.onDestroyView()
     }

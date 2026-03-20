@@ -11,6 +11,6 @@ class FitnessUltraApp : Application() {
         val osmConfig = Configuration.getInstance()
         osmConfig.load(this, PreferenceManager.getDefaultSharedPreferences(this))
         osmConfig.userAgentValue = packageName
-        osmConfig.osmdroidTileCache = cacheDir
+        osmConfig.osmdroidTileCache = getDir("osm_tiles", MODE_PRIVATE)
     }
 }
