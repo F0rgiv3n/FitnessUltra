@@ -55,10 +55,23 @@ object TrackingUtils {
         return ((durationMinutes / distanceUnits) * 60f).toInt()
     }
 
-    /** Calories with gender-specific MET factor. Male≈1.036, Female≈0.945, unknown≈1.036 */
-    fun calculateCalories(distanceMeters: Float, weightKg: Float, gender: String = "none"): Int {
+    /**
+     * Calories burned using the di Prampero running formula + elevation cost.
+     *
+     * Flat running: ~1.036 kcal/kg/km (male) or ~0.945 kcal/kg/km (female).
+     * Elevation gain: ~0.009 kcal/kg/m — derived from muscular efficiency (~25%)
+     *   lifting body weight against gravity (9.81 J/kg/m ÷ 0.25 ÷ 4.184 ≈ 0.0094).
+     */
+    fun calculateCalories(
+        distanceMeters: Float,
+        weightKg: Float,
+        gender: String = "none",
+        elevGainMeters: Float = 0f
+    ): Int {
         val factor = if (gender == "female") 0.945f else 1.036f
-        return (distanceMeters / 1000f * weightKg * factor).toInt()
+        val runCalories  = distanceMeters / 1000f * weightKg * factor
+        val elevCalories = weightKg * elevGainMeters * 0.009f
+        return (runCalories + elevCalories).toInt()
     }
 
     /** Convert a user-entered distance value to km for internal storage. */

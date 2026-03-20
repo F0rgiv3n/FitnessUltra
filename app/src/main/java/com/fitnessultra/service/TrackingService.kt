@@ -268,7 +268,7 @@ class TrackingService : LifecycleService() {
         val gender = SettingsManager.gender(this@TrackingService)
 
         val avgSpeedKmh = (distanceMeters / 1000f) / (durationMillis / 1000f / 3600f)
-        val calories = TrackingUtils.calculateCalories(distanceMeters, weightKg, gender)
+        val calories = TrackingUtils.calculateCalories(distanceMeters, weightKg, gender, elevGain)
 
         val run = RunEntity(
             dateTimestamp = System.currentTimeMillis(),

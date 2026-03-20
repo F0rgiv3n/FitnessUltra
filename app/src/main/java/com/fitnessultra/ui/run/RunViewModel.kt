@@ -53,7 +53,7 @@ class RunViewModel(application: Application) : AndroidViewModel(application) {
             val avgSpeedKmh = if (durationMillis > 0)
                 (distanceMeters / 1000f) / (durationMillis / 1000f / 3600f)
             else 0f
-            val calories = TrackingUtils.calculateCalories(distanceMeters, weightKg, gender)
+            val calories = TrackingUtils.calculateCalories(distanceMeters, weightKg, gender, elevationGain)
 
             val run = RunEntity(
                 dateTimestamp = System.currentTimeMillis(),
