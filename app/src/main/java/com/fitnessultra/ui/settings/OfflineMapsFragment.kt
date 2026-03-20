@@ -71,7 +71,7 @@ class OfflineMapsFragment : Fragment() {
             binding.mapView.controller.setCenter(lastPoint)
         } else {
             binding.mapView.controller.setZoom(6.0)
-            binding.mapView.controller.setCenter(GeoPoint(48.0, 13.0))
+            binding.mapView.controller.setCenter(GeoPoint(38.5, 24.0))
         }
 
         val adapter = ArrayAdapter(
