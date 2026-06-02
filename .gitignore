@@ -9,3 +9,8 @@ app/build/
 .externalNativeBuild
 .cxx
 local.properties
+
+# Signing — keep keys and passwords out of version control
+*.keystore
+*.jks
+keystore.properties

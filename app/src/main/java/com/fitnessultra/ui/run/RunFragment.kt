@@ -422,7 +422,8 @@ class RunFragment : Fragment() {
         val milestonePassed = (distanceKm / freqKm).toInt()
         if (milestonePassed > lastVoiceKm) {
             lastVoiceKm = milestonePassed
-            val kmAnnounced = milestonePassed * freqKm
+            // Must be Float: tts_voice_milestone uses a %.0f format specifier.
+            val kmAnnounced = (milestonePassed * freqKm).toFloat()
             val durationMs = viewModel.timeRunInMillis.value ?: 0L
             val paceStr = TrackingUtils.calculatePace(kmAnnounced * 1000f, durationMs, context = requireContext())
             speakTts(getTtsString(R.string.tts_voice_milestone, kmAnnounced, paceStr))
