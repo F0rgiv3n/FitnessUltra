@@ -82,6 +82,22 @@ class TrackingService : LifecycleService() {
 
     private var wakeLock: PowerManager.WakeLock? = null
 
+    // Cached so the per-second notification/widget refresh doesn't rebuild them each tick.
+    private val openAppPendingIntent: PendingIntent by lazy {
+        PendingIntent.getActivity(
+            this, 0,
+            Intent(this, MainActivity::class.java),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+    private val stopAndSavePendingIntent: PendingIntent by lazy {
+        PendingIntent.getService(
+            this, 2,
+            Intent(this, TrackingService::class.java).apply { action = ACTION_STOP_AND_SAVE },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
     private var timeStarted = 0L
     private var timeRun = 0L
     private var lastAltitude = Double.MIN_VALUE
@@ -93,6 +109,11 @@ class TrackingService : LifecycleService() {
     private var lastDistanceLocation: Location? = null  // for distance calc (requires ≤20m accuracy)
     private var lastKmReached = 0
     private val splitTimesMs = mutableListOf<Long>()
+
+    // Backing lists mutated only on the location thread; observers receive immutable copies
+    // (prevents ConcurrentModificationException while the UI iterates the list).
+    private val pathPointsList = mutableListOf<GeoPoint>()
+    private val rawLocationsList = mutableListOf<Location>()
 
     override fun onCreate() {
         super.onCreate()
@@ -120,6 +141,8 @@ class TrackingService : LifecycleService() {
                                     updateNotification(timeRun, totalDistanceMeters.value ?: 0f, tracking = false)
                                     updateWidget(timeRun, totalDistanceMeters.value ?: 0f, tracking = false)
                                     stopStepCounter()
+                                    stopBarometer()
+                                    smoothedSpeedKmh = 0f
                                     releaseWakeLock()
                                     return@forEach
                                 }
@@ -162,6 +185,8 @@ class TrackingService : LifecycleService() {
 
     private fun initValues() {
         isTracking.postValue(false)
+        pathPointsList.clear()
+        rawLocationsList.clear()
         pathPoints.postValue(mutableListOf())
         rawLocations.postValue(mutableListOf())
         timeRunInMillis.postValue(0L)
@@ -341,12 +366,7 @@ class TrackingService : LifecycleService() {
             val paceStr  = TrackingUtils.calculatePace(distanceMeters, elapsedMs, useMiles, this@TrackingService)
             setContentText(getString(R.string.notification_content, distStr, paceStr))
 
-            val openIntent = PendingIntent.getActivity(
-                this@TrackingService, 0,
-                Intent(this@TrackingService, MainActivity::class.java),
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            setContentIntent(openIntent)
+            setContentIntent(openAppPendingIntent)
 
             // Action 1: Pause / Resume
             val pauseResumeLabel: String
@@ -369,12 +389,7 @@ class TrackingService : LifecycleService() {
             addAction(pauseResumeIcon, pauseResumeLabel, pauseResumeIntent)
 
             // Action 2: Stop & Save
-            val stopIntent = PendingIntent.getService(
-                this@TrackingService, 2,
-                Intent(this@TrackingService, TrackingService::class.java).apply { action = ACTION_STOP_AND_SAVE },
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            addAction(R.drawable.ic_stop_notification, getString(R.string.btn_finish), stopIntent)
+            addAction(R.drawable.ic_stop_notification, getString(R.string.btn_finish), stopAndSavePendingIntent)
         }.build()
 
     private fun updateWidget(elapsedMs: Long, distanceMeters: Float, tracking: Boolean) {
@@ -383,24 +398,19 @@ class TrackingService : LifecycleService() {
         if (ids.isEmpty()) return
 
         val views = RemoteViews(packageName, R.layout.widget_run)
-        val openIntent = PendingIntent.getActivity(
-            this, 0,
-            Intent(this, MainActivity::class.java),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        views.setOnClickPendingIntent(R.id.widgetRoot, openIntent)
+        views.setOnClickPendingIntent(R.id.widgetRoot, openAppPendingIntent)
 
         if (elapsedMs > 0 || tracking) {
             val useMiles = SettingsManager.useMiles(this)
-            val status = if (tracking) "● RUNNING" else "⏸ PAUSED"
+            val status = getString(if (tracking) R.string.widget_status_running else R.string.widget_status_paused)
             views.setTextViewText(R.id.widgetStatus, status)
             views.setTextViewText(R.id.widgetTimer, TrackingUtils.formatTime(elapsedMs))
             val dist = TrackingUtils.formatDistance(distanceMeters, useMiles, this)
             val pace = TrackingUtils.calculatePace(distanceMeters, elapsedMs, useMiles, this)
-            views.setTextViewText(R.id.widgetStats, "$dist  ·  $pace")
+            views.setTextViewText(R.id.widgetStats, getString(R.string.notification_content, dist, pace))
         } else {
-            views.setTextViewText(R.id.widgetStatus, "FitnessUltra")
-            views.setTextViewText(R.id.widgetTimer, "--:--:--")
+            views.setTextViewText(R.id.widgetStatus, getString(R.string.app_name))
+            views.setTextViewText(R.id.widgetTimer, getString(R.string.time_placeholder))
             views.setTextViewText(R.id.widgetStats, getString(R.string.widget_no_run))
         }
 
@@ -443,10 +453,10 @@ class TrackingService : LifecycleService() {
         lastAcceptedLocation = location
 
         val pos = GeoPoint(location.latitude, location.longitude)
-        val points = pathPoints.value?.apply { add(pos) } ?: mutableListOf(pos)
-        pathPoints.postValue(points)
-        val locationList = rawLocations.value?.apply { add(location) } ?: mutableListOf(location)
-        rawLocations.postValue(locationList)
+        pathPointsList.add(pos)
+        pathPoints.postValue(ArrayList(pathPointsList))
+        rawLocationsList.add(location)
+        rawLocations.postValue(ArrayList(rawLocationsList))
 
         // Distance accumulation only from accurate fixes (≤20m) after the first display fix
         if (!isFirstFix && location.accuracy <= 20f) {
@@ -478,7 +488,11 @@ class TrackingService : LifecycleService() {
 
     private fun trackElevation(location: Location) {
         if (!location.hasAltitude()) return
-        val alt = location.altitude
+        applyElevationSample(location.altitude)
+    }
+
+    /** Accumulates elevation gain from one altitude sample, filtering noise below the threshold. */
+    private fun applyElevationSample(alt: Double) {
         if (lastAltitude == Double.MIN_VALUE) {
             lastAltitude = alt
             return
@@ -489,9 +503,7 @@ class TrackingService : LifecycleService() {
                 elevationGainMeters.postValue((elevationGainMeters.value ?: 0f) + diff.toFloat())
                 lastAltitude = alt
             }
-            diff <= -ELEVATION_THRESHOLD -> {
-                lastAltitude = alt
-            }
+            diff <= -ELEVATION_THRESHOLD -> lastAltitude = alt
         }
     }
 
@@ -546,7 +558,7 @@ class TrackingService : LifecycleService() {
                     }
                     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
                 }
-                sensorManager.registerListener(stepSensorListener, detectorSensor, SensorManager.SENSOR_DELAY_FASTEST)
+                sensorManager.registerListener(stepSensorListener, detectorSensor, SensorManager.SENSOR_DELAY_NORMAL)
             }
         }
     }
@@ -563,16 +575,7 @@ class TrackingService : LifecycleService() {
                 smoothedPressure = if (smoothedPressure == 0f) p
                                    else PRESSURE_ALPHA * p + (1f - PRESSURE_ALPHA) * smoothedPressure
                 val alt = SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, smoothedPressure).toDouble()
-                val prev = lastAltitude
-                if (prev == Double.MIN_VALUE) { lastAltitude = alt; return }
-                val diff = alt - prev
-                when {
-                    diff >= ELEVATION_THRESHOLD -> {
-                        elevationGainMeters.postValue((elevationGainMeters.value ?: 0f) + diff.toFloat())
-                        lastAltitude = alt
-                    }
-                    diff <= -ELEVATION_THRESHOLD -> lastAltitude = alt
-                }
+                applyElevationSample(alt)
             }
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
         }

@@ -20,8 +20,8 @@ class RunWidgetProvider : AppWidgetProvider() {
     companion object {
         fun buildIdleViews(context: Context): RemoteViews =
             RemoteViews(context.packageName, R.layout.widget_run).apply {
-                setTextViewText(R.id.widgetStatus, "FitnessUltra")
-                setTextViewText(R.id.widgetTimer, "--:--:--")
+                setTextViewText(R.id.widgetStatus, context.getString(R.string.app_name))
+                setTextViewText(R.id.widgetTimer, context.getString(R.string.time_placeholder))
                 setTextViewText(R.id.widgetStats, context.getString(R.string.widget_no_run))
                 val intent = PendingIntent.getActivity(
                     context, 0,

@@ -59,10 +59,12 @@ class HistoryFragment : Fragment() {
         val swipeToDelete = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onMove(rv: RecyclerView, vh: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder) = false
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val run = runAdapter.currentList[viewHolder.adapterPosition]
+                val pos = viewHolder.adapterPosition
+                if (pos == RecyclerView.NO_POSITION) return
+                val run = runAdapter.currentList[pos]
                 viewModel.deleteRun(run)
                 Snackbar.make(requireView(), R.string.msg_run_deleted, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.btn_undo) { viewModel.restoreRun(run) }
+                    .setAction(R.string.btn_undo) { viewModel.restoreLastDeleted() }
                     .show()
             }
         }
@@ -91,7 +93,7 @@ class HistoryFragment : Fragment() {
             val thisKm = if (useMiles) s.thisWeekKm * 0.621371f else s.thisWeekKm
 
             binding.tvWeekRuns.text = s.thisWeekRuns.toString()
-            binding.tvWeekDistance.text = "%.1f %s".format(thisKm, distLabel)
+            binding.tvWeekDistance.text = getString(R.string.week_distance_format, thisKm, distLabel)
             binding.tvWeekTime.text = getString(R.string.week_minutes_format, s.thisWeekMinutes)
 
             // Delta vs last week

@@ -117,8 +117,8 @@ class RunFragment : Fragment() {
             if (easterEggTapCount >= 10) {
                 easterEggTapCount = 0
                 val dialog = AlertDialog.Builder(requireContext())
-                    .setMessage("🐾 This is an easter egg! 🐾")
-                    .setPositiveButton("OK", null)
+                    .setMessage(getString(R.string.easter_egg_message))
+                    .setPositiveButton(android.R.string.ok, null)
                     .show()
                 dialog.window?.setLayout(
                     (resources.displayMetrics.widthPixels * 0.80).toInt(),
@@ -173,10 +173,8 @@ class RunFragment : Fragment() {
             updateConfigButton()
             lastVoiceKm = 0
             lastPaceAlertMs = 0L
-            val weightKg = getUserWeight()
-            val gender = SettingsManager.gender(requireContext())
-            viewModel.saveRun(weightKg, gender)
-            viewModel.sendCommand(TrackingService.ACTION_STOP)
+            // Persist + stop through the single guarded path in TrackingService
+            viewModel.sendCommand(TrackingService.ACTION_STOP_AND_SAVE)
             routePolyline?.setPoints(emptyList())
             locationMarker?.isEnabled = false
             binding.mapView.invalidate()
@@ -218,25 +216,25 @@ class RunFragment : Fragment() {
 
     private fun updateConfigButton() {
         val ctx = requireContext()
-        when (workoutConfig) {
-            is WorkoutConfig.FreeRun -> {
-                binding.btnWorkoutType.setText(R.string.workout_type_free)
-                binding.btnWorkoutType.backgroundTintList =
-                    ContextCompat.getColorStateList(ctx, R.color.colorPrimary)
-                binding.btnWorkoutType.setTextColor(android.graphics.Color.WHITE)
-            }
-            is WorkoutConfig.Intervals -> {
-                binding.btnWorkoutType.setText(R.string.workout_type_intervals)
-                binding.btnWorkoutType.backgroundTintList =
-                    ContextCompat.getColorStateList(ctx, R.color.colorPrimary)
-                binding.btnWorkoutType.setTextColor(android.graphics.Color.WHITE)
-            }
-            is WorkoutConfig.TargetPace -> {
-                binding.btnWorkoutType.setText(R.string.workout_type_target_pace)
-                binding.btnWorkoutType.backgroundTintList =
-                    ContextCompat.getColorStateList(ctx, R.color.colorPrimary)
-                binding.btnWorkoutType.setTextColor(android.graphics.Color.WHITE)
-            }
+        val btn = binding.btnWorkoutType
+        val labelRes = when (workoutConfig) {
+            is WorkoutConfig.FreeRun    -> R.string.workout_type_free
+            is WorkoutConfig.Intervals  -> R.string.workout_type_intervals
+            is WorkoutConfig.TargetPace -> R.string.workout_type_target_pace
+        }
+        btn.setText(labelRes)
+        if (workoutConfig is WorkoutConfig.FreeRun) {
+            // Outlined — no structured workout selected
+            btn.backgroundTintList =
+                android.content.res.ColorStateList.valueOf(android.graphics.Color.TRANSPARENT)
+            btn.setTextColor(ContextCompat.getColor(ctx, R.color.colorPrimary))
+            btn.strokeColor = ContextCompat.getColorStateList(ctx, R.color.colorPrimary)
+            btn.strokeWidth = (1.5f * resources.displayMetrics.density).toInt()
+        } else {
+            // Filled primary — a structured workout is active
+            btn.backgroundTintList = ContextCompat.getColorStateList(ctx, R.color.colorPrimary)
+            btn.setTextColor(android.graphics.Color.WHITE)
+            btn.strokeWidth = 0
         }
     }
 
@@ -475,11 +473,6 @@ class RunFragment : Fragment() {
             }
             .setNegativeButton(android.R.string.cancel, null)
             .show()
-    }
-
-    private fun getUserWeight(): Float {
-        val prefs = requireActivity().getSharedPreferences("user_prefs", 0)
-        return prefs.getFloat("weight_kg", 70f)
     }
 
     override fun onResume() {

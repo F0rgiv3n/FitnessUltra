@@ -5,11 +5,20 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.fitnessultra.data.db.AppDatabase
+import com.fitnessultra.data.db.entity.LocationPoint
 import com.fitnessultra.data.db.entity.RunEntity
+import com.fitnessultra.data.db.entity.RunSplit
 import com.fitnessultra.data.repository.RunRepository
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.Calendar
+
+/** Full snapshot of a deleted run so swipe-to-delete can be undone without losing the route. */
+private data class RunSnapshot(
+    val run: RunEntity,
+    val points: List<LocationPoint>,
+    val splits: List<RunSplit>
+)
 
 data class WeeklySummary(
     val thisWeekRuns: Int,
@@ -62,11 +71,29 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
         )
     }.asLiveData()
 
+    // Holds the most recently deleted run so it can be fully restored on Undo.
+    private var lastDeleted: RunSnapshot? = null
+
     fun deleteRun(run: RunEntity) {
-        viewModelScope.launch { repository.deleteRun(run) }
+        viewModelScope.launch {
+            // Snapshot route + splits before the FK CASCADE delete removes them.
+            lastDeleted = RunSnapshot(
+                run = run,
+                points = repository.getLocationPointsForRun(run.id),
+                splits = repository.getSplitsForRun(run.id)
+            )
+            repository.deleteRun(run)
+        }
     }
 
-    fun restoreRun(run: RunEntity) {
-        viewModelScope.launch { repository.insertRun(run) }
+    fun restoreLastDeleted() {
+        val snapshot = lastDeleted ?: return
+        lastDeleted = null
+        viewModelScope.launch {
+            // Same primary key → thumbnail file and PR logic stay valid.
+            repository.insertRun(snapshot.run)
+            if (snapshot.points.isNotEmpty()) repository.insertLocationPoints(snapshot.points)
+            if (snapshot.splits.isNotEmpty()) repository.insertSplits(snapshot.splits)
+        }
     }
 }

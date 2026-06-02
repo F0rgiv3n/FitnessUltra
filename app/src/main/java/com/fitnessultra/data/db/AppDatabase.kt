@@ -16,7 +16,7 @@ import com.fitnessultra.data.db.entity.WeightEntry
 @Database(
     entities = [RunEntity::class, LocationPoint::class, WeightEntry::class, RunSplit::class],
     version = 3,
-    exportSchema = false
+    exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
 

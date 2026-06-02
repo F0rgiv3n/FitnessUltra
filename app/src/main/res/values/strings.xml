@@ -35,6 +35,11 @@
 
     <!-- Widget -->
     <string name="widget_no_run">Tap to start a run</string>
+    <string name="widget_status_running">● RUNNING</string>
+    <string name="widget_status_paused">⏸ PAUSED</string>
+    <string name="time_placeholder" translatable="false">--:--:--</string>
+    <string name="week_distance_format" translatable="false">%1$.1f %2$s</string>
+    <string name="easter_egg_message" translatable="false">🐾 This is an easter egg! 🐾</string>
 
     <!-- History screen -->
     <string name="title_steps_history">Steps History</string>
