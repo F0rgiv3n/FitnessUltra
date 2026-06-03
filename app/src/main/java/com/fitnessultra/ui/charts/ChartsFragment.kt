@@ -201,6 +201,8 @@ class ChartsFragment : Fragment() {
                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
                     type = "image/jpeg"
                     putExtra(Intent.EXTRA_STREAM, uri)
+                    // ClipData lets the share sheet render a thumbnail preview of the image.
+                    clipData = android.content.ClipData.newUri(requireContext().contentResolver, "run", uri)
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
                 startActivity(Intent.createChooser(shareIntent, getString(R.string.share_run_title)))
@@ -235,6 +237,8 @@ class ChartsFragment : Fragment() {
                 type = "application/gpx+xml"
                 putExtra(Intent.EXTRA_STREAM, uri)
                 putExtra(Intent.EXTRA_SUBJECT, filename)
+                // ClipData lets the share sheet read the file for a name/preview.
+                clipData = android.content.ClipData.newUri(requireContext().contentResolver, filename, uri)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
             startActivity(Intent.createChooser(share, getString(R.string.gpx_share_title)))

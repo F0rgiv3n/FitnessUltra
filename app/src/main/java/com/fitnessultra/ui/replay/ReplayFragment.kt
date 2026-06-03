@@ -177,9 +177,17 @@ class ReplayFragment : Fragment() {
         }
         val lats = points.map { it.latitude }
         val lngs = points.map { it.longitude }
-        val box = BoundingBox(lats.max(), lngs.max(), lats.min(), lngs.min())
+        // Pad the box with a minimum span. A near-straight route gives an almost
+        // degenerate box, which makes zoomToBoundingBox compute an invalid zoom and
+        // fall back to a world view — the padding keeps the route nicely framed.
+        val latPad = ((lats.max() - lats.min()) * 0.15).coerceAtLeast(0.0008)
+        val lonPad = ((lngs.max() - lngs.min()) * 0.15).coerceAtLeast(0.0008)
+        val box = BoundingBox(
+            lats.max() + latPad, lngs.max() + lonPad,
+            lats.min() - latPad, lngs.min() - lonPad
+        )
         binding.replayMapView.post {
-            binding.replayMapView.zoomToBoundingBox(box.increaseByScale(1.3f), true)
+            binding.replayMapView.zoomToBoundingBox(box, false)
         }
     }
 

@@ -14,3 +14,6 @@ local.properties
 *.keystore
 *.jks
 keystore.properties
+
+# Release APKs are distributed via GitHub Releases, not committed
+/release/
