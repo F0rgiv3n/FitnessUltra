@@ -38,7 +38,7 @@ Two ways to get the app:
 
 ## 📸 Screenshots
 
-> Demo runs recorded in **Trikala, Greece** (Άι Γιώργης → Μύλος Ματσόπουλου), routed along real streets.
+> Demo runs recorded in **Trikala, Greece** , routed along real streets.
 
 | Live GPS Tracking | History & PRs | Per-run Charts |
 |:---:|:---:|:---:|
